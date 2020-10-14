@@ -40,8 +40,11 @@ class FavRetweetListener(tweepy.StreamListener):
 class AutoTweet:
     def __init__(self, api, urlfilename):
         self.api = api
-        urlfile = open("url-list.txt","r")
-        self.urls = urlfile.readlines()
+        try :
+            urlfile = open(urlfilename,"r")
+            self.urls = urlfile.readlines()
+        except Exception as e:
+            logger.error("Error loading the url file", exc_info=True)
         
     def tweet(self, delay):
         i = 0
@@ -50,7 +53,8 @@ class AutoTweet:
             try:
                 self.api.update_status(self.urls[i])
             except Exception as e:
-                logger.error("Error on autotweet", exc_info=True)               
+                logger.error("Error on autotweet", exc_info=True)
+            logger.info(f"Waiting to process the next url for {delay}s")            
             time.sleep(delay)
             i = (i+1) % len(self.urls)
 
