@@ -71,7 +71,7 @@ def main():
     api = create_api()
     tweets_listener = FavRetweetListener(api)
     stream = tweepy.Stream(api.auth, tweets_listener)
-    #stream.filter(track=["#VeilleESR", "#DataESR", "#LRU"], languages=["fr"], is_async = True)
+    #stream.filter(track=["#VeilleESR", "#DataESR", "#LRU", "#ESR"], languages=["fr"], is_async = True)
     
     autotweet = AutoTweet(api, stream, "url-list.txt")
     autotweet.tweet(57600)
