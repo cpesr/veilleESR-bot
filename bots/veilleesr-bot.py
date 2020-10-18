@@ -6,6 +6,7 @@ import logging
 from config import create_api
 import json
 import time
+from random import randrange
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -38,8 +39,9 @@ class FavRetweetListener(tweepy.StreamListener):
         logger.error(status)
         
 class AutoTweet:
-    def __init__(self, api, urlfilename):
+    def __init__(self, api, stream, urlfilename):
         self.api = api
+        self.stream = stream
         try :
             urlfile = open(urlfilename,"r")
             self.urls = urlfile.readlines()
@@ -47,8 +49,15 @@ class AutoTweet:
             logger.error("Error loading the url file", exc_info=True)
         
     def tweet(self, delay):
-        i = 0
+    
+        self.stream.filter(track=["#VeilleESR", "#DataESR", "#LRU"], languages=["fr"], is_async = True)
+    
+        i = randrange(0,len(self.urls))
         while True:
+            logger.info(f"Checking thread : {self.stream.running}")
+            if self.stream.running == False:
+                self.stream.filter(track=["#VeilleESR", "#DataESR", "#LRU"], languages=["fr"], is_async = True)
+        
             logger.info(f"Processing url {self.urls[i]}")
             try:
                 self.api.update_status(self.urls[i])
@@ -62,10 +71,10 @@ def main():
     api = create_api()
     tweets_listener = FavRetweetListener(api)
     stream = tweepy.Stream(api.auth, tweets_listener)
-    stream.filter(track=["#VeilleESR", "#DataESR"], languages=["fr","en"], is_async = True)
+    #stream.filter(track=["#VeilleESR", "#DataESR", "#LRU"], languages=["fr"], is_async = True)
     
-    autotweet = AutoTweet(api, "url-list.txt")
-    autotweet.tweet(86400)
+    autotweet = AutoTweet(api, stream, "url-list.txt")
+    autotweet.tweet(57600)
     
     
 
