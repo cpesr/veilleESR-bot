@@ -12,22 +12,24 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 class FavRetweetListener(tweepy.StreamListener):
-    def __init__(self, api):
+    def __init__(self, api, tags):
         self.api = api
+        self.tags = tags
         self.me = api.me()
 
     def on_status(self, tweet):
         logger.info(f"Processing tweet id {tweet.id}")
         if tweet.in_reply_to_status_id is not None or \
-            tweet.user.id == self.me.id:
-            # This tweet is a reply or I'm its author so, ignore it
+            tweet.user.id == self.me.id or \
+            not any([tag in tweet.text for tag in self.tags]):
+            # This tweet is a reply or I'm its author or a RT so, ignore it
             return
-        if not tweet.favorited:
-            # Mark it as Liked, since we have not done it yet
-            try:
-                tweet.favorite()
-            except Exception as e:
-                logger.error("Error on fav", exc_info=True)
+        #if not tweet.favorited:
+        #    # Mark it as Liked, since we have not done it yet
+        #    try:
+        #        tweet.favorite()
+        #    except Exception as e:
+        #        logger.error("Error on fav", exc_info=True)
         if not tweet.retweeted:
             # Retweet, since we have not retweeted it yet
             try:
@@ -39,9 +41,10 @@ class FavRetweetListener(tweepy.StreamListener):
         logger.error(status)
         
 class AutoTweet:
-    def __init__(self, api, stream, urlfilename):
+    def __init__(self, api, stream, tags, urlfilename):
         self.api = api
         self.stream = stream
+        self.tags = tags
         try :
             urlfile = open(urlfilename,"r")
             self.urls = urlfile.readlines()
@@ -50,13 +53,13 @@ class AutoTweet:
         
     def tweet(self, delay):
     
-        self.stream.filter(track=["#VeilleESR", "#DataESR", "#LRU"], languages=["fr"], is_async = True)
+        self.stream.filter(track=self.tags, languages=["fr"], is_async = True)
     
         i = randrange(0,len(self.urls))
         while True:
             logger.info(f"Checking thread : {self.stream.running}")
             if self.stream.running == False:
-                self.stream.filter(track=["#VeilleESR", "#DataESR", "#LRU"], languages=["fr"], is_async = True)
+                self.stream.filter(track=self.tags, languages=["fr"], is_async = True)
         
             logger.info(f"Processing url {self.urls[i]}")
             try:
@@ -68,12 +71,14 @@ class AutoTweet:
             i = (i+1) % len(self.urls)
 
 def main():
+    tags = ["#VeilleESR", "#DataESR", "#LRU", "#ESR", "#CNESER", "MESRI"]
+
     api = create_api()
-    tweets_listener = FavRetweetListener(api)
+    tweets_listener = FavRetweetListener(api, tags)
     stream = tweepy.Stream(api.auth, tweets_listener)
-    #stream.filter(track=["#VeilleESR", "#DataESR", "#LRU", "#ESR"], languages=["fr"], is_async = True)
+    #stream.filter(track=tags, languages=["fr"], is_async = True)
     
-    autotweet = AutoTweet(api, stream, "url-list.txt")
+    autotweet = AutoTweet(api, stream, tags, "url-list.txt")
     autotweet.tweet(57600)
     
     
