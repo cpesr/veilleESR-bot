@@ -71,7 +71,7 @@ class AutoTweet:
             i = (i+1) % len(self.urls)
 
 def main():
-    tags = ["#VeilleESR", "#DataESR", "#LRU", "#ESR", "#CNESER", "MESRI"]
+    tags = ["#VeilleESR", "#DataESR", "#LRU", "#ESR", "#CNESER", "#MESRI", "#LPR", "#LPPR", "#LoiRecherche"]
 
     api = create_api()
     tweets_listener = FavRetweetListener(api, tags)
