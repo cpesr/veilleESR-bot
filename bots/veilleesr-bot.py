@@ -37,9 +37,12 @@ class FavRetweetListener(tweepy.StreamListener):
             except Exception as e:
                 logger.error("Error on fav and retweet", exc_info=True)
 
+        # Follow the user
+        self.api.create_friendship(tweet.user.id)
+
     def on_error(self, status):
         logger.error(status)
-        
+
 class AutoTweet:
     def __init__(self, api, stream, tags, urlfilename):
         self.api = api
@@ -50,23 +53,23 @@ class AutoTweet:
             self.urls = urlfile.readlines()
         except Exception as e:
             logger.error("Error loading the url file", exc_info=True)
-        
+
     def tweet(self, delay):
-    
+
         self.stream.filter(track=self.tags, languages=["fr"], is_async = True)
-    
+
         i = randrange(0,len(self.urls))
         while True:
             logger.info(f"Checking thread : {self.stream.running}")
             if self.stream.running == False:
                 self.stream.filter(track=self.tags, languages=["fr"], is_async = True)
-        
+
             logger.info(f"Processing url {self.urls[i]}")
             try:
                 self.api.update_status(self.urls[i])
             except Exception as e:
                 logger.error("Error on autotweet", exc_info=True)
-            logger.info(f"Waiting to process the next url for {delay}s")            
+            logger.info(f"Waiting to process the next url for {delay}s")
             time.sleep(delay)
             i = (i+1) % len(self.urls)
 
@@ -77,11 +80,11 @@ def main():
     tweets_listener = FavRetweetListener(api, tags)
     stream = tweepy.Stream(api.auth, tweets_listener)
     #stream.filter(track=tags, languages=["fr"], is_async = True)
-    
+
     autotweet = AutoTweet(api, stream, tags, "url-list.txt")
     autotweet.tweet(57600)
-    
-    
+
+
 
 if __name__ == "__main__":
     main()
