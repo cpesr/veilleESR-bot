@@ -40,7 +40,7 @@ class FavRetweetListener(tweepy.StreamListener):
                 logger.error("Error on fav and retweet", exc_info=True)
 
         # Follow the user
-        self.api.create_friendship(tweet.user.id)
+        # self.api.create_friendship(tweet.user.id)
 
     def on_error(self, status):
         logger.error(status)
@@ -111,7 +111,7 @@ class AutoReTweet:
 
 def main():
     api = create_api()
-    tags = ["#VeilleESR", "#DataESR", "#LRU", "#ESR", "#CNESER", "#MESRI", "#LPR", "#LPPR", "#LoiRecherche", "#ComESR"]
+    tags = ["#VeilleESR", "#DataESR", "#LRU", "#ESR", "#CNESER", "#MESRI", "#LPR", "#LPPR", "#LoiRecherche", "#ComESR", "#etudiantsfantomes"]
 
     tagRetweeter = TagRetweeter(api, tags)
     tagRetweeter.start()
