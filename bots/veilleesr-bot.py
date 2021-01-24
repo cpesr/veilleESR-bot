@@ -111,7 +111,7 @@ class AutoReTweet:
 
 def main():
     api = create_api()
-    tags = ["#VeilleESR", "#DataESR", "#LRU", "#ESR", "#CNESER", "#MESRI", "#LPR", "#LPPR", "#LoiRecherche", "#ComESR", "#etudiantsfantomes"]
+    tags = ["#VeilleESR", "#DataESR", "#LRU", "#ESR", "#CNESER", "#MESRI", "#LPR", "#LPPR", "#LoiRecherche", "#ComESR"]
 
     tagRetweeter = TagRetweeter(api, tags)
     tagRetweeter.start()
