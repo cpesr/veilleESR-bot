@@ -3,121 +3,90 @@
 
 import tweepy
 import logging
-from config import create_api
-import json
 import time
 from random import randrange
-import threading
+from os import path
+from config import create_api
+from mdconfig import get_mdconfig
 
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
-class FavRetweetListener(tweepy.StreamListener):
-    def __init__(self, api, tags):
-        self.api = api
-        self.tags = tags
-        self.me = api.me()
-
-    def on_status(self, tweet):
-        logger.info(f"Processing tweet id {tweet.id}")
-        if tweet.in_reply_to_status_id is not None or \
-            tweet.user.id == self.me.id or \
-            not any([tag in tweet.text for tag in self.tags]):
-            # This tweet is a reply or I'm its author or a RT so, ignore it
-            return
-        #if not tweet.favorited:
-        #    # Mark it as Liked, since we have not done it yet
-        #    try:
-        #        tweet.favorite()
-        #    except Exception as e:
-        #        logger.error("Error on fav", exc_info=True)
-        if not tweet.retweeted:
-            # Retweet, since we have not retweeted it yet
-            try:
-                tweet.retweet()
-            except Exception as e:
-                logger.error("Error on fav and retweet", exc_info=True)
-
-        # Follow the user
-        # self.api.create_friendship(tweet.user.id)
-
-    def on_error(self, status):
-        logger.error(status)
-
-class TagRetweeter(threading.Thread):
-    def __init__(self, api, tags, delay=3600):
-        threading.Thread.__init__(self)
-        self.api = api
-        self.tags = tags
-        self.delay = delay
-
-    def run(self):
-        logger.info("Start tags retweeting")
-        tweets_listener = FavRetweetListener(self.api, self.tags)
-        stream = tweepy.Stream(self.api.auth, tweets_listener)
-        stream.filter(track=self.tags, languages=["fr"], is_async = True)
-
-        while True:
-            logger.info(f"Checking thread : {stream.running}")
-            if stream.running == False:
-                stream.filter(track=self.tags, languages=["fr"], is_async = True)
-            time.sleep(self.delay)
-
 class AutoTweet:
-    def __init__(self, api, urlfilename):
+    def __init__(self, api, mdconfig_url):
         self.api = api
-        self.stream = stream
-        self.tags = tags
-        try :
-            urlfile = open(urlfilename,"r")
-            self.urls = urlfile.readlines()
+        self.mdconfig_url = mdconfig_url
+        self.screen_name = api.get_settings()['screen_name']
+
+        self.itweet = -1
+        self.lasttweetid = 0
+
+    def tagRetweeter(self):
+        c = 1 if self.lasttweetid == 0 else 100
+        q = self.mdc['config']['tags'].strip(' ').replace(" "," OR ") + " -filter:retweets"
+        logger.info("Search tweets: " + str(q), exc_info=True)
+        tweets = self.api.search_tweets(q, since_id=self.lasttweetid, count=c, result_type='recent')
+        logger.info("Found tweets: " + str(len(tweets)), exc_info=True)
+
+        for tweet in tweets:
+            if tweet.author.screen_name != self.screen_name and not tweet.retweeted:
+                # Retweet, since we have not retweeted it yet
+                try:
+                    tweet.retweet()
+                except Exception as e:
+                    logger.error("Error on tagRetweet", exc_info=True)
+        if len(tweets) > 0: self.lasttweetid = tweets[0].id
+
+    def tweetTweeter(self):
+        self.itweet = (self.itweet+1)%len(self.mdc['tweets'])
+        try:
+            self.api.update_status(self.mdc['tweets'][self.itweet])
         except Exception as e:
-            logger.error("Error loading the url file", exc_info=True)
+            logger.error("Error on tweetTweet", exc_info=True)
 
-    def tweet(self, delay):
-        i = randrange(0,len(self.urls))
+    def dataTweeter(self):
+        i = randrange(0, len(self.mdc['datatweets']))
+        dt = self.mdc['datatweets'][i]
+
+        pm = tweepy.streaming.urllib3.PoolManager()
+        img = pm.request("GET", dt['imgurl'], preload_content=False)
+
+        try:
+            logger.info("Tweeting: "+str(dt))
+            media = self.api.simple_upload(path.basename(dt['imgurl']), file = img) # filename, *, file, chunked, media_category, additional_owners
+            self.api.create_media_metadata(media.media_id,dt['alt'])
+            self.api.update_status(dt['text']+"\n"+dt['url'], media_ids = [media.media_id])
+        except Exception as e:
+            logger.error("Error on dataTweet", exc_info=True)
+
+    def start(self):
+
         while True:
-            logger.info(f"Processing url {self.urls[i]}")
-            try:
-                self.api.update_status(self.urls[i])
-            except Exception as e:
-                logger.error("Error on autotweet", exc_info=True)
-            logger.info(f"Waiting to process the next url for {delay}s")
+            logger.info(f"Retrieving mdconfig")
+            self.mdc = get_mdconfig(self.mdconfig_url)
+
+            # Retweets
+            self.tagRetweeter()
+
+            # Tweets
+            self.tweetTweeter()
+
+            # Data
+            self.dataTweeter()
+
+            delay = int(self.mdc['config']['delay'])
+            logger.info(f"Waiting for the next loop for {delay}s")
             time.sleep(delay)
-            i = (i+1) % len(self.urls)
-
-class AutoReTweet:
-    def __init__(self, api, tweetidfilename, delay=72000):
-        self.api = api
-        self.tweetidfilename = tweetidfilename
-        self.delay = delay
-
-    def retweet(self):
-        logger.info("Start auretweeting")
-        while True:
-            logger.info("Processing retweets")
-            with open(self.tweetidfilename) as tweetidfile:
-                tweetids = tweetidfile.read().splitlines()
-                for tweetid in tweetids:
-                    try:
-                        self.api.unretweet(tweetid)
-                        self.api.retweet(tweetid)
-                    except Exception as e:
-                        logger.error("Error on autoretweet", tweetid, exc_info=True)
-
-            logger.info(f"Waiting to process the next tweet for {self.delay}s")
-            time.sleep(self.delay)
 
 def main():
     api = create_api()
-    tags = ["#VeilleESR", "#DataESR", "#LRU", "#ESR", "#CNESER", "#MESRI", "#LPR", "#LPPR", "#LoiRecherche", "#ComESR"]
 
-    tagRetweeter = TagRetweeter(api, tags)
-    tagRetweeter.start()
+    #tagRetweeter = TagRetweeter(api, tags)
+    #tagRetweeter.start()
 
-    autoretweet = AutoReTweet(api, "tweet-list.txt")
-    autoretweet.retweet()
+    autotweet = AutoTweet(api, "https://github.com/juliengossa/veilleesr-bot/raw/master/botconfig.md")
+    autotweet.start()
 
 if __name__ == "__main__":
     main()
