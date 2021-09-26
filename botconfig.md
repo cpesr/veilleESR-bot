@@ -1,6 +1,6 @@
 # Config
-- delay:30
-- tags:#VeilleESR #DataESR #ComESR 
+- delay:36000
+- tags:#VeilleESR #HelpESR #DataESR #ComESR
 
 # VeilleESR
 [#VeilleESR] Mise à jour quotidienne des publications des syndicats de l’#ESR. https://cpesr.fr/veille-syndicats/
