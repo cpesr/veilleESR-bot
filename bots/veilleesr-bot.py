@@ -109,8 +109,8 @@ def main():
     args = parser.parse_args()
 
     api = create_api()
-
-    autotweet = AutoTweet(api, "https://github.com/juliengossa/veilleesr-bot/raw/master/botconfig.md")
+    #autotweet = AutoTweet(api, "https://github.com/juliengossa/veilleesr-bot/raw/master/botconfig.md")
+    autotweet = AutoTweet(api, "https://github.com/cpesr/veilleesr-bot/raw/master/botconfig.md")
 
     if args.tweetmd is not None:
         autotweet.tweetmd(args.tweetmd[0])
