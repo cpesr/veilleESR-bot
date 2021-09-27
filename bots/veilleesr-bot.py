@@ -6,9 +6,10 @@ import logging
 import time
 from random import randrange
 from os import path
-from config import create_api
-from mdconfig import get_mdconfig
+import argparse
 
+from config import create_api
+import mdconfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -18,6 +19,8 @@ class AutoTweet:
         self.api = api
         self.mdconfig_url = mdconfig_url
         self.screen_name = api.get_settings()['screen_name']
+
+        self.mdc = {}
 
         self.itweet = -1
         self.lasttweetid = 0
@@ -45,26 +48,42 @@ class AutoTweet:
         except Exception as e:
             logger.error("Error on tweetTweet", exc_info=True)
 
-    def dataTweeter(self):
-        i = randrange(0, len(self.mdc['datatweets']))
-        dt = self.mdc['datatweets'][i]
-
+    def dataTweeter(self, dataTweet, in_reply_to=None):
         pm = tweepy.streaming.urllib3.PoolManager()
-        img = pm.request("GET", dt['imgurl'], preload_content=False)
+        img = pm.request("GET", dataTweet['imgurl'], preload_content=False)
 
         try:
-            logger.info("Tweeting: "+str(dt))
-            media = self.api.simple_upload(path.basename(dt['imgurl']), file = img) # filename, *, file, chunked, media_category, additional_owners
-            self.api.create_media_metadata(media.media_id,dt['alt'])
-            self.api.update_status(dt['text']+"\n"+dt['url'], media_ids = [media.media_id])
+            logger.info("Tweeting: "+str(dataTweet))
+            media = self.api.simple_upload(path.basename(dataTweet['imgurl']), file = img) # filename, *, file, chunked, media_category, additional_owners
+            self.api.create_media_metadata(media.media_id,dataTweet['alt'])
+            if in_reply_to is None:
+                tweet = self.api.update_status(
+                    dataTweet['text']+"\n\n"+dataTweet['url'],
+                    media_ids = [media.media_id])
+            else:
+                tweet = self.api.update_status(
+                    dataTweet['text'],
+                    in_reply_to_status_id = in_reply_to,
+                    media_ids = [media.media_id])
         except Exception as e:
             logger.error("Error on dataTweet", exc_info=True)
+
+        return tweet
+
+    def tweetmd(self,url):
+        dataTweets = mdconfig.get_datamd(url)
+        id = path.basename(dataTweets[0]['url'])
+        for dt in dataTweets:
+            tweet = self.dataTweeter(dt, in_reply_to = id)
+            id = tweet.id
+            logger.info("Twitté en réponse : "+str(id))
+            #return
 
     def start(self):
 
         while True:
             logger.info(f"Retrieving mdconfig")
-            self.mdc = get_mdconfig(self.mdconfig_url)
+            self.mdc = mdconfig.get_mdconfig(self.mdconfig_url)
 
             # Retweets
             self.tagRetweeter()
@@ -73,20 +92,30 @@ class AutoTweet:
             self.tweetTweeter()
 
             # Data
-            self.dataTweeter()
+            i = randrange(0, len(self.mdc['datatweets']))
+            dt = self.mdc['datatweets'][i]
+            self.dataTweeter(dt)
 
             delay = int(self.mdc['config']['delay'])
             logger.info(f"Waiting for the next loop for {delay}s")
             time.sleep(delay)
 
 def main():
+    parser = argparse.ArgumentParser(description='Bot twitter pour la cpesr')
+    parser.add_argument('--tweetmd', dest='tweetmd', nargs=1,
+                        metavar='data md url',
+                        help="Tweete tous les graphiques d'un md plutôt que de lancer le bot")
+
+    args = parser.parse_args()
+
     api = create_api()
+    #autotweet = AutoTweet(api, "https://github.com/juliengossa/veilleesr-bot/raw/master/botconfig.md")
+    autotweet = AutoTweet(api, "https://github.com/cpesr/veilleesr-bot/raw/master/botconfig.md")
 
-    #tagRetweeter = TagRetweeter(api, tags)
-    #tagRetweeter.start()
-
-    autotweet = AutoTweet(api, "https://github.com/juliengossa/veilleesr-bot/raw/master/botconfig.md")
-    autotweet.start()
+    if args.tweetmd is not None:
+        autotweet.tweetmd(args.tweetmd[0])
+    else:
+        autotweet.start()
 
 if __name__ == "__main__":
     main()

@@ -16,4 +16,5 @@
 [#VeilleESR #DataESR] L'entrée dans la carrière des enseignants-chercheurs https://cpesr.fr/lentree-dans-la-carriere-des-enseignants-chercheurs/
 
 # DataESR
-https://github.com/cpesr/RFC/raw/main/ConcoursMCF/ConcoursMCF-sections.md
+https://raw.githubusercontent.com/cpesr/emploiESR/main/emploiEC/emploiEC.md
+https://raw.githubusercontent.com/cpesr/RFC/main/ConcoursMCF/ConcoursMCF-sections.md
