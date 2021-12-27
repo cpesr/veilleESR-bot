@@ -28,7 +28,7 @@ class JORF:
         self.sommaire = None
         self.esr = None
 
-        self.css = "jorf.css"
+        self.css = "legifrance.css"
 
 
     def get_access_token(self):
@@ -130,7 +130,7 @@ class JORF:
     def get_jotweets(self, write_img = False):
         jotext = "[#VeilleESR #JORF] Publications au Journal Officiel concernant l'#ESR\n\U0001F5DE "+self.get_sommaire()['items'][0]['joCont']['titre']+" \n\n"+self.jorf2url(self.jorf)
         if write_img:
-            imgkit.from_string(self.sommaire2html(), self.get_last_JO_id()+'.png', css=self.css)
+            imgkit.from_string(self.sommaire2html(), self.get_last_JO_id()+'.png', css=self.css, options={"log-level":"info"})
             joimg = self.get_last_JO_id()+'.png'
         else:
             joimg = BytesIO(imgkit.from_string(self.sommaire2html(), False, css=self.css)) #self.get_last_JO_id()+'.png')
