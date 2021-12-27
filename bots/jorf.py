@@ -30,7 +30,7 @@ class JORF:
         self.esr = None
 
         self.css = "https://www.legifrance.gouv.fr/resources/css/legifrance.css" #"jorf.css"
-        self.wkoptions={"log-level":"info","javascript-delay":20}
+        self.wkoptions={"log-level":"info","javascript-delay":20000}
 
     def get_access_token(self):
         client_id = os.getenv("PISTE_CLIENT_ID")
