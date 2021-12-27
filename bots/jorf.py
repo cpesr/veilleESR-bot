@@ -29,8 +29,8 @@ class JORF:
         self.sommaire = None
         self.esr = None
 
-        self.css = "https://www.legifrance.gouv.fr/resources/css/legifrance.css" #"jorf.css"
-        self.wkoptions={"log-level":"info","javascript-delay":20000}
+        self.css = os.getcwd()+"/css/legifrance.css" #"jorf.css"
+        self.wkoptions={"log-level":"info","javascript-delay":2000}
 
     def get_access_token(self):
         client_id = os.getenv("PISTE_CLIENT_ID")
@@ -129,9 +129,10 @@ class JORF:
         return html
 
     def html2img(self, html, id, write_img=False):
-        head = '<head><meta charset="UTF-8"><link rel="stylesheet" href="'+self.css+'"></head>'
+        head = '<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="'+self.css+'"></head>'
+        tail = '</body></html>'
 
-        fhtml = StringIO(head+html)
+        fhtml = StringIO(head+html+tail)
         if write_img:
             imgkit.from_file(fhtml, id+'.png', options=self.wkoptions)
             return id+'.png'
