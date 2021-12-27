@@ -19,6 +19,7 @@ import json
 import os
 import imgkit
 from io import BytesIO
+from io import StringIO
 
 class JORF:
     def __init__(self):
@@ -28,7 +29,7 @@ class JORF:
         self.sommaire = None
         self.esr = None
 
-        self.css = "legifrance.css"
+        self.css = "https://www.legifrance.gouv.fr/resources/css/legifrance.css" #"jorf.css"
         self.wkoptions={"log-level":"info","javascript-delay":20}
 
     def get_access_token(self):
@@ -127,13 +128,20 @@ class JORF:
         html += '</div>'
         return html
 
+    def html2img(self, html, id, write_img=False):
+        head = '<head><meta charset="UTF-8"><link rel="stylesheet" href="'+self.css+'"></head>'
+
+        fhtml = StringIO(head+html)
+        if write_img:
+            imgkit.from_file(fhtml, id+'.png', options=self.wkoptions)
+            return id+'.png'
+        else:
+            return BytesIO(imgkit.from_file(fhtml, False, options=self.wkoptions))
+
+
     def get_jotweets(self, write_img = False):
         jotext = "[#VeilleESR #JORF] Publications au Journal Officiel concernant l'#ESR\n\U0001F5DE "+self.get_sommaire()['items'][0]['joCont']['titre']+" \n\n"+self.jorf2url(self.jorf)
-        if write_img:
-            imgkit.from_string(self.sommaire2html(), self.get_last_JO_id()+'.png', css=self.css, options=self.wkoptions)
-            joimg = self.get_last_JO_id()+'.png'
-        else:
-            joimg = BytesIO(imgkit.from_string(self.sommaire2html(), False, css=self.css, options=self.wkoptions)) #self.get_last_JO_id()+'.png')
+        joimg = self.html2img(self.sommaire2html(), self.get_last_JO_id(), write_img)
 
         jotweets = [ {'id':self.get_last_JO_id(), 'text':jotext, 'img':joimg} ]
 
@@ -143,12 +151,7 @@ class JORF:
 
             cont = self.piste_req('jorf',{'textCid':texte['id']})
             html = self.cont2html(cont)
-            if write_img:
-                imgkit.from_string(html, texte['id']+'.png', css=self.css, options=self.wkoptions)
-                joimg = texte['id']+'.png'
-            else:
-                joimg = BytesIO(imgkit.from_string(html,False, css=self.css, options=self.wkoptions)) #texte['id']+'.png')
-
+            joimg = self.html2img(html, texte['id'], write_img)
 
             jotweets += [ {'id':texte['id'], 'text':jotext, 'img':joimg} ]
 
