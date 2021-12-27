@@ -29,7 +29,7 @@ class JORF:
         self.esr = None
 
         self.css = "legifrance.css"
-
+        self.wkoptions={"log-level":"info","javascript-delay":20}
 
     def get_access_token(self):
         client_id = os.getenv("PISTE_CLIENT_ID")
@@ -130,10 +130,10 @@ class JORF:
     def get_jotweets(self, write_img = False):
         jotext = "[#VeilleESR #JORF] Publications au Journal Officiel concernant l'#ESR\n\U0001F5DE "+self.get_sommaire()['items'][0]['joCont']['titre']+" \n\n"+self.jorf2url(self.jorf)
         if write_img:
-            imgkit.from_string(self.sommaire2html(), self.get_last_JO_id()+'.png', css=self.css, options={"log-level":"info"})
+            imgkit.from_string(self.sommaire2html(), self.get_last_JO_id()+'.png', css=self.css, options=self.wkoptions)
             joimg = self.get_last_JO_id()+'.png'
         else:
-            joimg = BytesIO(imgkit.from_string(self.sommaire2html(), False, css=self.css)) #self.get_last_JO_id()+'.png')
+            joimg = BytesIO(imgkit.from_string(self.sommaire2html(), False, css=self.css, options=self.wkoptions)) #self.get_last_JO_id()+'.png')
 
         jotweets = [ {'id':self.get_last_JO_id(), 'text':jotext, 'img':joimg} ]
 
@@ -144,10 +144,10 @@ class JORF:
             cont = self.piste_req('jorf',{'textCid':texte['id']})
             html = self.cont2html(cont)
             if write_img:
-                imgkit.from_string(html, texte['id']+'.png', css=self.css)
+                imgkit.from_string(html, texte['id']+'.png', css=self.css, options=self.wkoptions)
                 joimg = texte['id']+'.png'
             else:
-                joimg = BytesIO(imgkit.from_string(html,False, css=self.css)) #texte['id']+'.png')
+                joimg = BytesIO(imgkit.from_string(html,False, css=self.css, options=self.wkoptions)) #texte['id']+'.png')
 
 
             jotweets += [ {'id':texte['id'], 'text':jotext, 'img':joimg} ]
