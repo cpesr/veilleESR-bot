@@ -1,0 +1,14 @@
+@import url(https://www.legifrance.gouv.fr/resources/css/legifrance.css);
+
+H1 { text-align: center }
+H2 { text-align: center }
+
+div {
+  min-width: 800px;
+  min-height: 450px;
+  margin: 2em;
+}
+
+li{
+  margin: 0.1em 0;
+}
