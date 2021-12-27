@@ -1,4 +1,4 @@
-jorf# MIT License
+# MIT License
 #
 # Copyright (c) 2021 Julien Gossa
 #
@@ -129,13 +129,13 @@ class AutoTweet:
             self.mdc = mdconfig.get_mdconfig(self.mdconfig_url)
 
             # Retweets
-            #self.tagRetweeter()
+            self.tagRetweeter()
 
             # Tweets
-            #self.tweetTweeter()
+            self.tweetTweeter()
 
             # Data
-            #self.dataRandTweeter()
+            self.dataRandTweeter()
 
             # JORF
             self.jorfTweeter()
