@@ -104,7 +104,9 @@ class AutoTweet:
     def jorfTweeter(self):
         try:
             jorf = JORF()
+            if self.jorfid is None: self.jorfid = jorf.get_last_JO_id()
             if jorf.get_last_JO_id() == self.jorfid: return
+            self.jorfid = jorf.get_last_JO_id()
 
             in_reply_to = None
             for jot in jorf.get_jotweets():
