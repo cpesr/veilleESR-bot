@@ -8,5 +8,8 @@ RUN pip3 install -r /tmp/requirements.txt
 COPY wkhtmltox_0.12.5-1.stretch_amd64.deb /tmp
 RUN apt update && apt install -y /tmp/wkhtmltox_0.12.5-1.stretch_amd64.deb
 
-WORKDIR /bots
-CMD ["python3", "veilleesr-bot.py"]
+RUN apt -y install cron
+ADD crontab /etc/cron.d/bot-cron
+RUN chmod 0644 /etc/cron.d/bot-cron
+
+CMD cron

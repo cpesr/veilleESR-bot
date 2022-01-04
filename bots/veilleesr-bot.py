@@ -157,15 +157,15 @@ def main():
     #autotweet = AutoTweet(api, "https://github.com/juliengossa/veilleesr-bot/raw/master/botconfig.md")
     autotweet = AutoTweet("https://raw.githubusercontent.com/cpesr/veilleesr-bot/master/botconfig.md")
 
-    if args.retweet is not None:
+    if args.retweet:
         autotweet.tagRetweeter()
-    if args.tweet is not None:
+    if args.tweet:
         autotweet.tweetTweeter()
-    if args.datarand is not None:
+    if args.datarand:
         autotweet.dataRandTweeter()
     if args.tweetmd is not None:
         autotweet.tweetmd(args.tweetmd[0])
-    if args.jorf is not None:
+    if args.jorf:
         autotweet.lastJorfTweeter()
     if args.jorfrecap:
         autotweet.recapJorfTweeter()
