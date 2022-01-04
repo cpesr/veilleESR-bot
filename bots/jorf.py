@@ -24,7 +24,8 @@ from datetime import datetime
 import config
 
 class JORF:
-    def __init__(self):
+    def __init__(self, config):
+        self.config = config
         self.pm = tweepy.streaming.urllib3.PoolManager()
         self.get_access_token()
         self.jorf = None
@@ -35,10 +36,8 @@ class JORF:
         self.wkoptions={"log-level":"info","javascript-delay":2000}
 
     def get_access_token(self):
-        client_id = os.getenv("PISTE_CLIENT_ID")
-        client_secret = os.getenv("PISTE_CLIENT_SECRET")
-        if (client_id is None or client_secret is None):
-            raise Exception("PISTE_CLIENT_ID and PISTE_CLIENT_SECRET env var must be set.")
+        if (self.config.piste_client_id is None or self.config.piste_client_secret is None):
+            raise Exception("PISTE_CLIENT_ID and PISTE_CLIENT_SECRET env var must be configured.")
 
         req = self.pm.request(
             "POST",
@@ -46,7 +45,7 @@ class JORF:
             headers = {
                 'accept': 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded'},
-            body = "grant_type=client_credentials&client_id="+client_id+"&client_secret="+client_secret+"&scope=openid")
+            body = "grant_type=client_credentials&client_id="+self.config.piste_client_id+"&client_secret="+self.config.piste_client_secret+"&scope=openid")
         self.access_token = json.loads(req.data)['access_token']
         return self.access_token
 
@@ -186,10 +185,10 @@ class JORF:
         return jotweets
 
 def main():
-    state = config.State.load()
+    config = config.Config.load()
 
     jorf = JORF()
-    jorf.get_sommaire(state.last_jorf)
+    jorf.get_sommaire(config.last_jorf)
     #print(json.dumps(jorf.get_sommaire(),indent=2))
 
     print(jorf.get_jotweets(write_img=True))

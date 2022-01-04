@@ -20,14 +20,17 @@ from datetime import datetime
 
 logger = logging.getLogger()
 
-def create_api():
-    consumer_key = os.getenv("CONSUMER_KEY")
-    consumer_secret = os.getenv("CONSUMER_SECRET")
-    access_token = os.getenv("ACCESS_TOKEN")
-    access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
+def create_twitter_api(config):
 
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
+    if (config.twitter_consumer_key is None or
+        config.twitter_consumer_key is None or
+        config.twitter_access_token is None or
+        config.twitter_access_token_secret is None ):
+        raise Exception("CONSUMER_KEY and CONSUMER_SECRET and ACCESS_TOKEN and ACCESS_TOKEN_SECRET env var must be configured.")
+
+
+    auth = tweepy.OAuthHandler(config.twitter_consumer_key, config.twitter_consumer_secret)
+    auth.set_access_token(config.twitter_access_token, config.twitter_access_token_secret)
     api = tweepy.API(auth, wait_on_rate_limit=True)
     try:
         api.verify_credentials()
@@ -37,10 +40,22 @@ def create_api():
     logger.info("API created")
     return api
 
-class State:
+class Config:
+
+    configfile = os.path.dirname(__file__) + "/config/config.json"
+
     def __init__(self):
-        self.last_jorf = State.now()
-        self.last_recap = State.now()
+        self.twitter_consumer_key = os.getenv("CONSUMER_KEY")
+        self.twitter_consumer_secret = os.getenv("CONSUMER_SECRET")
+        self.twitter_access_token = os.getenv("ACCESS_TOKEN")
+        self.twitter_access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
+        self.piste_client_id = os.getenv("PISTE_CLIENT_ID")
+        self.piste_client_secret = os.getenv("PISTE_CLIENT_SECRET")
+
+        self.mdconfig_url = "https://raw.githubusercontent.com/cpesr/veilleesr-bot/master/botconfig.md"
+
+        self.last_jorf = Config.now()
+        self.last_recap = Config.now()
         self.itweet = 0
         self.lasttweetid = 0
 
@@ -55,27 +70,22 @@ class State:
 
     @staticmethod
     def load():
-        s = State()
+        config = Config()
         try:
-            with open("state.json","r") as sf:
-                state = json.load(sf)
-                s.last_jorf = state['last_jorf']
-                s.last_recap = state['last_recap']
-                s.itweet = state['itweet']
-                s.lasttweetid = state['lasttweetid']
+            with open(Config.configfile,"r") as sf:
+                keyval = json.load(sf)
+                for k in keyval:
+                    setattr(config,k,keyval[k])
         except FileNotFoundError:
-            pass
+            config.save()
 
-        return s
+        return config
 
     def save(self):
-        with open("state.json","w") as sf:
-            json.dump({
-                "last_jorf":self.last_jorf,
-                "last_recap":self.last_recap,
-                "itweet":self.itweet,
-                "lasttweetid":self.lasttweetid
-                }, sf, indent=2)
+        if not os.path.exists(os.path.dirname(self.configfile)):
+            os.makedirs(os.path.dirname(self.configfile))
+        with open(self.configfile,"w") as sf:
+            json.dump(self, sf, indent=2, default=lambda o: o.__dict__)
 
     def reset_last_jorf(self):
         self.last_jorf = self.now()

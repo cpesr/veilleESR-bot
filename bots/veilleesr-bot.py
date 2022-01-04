@@ -29,21 +29,23 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 class AutoTweet:
-    def __init__(self, mdconfig_url):
-        self.api = config.create_api()
-        self.state = config.State.load()
+    def __init__(self):
+        logger.info(f"Loading config")
+        self.config = config.Config.load()
 
-        self.mdconfig_url = mdconfig_url
+        logger.info(f"Create twitter api")
+        self.api = config.create_twitter_api(self.config)
+
         logger.info(f"Retrieving mdconfig")
-        self.mdc = mdconfig.get_mdconfig(self.mdconfig_url)
+        self.mdc = mdconfig.get_mdconfig(self.config.mdconfig_url)
 
         self.screen_name = self.api.get_settings()['screen_name']
 
     def tagRetweeter(self):
-        c = 1 if self.state.lasttweetid == 0 else 100
+        c = 1 if self.config.lasttweetid == 0 else 100
         q = self.mdc['config']['tags'].strip(' ').replace(" "," OR ") + " -filter:retweets"
         logger.info("Search tweets: " + str(q), exc_info=True)
-        tweets = self.api.search_tweets(q, since_id=self.state.lasttweetid, count=c, result_type='recent')
+        tweets = self.api.search_tweets(q, since_id=self.config.lasttweetid, count=c, result_type='recent')
         logger.info("Found tweets: " + str(len(tweets)), exc_info=True)
 
         for tweet in tweets:
@@ -53,12 +55,12 @@ class AutoTweet:
                     tweet.retweet()
                 except Exception as e:
                     logger.error("Error on tagRetweet", exc_info=True)
-        if len(tweets) > 0: self.state.lasttweetid = tweets[0].id
+        if len(tweets) > 0: self.config.lasttweetid = tweets[0].id
 
     def tweetTweeter(self):
-        self.state.itweet = (self.state.itweet+1)%len(self.mdc['tweets'])
+        self.config.itweet = (self.config.itweet+1)%len(self.mdc['tweets'])
         try:
-            self.api.update_status(self.mdc['tweets'][self.state.itweet])
+            self.api.update_status(self.mdc['tweets'][self.config.itweet])
         except Exception as e:
             logger.error("Error on tweetTweet", exc_info=True)
 
@@ -120,12 +122,12 @@ class AutoTweet:
             logger.error("Error on jorfTweeter", exc_info=True)
 
     def lastJorfTweeter(self):
-        self.jorfTweeter(self.state.last_jorf)
-        self.state.reset_last_jorf()
+        self.jorfTweeter(self.config.last_jorf)
+        self.config.reset_last_jorf()
 
     def recapJorfTweeter(self):
-        self.jorfTweeter(self.state.last_recap)
-        self.state.reset_last_recap()
+        self.jorfTweeter(self.config.last_recap)
+        self.config.reset_last_recap()
 
 
     def start(self):
@@ -150,12 +152,16 @@ def main():
                         help="Tweete le dernier JO")
     parser.add_argument('--jorfrecap', dest='jorfrecap', action="store_const", const=True, default=False,
                         help="Tweete un reécapitulatif des derniers JO")
+    parser.add_argument('--createconfig', dest='createconfig', action="store_const", const=True, default=False,
+                        help="Crée le fichier de configuration")
 
 
     args = parser.parse_args()
 
-    #autotweet = AutoTweet(api, "https://github.com/juliengossa/veilleesr-bot/raw/master/botconfig.md")
-    autotweet = AutoTweet("https://raw.githubusercontent.com/cpesr/veilleesr-bot/master/botconfig.md")
+    if args.createconfig:
+        config.Config.load()
+
+    autotweet = AutoTweet()
 
     if args.retweet:
         autotweet.tagRetweeter()
@@ -170,7 +176,7 @@ def main():
     if args.jorfrecap:
         autotweet.recapJorfTweeter()
 
-    autotweet.state.save()
+    autotweet.config.save()
 
 if __name__ == "__main__":
     main()
