@@ -11,6 +11,6 @@ RUN apt update && apt install -y /tmp/wkhtmltox_0.12.5-1.stretch_amd64.deb
 RUN apt -y install cron
 COPY crontab /etc/cron.d/bot-cron
 RUN chmod 0644 /etc/cron.d/bot-cron
-RUN python3 /bots/veilleesr-bot.py --createconfig
+COPY startcron.sh /bots/startcron.sh
 
-CMD cron -f
+CMD /bots/startcron.sh
