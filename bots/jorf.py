@@ -20,6 +20,8 @@ import os
 import imgkit
 from io import BytesIO
 from io import StringIO
+from datetime import datetime
+import config
 
 class JORF:
     def __init__(self):
@@ -61,20 +63,34 @@ class JORF:
 
     @staticmethod
     def jorf2url(jorf):
-        return "https://www.legifrance.gouv.fr/jorf" + jorf['containers'][0]['idEli'][4:]
+        return "https://www.legifrance.gouv.fr/jorf" + jorf['idEli'][4:]
 
     @staticmethod
     def texte2url(texte):
         return "https://www.legifrance.gouv.fr/jorf/id/"+texte['id']
 
-    def get_jorf(self):
+    def get_last_jorf(self):
         if self.jorf is None:
             self.jorf = self.piste_req("lastNJo",{"nbElement":1})
         return self.jorf
 
-    def get_sommaire(self):
+    def get_last_jorf_id(self):
+        return self.get_last_jorf()['containers'][0]['id']
+
+
+    def get_sommaire(self, since=None):
+        self.since = since
         if self.sommaire is None:
-            self.sommaire = self.piste_req("jorfCont",{"id":self.get_jorf()['containers'][0]['id'], "pageNumber": 1, "pageSize": 3})
+            if since is None:
+                resp = self.piste_req("jorfCont",{"id":self.get_last_jorf_id(), "pageNumber": 1, "pageSize": 100})
+                self.sommaire = resp['items']
+            else:
+                self.sommaire = []
+                resp = self.piste_req("jorfCont",{"start":since, "end":{'year': 2222, 'month': 1, 'dayOfMonth': 1}, "pageNumber": 1, "pageSize": 100})
+                for jo in resp['items'][::-1][1:]:
+                    joresp = self.piste_req("jorfCont",{"id":jo['joCont']['id'], "pageNumber": 1, "pageSize": 100})
+                    self.sommaire += joresp['items']
+
         return self.sommaire
 
 
@@ -97,23 +113,23 @@ class JORF:
 
     def get_esr(self):
         if self.esr is None:
-            self.esr = self.esr_lookup(self.get_sommaire()['items'][0]['joCont']['structure']['tms'][0])
+            self.esr = {}
+            for jo in self.get_sommaire():
+                self.esr[jo['joCont']['id']] = self.esr_lookup(jo['joCont']['structure']['tms'][0])
         return self.esr
-
-    def get_last_JO_id(self):
-        return self.get_jorf()['containers'][0]['id']
 
     def get_text(self, id):
         return self.piste_req("jorf",{"textCid":id})
 
     def sommaire2html(self):
         html = '<div>'
-        html += '<H1>'+self.get_sommaire()['items'][0]['joCont']['titre']+"</H1>"
-        html += '<H2>Sélection ESR</H2>'
-        html += "<ul>"
-        for texte in self.get_esr():
-            html += "<li>"+texte['titre']+"</li>"
-        html += "</ul>"
+        html += '<H1>Publications au Journal Officiel - Sélection ESR</H1>'
+        for jo in self.get_sommaire():
+            html += '<H2>'+jo['joCont']['titre']+"</H2>"
+            html += "<ul>"
+            for texte in self.get_esr()[jo['joCont']['id']]:
+                html += "<li>"+texte['titre']+"</li>"
+            html += "</ul>"
         html += '</div>'
         return html
 
@@ -139,16 +155,27 @@ class JORF:
         else:
             return BytesIO(imgkit.from_file(fhtml, False, options=self.wkoptions))
 
+    def get_jotweets(self, recap = False, write_img = False):
+        sommaire = self.get_sommaire()
+        if len(sommaire) == 0:
+            return []
 
-    def get_jotweets(self, write_img = False):
-        jotext = "[#VeilleESR #JORF] Publications au Journal Officiel concernant l'#ESR\n\U0001F5DE "+self.get_sommaire()['items'][0]['joCont']['titre']+" \n\n"+self.jorf2url(self.jorf)
-        joimg = self.html2img(self.sommaire2html(), self.get_last_JO_id(), write_img)
+        jotext = "[#VeilleESR #JORFESR] Publications au Journal Officiel concernant l'#ESR\n\n"
+        if recap:
+            jotext += "\U0001F5DE Récapitulatif de la semaine du "+self.since['dayOfMonth']+"/"+self.since['month']+"/"+self.since['year']
+        else:
+            for jo in sommaire[0:2]:
+                jotext += "\U0001F5DE #"+jo['joCont']['titre']+" : "+self.jorf2url(jo['joCont'])+"\n"
+            if len(sommaire) > 2:
+                jotext += "..."
+        joimg = self.html2img(self.sommaire2html(), 'header', write_img)
 
-        jotweets = [ {'id':self.get_last_JO_id(), 'text':jotext, 'img':joimg} ]
+        jotweets = [ {'id':'header', 'text':jotext, 'img':joimg} ]
 
-        for texte in self.get_esr():
+        esr = self.get_esr()
+        for texte in sum([ esr[t] for t in esr], []):
             txt = texte['titre'] if len(texte['titre']) <= 220 else texte['titre'][:220]+"..."
-            jotext = "[#VeilleESR #JORF] "+txt+"\n\n\U0001F4F0 "+self.texte2url(texte)
+            jotext = "[#VeilleESR #JORFESR] "+txt+"\n\n\U0001F4F0 "+self.texte2url(texte)
 
             cont = self.piste_req('jorf',{'textCid':texte['id']})
             html = self.cont2html(cont)
@@ -159,10 +186,13 @@ class JORF:
         return jotweets
 
 def main():
-    jorf = JORF()
-    print(jorf.get_last_JO_id())
-    print(jorf.get_jotweets(write_img=True))
+    state = config.State.load()
 
+    jorf = JORF()
+    jorf.get_sommaire(state.last_jorf)
+    #print(json.dumps(jorf.get_sommaire(),indent=2))
+
+    print(jorf.get_jotweets(write_img=True))
 
 if __name__ == "__main__":
     main()

@@ -15,6 +15,8 @@
 import tweepy
 import logging
 import os
+import json
+from datetime import datetime
 
 logger = logging.getLogger()
 
@@ -34,3 +36,49 @@ def create_api():
         raise e
     logger.info("API created")
     return api
+
+class State:
+    def __init__(self):
+        self.last_jorf = State.now()
+        self.last_recap = State.now()
+        self.itweet = 0
+        self.lasttweetid = 0
+
+    @staticmethod
+    def now():
+        dtn = datetime.now()
+        return {
+          "year": int(dtn.strftime("%Y")),
+          "month": int(dtn.strftime("%m")),
+          "dayOfMonth": int(dtn.strftime("%d"))
+        }
+
+    @staticmethod
+    def load():
+        s = State()
+        try:
+            with open("state.json","r") as sf:
+                state = json.load(sf)
+                s.last_jorf = state['last_jorf']
+                s.last_recap = state['last_recap']
+                s.itweet = state['itweet']
+                s.lasttweetid = state['lasttweetid']
+        except FileNotFoundError:
+            pass
+
+        return s
+
+    def save(self):
+        with open("state.json","w") as sf:
+            json.dump({
+                "last_jorf":self.last_jorf,
+                "last_recap":self.last_recap,
+                "itweet":self.itweet,
+                "lasttweetid":self.lasttweetid
+                }, sf, indent=2)
+
+    def reset_last_jorf(self):
+        self.last_jorf = self.now()
+
+    def reset_last_recap(self):
+        self.last_recap = self.now()

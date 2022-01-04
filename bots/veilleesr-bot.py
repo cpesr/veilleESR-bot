@@ -21,7 +21,7 @@ from random import randrange
 from os import path
 import argparse
 
-from config import create_api
+import config
 import mdconfig
 from jorf import JORF
 
@@ -29,23 +29,21 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 class AutoTweet:
-    def __init__(self, api, mdconfig_url):
-        self.api = api
+    def __init__(self, mdconfig_url):
+        self.api = config.create_api()
+        self.state = config.State.load()
+
         self.mdconfig_url = mdconfig_url
-        self.screen_name = api.get_settings()['screen_name']
+        logger.info(f"Retrieving mdconfig")
+        self.mdc = mdconfig.get_mdconfig(self.mdconfig_url)
 
-        self.mdc = {}
-
-        self.itweet = -1
-        self.lasttweetid = 0
-
-        self.jorfid = None
+        self.screen_name = self.api.get_settings()['screen_name']
 
     def tagRetweeter(self):
-        c = 1 if self.lasttweetid == 0 else 100
+        c = 1 if self.state.lasttweetid == 0 else 100
         q = self.mdc['config']['tags'].strip(' ').replace(" "," OR ") + " -filter:retweets"
         logger.info("Search tweets: " + str(q), exc_info=True)
-        tweets = self.api.search_tweets(q, since_id=self.lasttweetid, count=c, result_type='recent')
+        tweets = self.api.search_tweets(q, since_id=self.state.lasttweetid, count=c, result_type='recent')
         logger.info("Found tweets: " + str(len(tweets)), exc_info=True)
 
         for tweet in tweets:
@@ -55,12 +53,12 @@ class AutoTweet:
                     tweet.retweet()
                 except Exception as e:
                     logger.error("Error on tagRetweet", exc_info=True)
-        if len(tweets) > 0: self.lasttweetid = tweets[0].id
+        if len(tweets) > 0: self.state.lasttweetid = tweets[0].id
 
     def tweetTweeter(self):
-        self.itweet = (self.itweet+1)%len(self.mdc['tweets'])
+        self.state.itweet = (self.state.itweet+1)%len(self.mdc['tweets'])
         try:
-            self.api.update_status(self.mdc['tweets'][self.itweet])
+            self.api.update_status(self.mdc['tweets'][self.state.itweet])
         except Exception as e:
             logger.error("Error on tweetTweet", exc_info=True)
 
@@ -91,7 +89,6 @@ class AutoTweet:
         dt = self.mdc['datatweets'][i]
         self.dataTweeter(dt)
 
-
     def tweetmd(self,url):
         dataTweets = mdconfig.get_datamd(url)
         id = path.basename(dataTweets[0]['url'])
@@ -101,12 +98,11 @@ class AutoTweet:
             logger.info("Twitté en réponse : "+str(id))
             #return
 
-    def jorfTweeter(self):
+
+    def jorfTweeter(self, since):
         try:
             jorf = JORF()
-            if self.jorfid is None: self.jorfid = jorf.get_last_JO_id()
-            if jorf.get_last_JO_id() == self.jorfid: return
-            self.jorfid = jorf.get_last_JO_id()
+            jorf.get_sommaire(since)
 
             in_reply_to = None
             for jot in jorf.get_jotweets():
@@ -123,24 +119,17 @@ class AutoTweet:
         except Exception as e:
             logger.error("Error on jorfTweeter", exc_info=True)
 
+    def lastJorfTweeter(self):
+        self.jorfTweeter(self.state.last_jorf)
+        self.state.reset_last_jorf()
+
+    def recapJorfTweeter(self):
+        self.jorfTweeter(self.state.last_recap)
+        self.state.reset_last_recap()
 
 
     def start(self):
         while True:
-            logger.info(f"Retrieving mdconfig")
-            self.mdc = mdconfig.get_mdconfig(self.mdconfig_url)
-
-            # Retweets
-            self.tagRetweeter()
-
-            # Tweets
-            self.tweetTweeter()
-
-            # Data
-            self.dataRandTweeter()
-
-            # JORF
-            self.jorfTweeter()
 
             delay = int(self.mdc['config']['delay'])
             logger.info(f"Waiting for the next loop for {delay}s")
@@ -148,20 +137,40 @@ class AutoTweet:
 
 def main():
     parser = argparse.ArgumentParser(description='Bot twitter pour la cpesr')
+    parser.add_argument('--retweet', dest='retweet', action="store_const", const=True, default=False,
+                        help="Retweete les hashtags configurés")
+    parser.add_argument('--tweet', dest='tweet', action="store_const", const=True, default=False,
+                        help="Tweete le message configuré suivant")
+    parser.add_argument('--datarand', dest='datarand', action="store_const", const=True, default=False,
+                        help="Tweete un graphique data random")
     parser.add_argument('--tweetmd', dest='tweetmd', nargs=1,
-                        metavar='data md url',
-                        help="Tweete tous les graphiques d'un md plutôt que de lancer le bot")
+                        metavar='data_md_url',
+                        help="Tweete tous les graphiques d'un md")
+    parser.add_argument('--jorf', dest='jorf', action="store_const", const=True, default=False,
+                        help="Tweete le dernier JO")
+    parser.add_argument('--jorfrecap', dest='jorfrecap', action="store_const", const=True, default=False,
+                        help="Tweete un reécapitulatif des derniers JO")
+
 
     args = parser.parse_args()
 
-    api = create_api()
     #autotweet = AutoTweet(api, "https://github.com/juliengossa/veilleesr-bot/raw/master/botconfig.md")
-    autotweet = AutoTweet(api, "https://raw.githubusercontent.com/cpesr/veilleesr-bot/master/botconfig.md")
+    autotweet = AutoTweet("https://raw.githubusercontent.com/cpesr/veilleesr-bot/master/botconfig.md")
 
+    if args.retweet is not None:
+        autotweet.tagRetweeter()
+    if args.tweet is not None:
+        autotweet.tweetTweeter()
+    if args.datarand is not None:
+        autotweet.dataRandTweeter()
     if args.tweetmd is not None:
         autotweet.tweetmd(args.tweetmd[0])
-    else:
-        autotweet.start()
+    if args.jorf is not None:
+        autotweet.lastJorfTweeter()
+    if args.jorfrecap:
+        autotweet.recapJorfTweeter()
+
+    autotweet.state.save()
 
 if __name__ == "__main__":
     main()
