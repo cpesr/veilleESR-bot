@@ -32,7 +32,7 @@ class JORF:
         self.sommaire = None
         self.esr = None
 
-        self.css = os.getcwd()+"/css/legifrance.css" #"jorf.css"
+        self.css = os.path.dirname(__file__)+"/css/legifrance.css" #"jorf.css"
         self.wkoptions={"log-level":"info","javascript-delay":2000}
 
     def get_access_token(self):
