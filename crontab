@@ -2,5 +2,5 @@ LANG=fr_FR.UTF-8
 LC_ALL=fr_FR.UTF-8
 0 6 * * * root /usr/local/bin/python3 /bots/veilleesr-bot.py --jorf  >> /var/log/cron.log  2>&1
 0 8 * * 1 root /usr/local/bin/python3 /bots/veilleesr-bot.py --jorfrecap  >> /var/log/cron.log  2>&1
-0 13 * * * root /usr/local/bin/python3 /bots/veilleesr-bot.py --retweet --tweet --datarand --jorf  >> /var/log/cron.log  2>&1
+0 14 * * * root /usr/local/bin/python3 /bots/veilleesr-bot.py --retweet --tweet --datarand --jorf  >> /var/log/cron.log  2>&1
 #
