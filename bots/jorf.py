@@ -34,9 +34,7 @@ class JORF:
 
         self.css = os.path.dirname(os.path.abspath(__file__))+"/css/legifrance.css" #"jorf.css"
         self.wkoptions={"log-level":"info","javascript-delay":2000}
-
-        if hasattr(config, 'wk_path') :
-            imgkit.config(wkhtmltoimage=config.wk_path)
+        self.wkconfig = imgkit.config(wkhtmltoimage=config.wk_path)
 
     def get_access_token(self):
         if (self.config.piste_client_id is None or self.config.piste_client_secret is None):
@@ -152,10 +150,10 @@ class JORF:
 
         fhtml = StringIO(head+html+tail)
         if write_img:
-            imgkit.from_file(fhtml, id+'.png', options=self.wkoptions)
+            imgkit.from_file(fhtml, id+'.png', options=self.wkoptions, config=self.wkconfig)
             return id+'.png'
         else:
-            return BytesIO(imgkit.from_file(fhtml, False, options=self.wkoptions))
+            return BytesIO(imgkit.from_file(fhtml, False, options=self.wkoptions, config=self.wkconfig))
 
     def get_jotweets(self, recap = False, write_img = False):
         sommaire = self.get_sommaire()
