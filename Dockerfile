@@ -13,4 +13,4 @@ COPY crontab /etc/cron.d/bot-cron
 RUN chmod 0644 /etc/cron.d/bot-cron
 COPY startcron.sh /bots/startcron.sh
 
-CMD /bots/startcron.sh
+CMD sh /bots/startcron.sh

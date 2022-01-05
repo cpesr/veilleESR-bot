@@ -103,7 +103,7 @@ class AutoTweet:
 
     def jorfTweeter(self, since):
         try:
-            jorf = JORF()
+            jorf = JORF(self.config)
             jorf.get_sommaire(since)
 
             in_reply_to = None
