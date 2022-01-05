@@ -40,9 +40,14 @@ def create_twitter_api(config):
     logger.info("API created")
     return api
 
+def get_wkpath():
+    with os.popen("which wkhtmltoimage") as cmd:
+        wkpath = cmd.read().rstrip('\n')
+    return wkpath
+
 class Config:
 
-    configfile = os.path.dirname(__file__) + "/config/config.json"
+    configfile = os.path.dirname(os.path.abspath(__file__)) + "/config/config.json"
 
     def __init__(self):
         self.twitter_consumer_key = os.getenv("CONSUMER_KEY")
@@ -53,6 +58,8 @@ class Config:
         self.piste_client_secret = os.getenv("PISTE_CLIENT_SECRET")
 
         self.mdconfig_url = "https://raw.githubusercontent.com/cpesr/veilleesr-bot/master/botconfig.md"
+
+        self.wk_path = get_wkpath()
 
         self.last_jorf = Config.now()
         self.last_recap = Config.now()

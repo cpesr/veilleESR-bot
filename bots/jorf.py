@@ -23,11 +23,6 @@ from io import StringIO
 from datetime import datetime
 import config
 
-def configure_wkpath():
-    with os.popen("which wkhtmltoimage") as cmd:
-        wkpath = cmd.read().rstrip('\n')
-    imgkit.config(wkhtmltoimage=wkpath)
-
 class JORF:
     def __init__(self, config):
         self.config = config
@@ -39,7 +34,9 @@ class JORF:
 
         self.css = os.path.dirname(os.path.abspath(__file__))+"/css/legifrance.css" #"jorf.css"
         self.wkoptions={"log-level":"info","javascript-delay":2000}
-        configure_wkpath()
+
+        if hasattr(config, 'wk_path') :
+            imgkit.config(wkhtmltoimage=config.wk_path)
 
     def get_access_token(self):
         if (self.config.piste_client_id is None or self.config.piste_client_secret is None):
