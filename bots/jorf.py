@@ -23,6 +23,11 @@ from io import StringIO
 from datetime import datetime
 import config
 
+def configure_wkpath():
+    with os.popen("which wkhtmltoimage") as cmd:
+        wkpath = cmd.read().rstrip('\n')
+    imgkit.config(wkhtmltoimage=wkpath)
+
 class JORF:
     def __init__(self, config):
         self.config = config
@@ -32,8 +37,9 @@ class JORF:
         self.sommaire = None
         self.esr = None
 
-        self.css = os.path.dirname(__file__)+"/css/legifrance.css" #"jorf.css"
+        self.css = os.path.dirname(os.path.abspath(__file__))+"/css/legifrance.css" #"jorf.css"
         self.wkoptions={"log-level":"info","javascript-delay":2000}
+        configure_wkpath()
 
     def get_access_token(self):
         if (self.config.piste_client_id is None or self.config.piste_client_secret is None):
@@ -185,10 +191,10 @@ class JORF:
         return jotweets
 
 def main():
-    config = config.Config.load()
+    conf = config.Config.load()
 
-    jorf = JORF()
-    jorf.get_sommaire(config.last_jorf)
+    jorf = JORF(conf)
+    jorf.get_sommaire(conf.last_jorf)
     #print(json.dumps(jorf.get_sommaire(),indent=2))
 
     print(jorf.get_jotweets(write_img=True))
