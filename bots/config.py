@@ -65,6 +65,7 @@ class Config:
         self.last_recap = Config.now()
         self.itweet = 0
         self.lasttweetid = 0
+        self.retweets = {}
 
     @staticmethod
     def now():

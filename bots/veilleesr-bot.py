@@ -57,6 +57,11 @@ class AutoTweet:
                     logger.error("Error on tagRetweet", exc_info=True)
         if len(tweets) > 0: self.config.lasttweetid = tweets[0].id
 
+    def tweetRetweeter(self):
+        for rt in self.config.retweets:
+            logger.info("Retweets: " + rt, exc_info=True)
+            tweets = self.api.retweet(id = self.config.retweets[rt])
+
     def tweetTweeter(self):
         self.config.itweet = (self.config.itweet+1)%len(self.mdc['tweets'])
         try:
@@ -107,6 +112,7 @@ class AutoTweet:
             jorf.get_sommaire(since)
 
             in_reply_to = None
+            twid = None
             for jot in jorf.get_jotweets():
                 logger.info("Tweeting JORF:"+jot['id'])
                 media = self.api.simple_upload(jot['id'], file = jot['img']) # filename, *, file, chunked, media_category, additional_owners
@@ -115,20 +121,23 @@ class AutoTweet:
                     in_reply_to_status_id = in_reply_to,
                     media_ids = [media.media_id]
                     )
+                if in_reply_to is None:
+                    twid = tweet.id
                 in_reply_to = tweet.id
                 jot['img'].close()
-
+            return twid
         except Exception as e:
             logger.error("Error on jorfTweeter", exc_info=True)
 
     def lastJorfTweeter(self):
-        self.jorfTweeter(self.config.last_jorf)
+        twid = self.jorfTweeter(self.config.last_jorf)
+        self.config.retweets['jorf'] = twid
         self.config.reset_last_jorf()
 
     def recapJorfTweeter(self):
-        self.jorfTweeter(self.config.last_recap)
+        twid = self.jorfTweeter(self.config.last_recap)
+        self.config.retweets['jorf'] = twid
         self.config.reset_last_recap()
-
 
     def start(self):
         while True:
@@ -139,8 +148,10 @@ class AutoTweet:
 
 def main():
     parser = argparse.ArgumentParser(description='Bot twitter pour la cpesr')
-    parser.add_argument('--retweet', dest='retweet', action="store_const", const=True, default=False,
+    parser.add_argument('--tag-retweet', dest='tagRetweet', action="store_const", const=True, default=False,
                         help="Retweete les hashtags configurés")
+    parser.add_argument('--tweet-retweet', dest='tweetRetweet', action="store_const", const=True, default=False,
+                        help="Retweete les tweets configurés")
     parser.add_argument('--tweet', dest='tweet', action="store_const", const=True, default=False,
                         help="Tweete le message configuré suivant")
     parser.add_argument('--datarand', dest='datarand', action="store_const", const=True, default=False,
@@ -163,8 +174,10 @@ def main():
 
     autotweet = AutoTweet()
 
-    if args.retweet:
+    if args.tagRetweet:
         autotweet.tagRetweeter()
+    if args.tweetRetweet:
+        autotweet.tweetRetweeter()
     if args.tweet:
         autotweet.tweetTweeter()
     if args.datarand:

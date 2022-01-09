@@ -95,7 +95,7 @@ class JORF:
 
 
     @staticmethod
-    def esr_detect(string, keywords=["echerche", "seignement supérieur"]):
+    def esr_detect(string, keywords=["echerche", "seignement supérieur", "niversité", "diplômes"]):
         return any([k in string for k in keywords])
 
     @staticmethod
@@ -185,13 +185,14 @@ class JORF:
 
         return jotweets
 
+
+
 def main():
     conf = config.Config.load()
-
     jorf = JORF(conf)
-    jorf.get_sommaire(conf.last_jorf)
-    #print(json.dumps(jorf.get_sommaire(),indent=2))
 
+    jorf.get_sommaire(conf.last_recap)
+    #print(json.dumps(jorf.get_sommaire(),indent=2))
     print(jorf.get_jotweets(write_img=True))
 
 if __name__ == "__main__":
