@@ -59,8 +59,16 @@ class AutoTweet:
 
     def tweetRetweeter(self):
         for rt in self.config.retweets:
-            logger.info("Retweets: " + rt, exc_info=True)
-            tweets = self.api.retweet(id = self.config.retweets[rt])
+            logger.info("TweetRetweeter: " + rt +":"+str(self.config.retweets[rt]), exc_info=True)
+            try:
+                tweets = self.api.retweet(id = self.config.retweets[rt])
+            except tweepy.errors.Forbidden:
+                tweets = self.api.unretweet(id = self.config.retweets[rt])
+                tweets = self.api.retweet(id = self.config.retweets[rt])
+                pass
+            except tweepy.errors.NotFound:
+                logger.error("TweetRetweeter: Tweet non trouvé", exc_info=True)
+                pass
 
     def tweetTweeter(self):
         self.config.itweet = (self.config.itweet+1)%len(self.mdc['tweets'])
@@ -135,7 +143,7 @@ class AutoTweet:
         self.config.reset_last_jorf()
 
     def recapJorfTweeter(self):
-        twid = self.jorfTweeter(self.config.last_recap)
+        twid = self.jorfTweeter(self.config.last_recap, recap=True)
         self.config.retweets['jorf'] = twid
         self.config.reset_last_recap()
 

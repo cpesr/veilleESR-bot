@@ -127,9 +127,14 @@ class JORF:
         for jo in self.get_sommaire():
             html += '<H2>'+jo['joCont']['titre']+"</H2>"
             html += "<ul>"
-            for texte in self.get_esr()[jo['joCont']['id']]:
-                html += "<li>"+texte['titre']+"</li>"
-            html += "</ul>"
+            esr = self.get_esr()[jo['joCont']['id']]
+            if len(esr) == 0:
+                html+='<H3 style="text-align:center;margin-top:4cm">Aucune publication concernant l\'ESR detectée.</H3>'
+            else:
+                for texte in self.get_esr()[jo['joCont']['id']]:
+                    html += "<li>"+texte['titre']+"</li>"
+                html += "</ul>"
+
         html += '</div>'
         return html
 
@@ -191,7 +196,7 @@ def main():
     conf = config.Config.load()
     jorf = JORF(conf)
 
-    jorf.get_sommaire(conf.last_recap)
+    jorf.get_sommaire(conf.last_jorf)
     #print(json.dumps(jorf.get_sommaire(),indent=2))
     print(jorf.get_jotweets(write_img=True))
 
