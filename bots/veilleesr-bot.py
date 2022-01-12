@@ -139,13 +139,15 @@ class AutoTweet:
 
     def lastJorfTweeter(self):
         twid = self.jorfTweeter(self.config.last_jorf)
-        self.config.retweets['jorf'] = twid
-        self.config.reset_last_jorf()
+        if twid is not None:
+            self.config.retweets['jorf'] = twid
+            self.config.reset_last_jorf()
 
     def recapJorfTweeter(self):
         twid = self.jorfTweeter(self.config.last_recap, recap=True)
-        self.config.retweets['jorf'] = twid
-        self.config.reset_last_recap()
+        if twid is not None:
+            self.config.retweets['jorf'] = twid
+            self.config.reset_last_recap()
 
     def start(self):
         while True:
