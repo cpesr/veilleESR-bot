@@ -144,7 +144,7 @@ class AutoTweet:
             self.config.reset_last_jorf()
 
     def recapJorfTweeter(self):
-        twid = self.jorfTweeter(self.config.last_recap, recap=True)
+        twid = self.jorfTweeter(self.config.last_recap)
         if twid is not None:
             self.config.retweets['jorf'] = twid
             self.config.reset_last_recap()

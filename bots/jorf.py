@@ -129,7 +129,7 @@ class JORF:
             html += "<ul>"
             esr = self.get_esr()[jo['joCont']['id']]
             if len(esr) == 0:
-                html+='<H3 style="text-align:center;margin-top:4cm">Aucune publication concernant l\'ESR detectée.</H3>'
+                html+='<H3 style="text-align:center;margin-top:1cm">Aucune publication concernant l\'ESR detectée.</H3>'
             else:
                 for texte in self.get_esr()[jo['joCont']['id']]:
                     html += "<li>"+texte['titre']+"</li>"
