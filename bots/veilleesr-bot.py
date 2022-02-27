@@ -114,7 +114,7 @@ class AutoTweet:
             #return
 
 
-    def jorfTweeter(self, since):
+    def jorfTweeter(self, since, recap = False):
         try:
             jorf = JORF(self.config)
             jorf.get_sommaire(since)
@@ -138,13 +138,13 @@ class AutoTweet:
             logger.error("Error on jorfTweeter", exc_info=True)
 
     def lastJorfTweeter(self):
-        twid = self.jorfTweeter(self.config.last_jorf)
+        twid = self.jorfTweeter(self.config.last_jorf, recap=False)
         if twid is not None:
             self.config.retweets['jorf'] = twid
             self.config.reset_last_jorf()
 
     def recapJorfTweeter(self):
-        twid = self.jorfTweeter(self.config.last_recap)
+        twid = self.jorfTweeter(self.config.last_recap, recap=True)
         if twid is not None:
             self.config.retweets['jorf'] = twid
             self.config.reset_last_recap()

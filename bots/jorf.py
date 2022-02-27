@@ -180,7 +180,7 @@ class JORF:
         esr = self.get_esr()
         for texte in sum([ esr[t] for t in esr], []):
             txt = texte['titre'] if len(texte['titre']) <= 220 else texte['titre'][:220]+"..."
-            jotext = "[#VeilleESR #JORFESR] "+txt+"\n\n\U0001F4F0 "+self.texte2url(texte)
+            jotext = "[#JORF #JORFESR] "+txt+"\n\n\U0001F4F0 "+self.texte2url(texte)
 
             cont = self.piste_req('jorf',{'textCid':texte['id']})
             html = self.cont2html(cont)
@@ -189,7 +189,6 @@ class JORF:
             jotweets += [ {'id':texte['id'], 'text':jotext, 'img':joimg} ]
 
         return jotweets
-
 
 
 def main():
