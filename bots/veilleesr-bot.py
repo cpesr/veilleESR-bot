@@ -121,7 +121,7 @@ class AutoTweet:
 
             in_reply_to = None
             twid = None
-            for jot in jorf.get_jotweets():
+            for jot in jorf.get_jotweets(recap):
                 logger.info("Tweeting JORF:"+jot['id'])
                 media = self.api.simple_upload(jot['id'], file = jot['img']) # filename, *, file, chunked, media_category, additional_owners
                 tweet = self.api.update_status(
