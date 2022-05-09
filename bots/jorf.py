@@ -95,7 +95,7 @@ class JORF:
 
 
     @staticmethod
-    def esr_detect(string, keywords=["echerche", "seignement supérieur", "niversité", "diplômes"]):
+    def esr_detect(string, keywords=["echerche", "seignement supérieur", "niversité", "diplômes", "cole nationale", "coles nationales"]):
         return any([k in string for k in keywords])
 
     @staticmethod
