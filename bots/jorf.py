@@ -142,6 +142,7 @@ class JORF:
     def cont2html(cont):
         html = '<div>'
         html += "<H1>"+cont['title']+"</H1>"
+        cont['articles'].sort(key=lambda x:int(x.get('num') if x.get('num') is not None else 0))
         for article in cont['articles']:
             if article['num'] is not None:
                 html += "<H2>Article "+article['num']+"</H2>"
