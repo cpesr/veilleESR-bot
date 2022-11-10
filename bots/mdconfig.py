@@ -48,28 +48,30 @@ def md2img(line):
     if start == -1: start = line.find("(") + 2
     return( line[start:end+4] )
 
-def get_datamd(url):
+def get_datamd(mdurl):
     pm = urllib3.PoolManager()
-    data = pm.request("GET", url, preload_content=False)
+    data = pm.request("GET", mdurl, preload_content=False)
     datamd = data.read().decode('utf-8').splitlines()
 
     twtexte = "[#DataESR]"
     twalt = ""
     twurl = ""
+    url = ""
 
     datatweets = []
     for dm in datamd:
         dm = dm.strip(" ")
         if len(dm) > 0:
-            if dm[0:9] == "- twtexte": twtexte = dm[10:].strip(" ")
-            elif dm[0:7] == "- twalt": twalt = dm[8:].strip(" ")
-            elif dm[0:7] == "- twurl": twurl = dm[8:].strip(" <>")
-            elif dm[0] == "#": dttext = twtexte + '.\n\n\U0001F4CA \U0001F4C9 ' + dm.lstrip('# ') + '.'
+            if dm.startswith("- twtexte"): twtexte = dm[10:].strip(" ")
+            elif dm.startswith("- twalt"): twalt = dm[8:].strip(" ")
+            elif dm.startswith("- twurl"): twurl = dm[8:].strip(" <>")
+            elif dm.startswith("- url"): url = dm[6:].strip(" <>")
+            elif dm.startswith("#"): dttext = twtexte + '.\n\n\U0001F4CA \U0001F4C9 ' + dm.lstrip('# ') + '.'
             else:
                 dtimgurl = md2img(dm)
                 if dtimgurl is not None:
-                    dtimgurl = path.dirname(url) + "/" + dtimgurl
-                    datatweets.append({'text':dttext, 'imgurl':dtimgurl, 'alt':twalt, 'url':twurl})
+                    dtimgurl = path.dirname(mdurl) + "/" + dtimgurl
+                    datatweets.append({'text':dttext, 'imgurl':dtimgurl, 'alt':twalt, 'twurl':twurl, 'url':url})
 
     return(datatweets)
 

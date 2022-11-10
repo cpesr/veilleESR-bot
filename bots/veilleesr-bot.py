@@ -14,158 +14,27 @@
 
 #!/usr/bin/env python
 
-import tweepy
-import logging
-import time
-from random import randrange
-from os import path
 import argparse
+import logging
+from random import randrange
 
-import config
+
+import vbconfig
 import mdconfig
 from jorf import JORF
+from autoTweet import AutoTweet
+from autoToot import AutoToot
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
-class AutoTweet:
-    def __init__(self):
-        logger.info(f"Loading config")
-        self.config = config.Config.load()
-
-        logger.info(f"Create twitter api")
-        self.api = config.create_twitter_api(self.config)
-
-        logger.info(f"Retrieving mdconfig")
-        self.mdc = mdconfig.get_mdconfig(self.config.mdconfig_url)
-
-        self.screen_name = self.api.get_settings()['screen_name']
-
-    def tagRetweeter(self):
-        c = 1 if self.config.lasttweetid == 0 else 100
-        q = self.mdc['config']['tags'].strip(' ').replace(" "," OR ") + " -filter:retweets"
-        logger.info("Search tweets: " + str(q), exc_info=True)
-        tweets = self.api.search_tweets(q, since_id=self.config.lasttweetid, count=c, result_type='recent')
-        logger.info("Found tweets: " + str(len(tweets)), exc_info=True)
-
-        for tweet in tweets:
-            if tweet.author.screen_name != self.screen_name and not tweet.retweeted:
-                # Retweet, since we have not retweeted it yet
-                try:
-                    tweet.retweet()
-                except Exception as e:
-                    logger.error("Error on tagRetweet", exc_info=True)
-        if len(tweets) > 0: self.config.lasttweetid = tweets[0].id
-
-    def tweetRetweeter(self):
-        for rt in self.config.retweets:
-            logger.info("TweetRetweeter: " + rt +":"+str(self.config.retweets[rt]), exc_info=True)
-            try:
-                tweets = self.api.retweet(id = self.config.retweets[rt])
-            except tweepy.errors.Forbidden:
-                tweets = self.api.unretweet(id = self.config.retweets[rt])
-                tweets = self.api.retweet(id = self.config.retweets[rt])
-                pass
-            except tweepy.errors.NotFound:
-                logger.error("TweetRetweeter: Tweet non trouvé", exc_info=True)
-                pass
-
-    def tweetTweeter(self):
-        self.config.itweet = (self.config.itweet+1)%len(self.mdc['tweets'])
-        try:
-            self.api.update_status(self.mdc['tweets'][self.config.itweet])
-        except Exception as e:
-            logger.error("Error on tweetTweet", exc_info=True)
-
-    def dataTweeter(self, dataTweet, in_reply_to=None):
-        pm = tweepy.streaming.urllib3.PoolManager()
-        img = pm.request("GET", dataTweet['imgurl'], preload_content=False)
-
-        try:
-            logger.info("Tweeting: "+str(dataTweet))
-            media = self.api.simple_upload(path.basename(dataTweet['imgurl']), file = img) # filename, *, file, chunked, media_category, additional_owners
-            self.api.create_media_metadata(media.media_id,dataTweet['alt'])
-            if in_reply_to is None:
-                tweet = self.api.update_status(
-                    dataTweet['text']+"\n\n"+dataTweet['url'],
-                    media_ids = [media.media_id])
-            else:
-                tweet = self.api.update_status(
-                    dataTweet['text'],
-                    in_reply_to_status_id = in_reply_to,
-                    media_ids = [media.media_id])
-        except Exception as e:
-            logger.error("Error on dataTweet", exc_info=True)
-
-        return tweet
-
-    def dataRandTweeter(self):
-        i = randrange(0, len(self.mdc['datatweets']))
-        dt = self.mdc['datatweets'][i]
-        self.dataTweeter(dt)
-
-    def tweetmd(self,url):
-        dataTweets = mdconfig.get_datamd(url)
-        id = path.basename(dataTweets[0]['url'])
-        for dt in dataTweets:
-            tweet = self.dataTweeter(dt, in_reply_to = id)
-            id = tweet.id
-            logger.info("Twitté en réponse : "+str(id))
-            #return
-
-
-    def jorfTweeter(self, since, recap = False):
-        try:
-            jorf = JORF(self.config)
-            jorf.get_sommaire(since)
-
-            in_reply_to = None
-            twid = None
-            for jot in jorf.get_jotweets(recap):
-                logger.info("Tweeting JORF:"+jot['id'])
-                media = self.api.simple_upload(jot['id'], file = jot['img']) # filename, *, file, chunked, media_category, additional_owners
-                try:
-                    tweet = self.api.update_status(
-                        jot['text'],
-                        in_reply_to_status_id = in_reply_to,
-                        media_ids = [media.media_id]
-                        )
-                except tweepy.errors.BadRequest:
-                    tweet = self.api.update_status(
-                        jot['text'],
-                        in_reply_to_status_id = in_reply_to
-                        )
-                if in_reply_to is None:
-                    twid = tweet.id
-                in_reply_to = tweet.id
-                jot['img'].close()
-            return twid
-        except Exception as e:
-            logger.error("Error on jorfTweeter", exc_info=True)
-
-    def lastJorfTweeter(self):
-        twid = self.jorfTweeter(self.config.last_jorf, recap=False)
-        if twid is not None:
-            self.config.retweets['jorf'] = twid
-            self.config.reset_last_jorf()
-
-    def recapJorfTweeter(self):
-        twid = self.jorfTweeter(self.config.last_recap, recap=True)
-        if twid is not None:
-            self.config.retweets['jorf'] = twid
-            self.config.reset_last_recap()
-
-    def start(self):
-        while True:
-
-            delay = int(self.mdc['config']['delay'])
-            logger.info(f"Waiting for the next loop for {delay}s")
-            time.sleep(delay)
 
 def main():
     parser = argparse.ArgumentParser(description='Bot twitter pour la cpesr')
     parser.add_argument('--tag-retweet', dest='tagRetweet', action="store_const", const=True, default=False,
                         help="Retweete les hashtags configurés")
+    parser.add_argument('--tag-t2m', dest='tagt2m', action="store_const", const=True, default=False,
+                        help="Transfère les threads twitter #VeilleESR vers mastodon")
     parser.add_argument('--tweet-retweet', dest='tweetRetweet', action="store_const", const=True, default=False,
                         help="Retweete les tweets configurés")
     parser.add_argument('--tweet', dest='tweet', action="store_const", const=True, default=False,
@@ -185,25 +54,73 @@ def main():
 
     args = parser.parse_args()
 
-    if args.createconfig:
-        config.Config.load()
+    logger.info(f"Loading config")
+    config = vbconfig.Config.load()
 
-    autotweet = AutoTweet()
+    logger.info(f"Retrieving mdconfig")
+    mdc = mdconfig.get_mdconfig(config.mdconfig_url)
+
+
+    autotweet = AutoTweet(config)
+    autotoot = AutoToot(config)
+
+    if args.tagt2m:
+        logger.info("tag transfer to mastodon")
+        threads = autotweet.getTagThreads("#VeilleESR")
+        autotoot.postTagThreads(threads)
+        if len(threads) > 0: config.lastthreadid = threads[0][0].id
 
     if args.tagRetweet:
-        autotweet.tagRetweeter()
+        logger.info("tag repost")
+        autotweet.tagRepost()
+        autotoot.tagRepost(mdc['config']['tags'])
+
     if args.tweetRetweet:
         autotweet.tweetRetweeter()
+
     if args.tweet:
-        autotweet.tweetTweeter()
+        config.itweet = (config.itweet+1)%len(mdc['tweets'])
+        logger.info("post "+mdc['tweets'][config.itweet])
+        autotweet.post(mdc['tweets'][config.itweet])
+        autotoot.post(mdc['tweets'][config.itweet])
+
     if args.datarand:
-        autotweet.dataRandTweeter()
+        i = randrange(0, len(mdc['datatweets']))
+        dt = mdc['datatweets'][i]
+        print(dt)
+        autotweet.postData(dt)
+        autotoot.postData(dt)
+
     if args.tweetmd is not None:
-        autotweet.tweetmd(args.tweetmd[0])
+        dataTweets = mdconfig.get_datamd(url)
+        # A arranger
+        id = path.basename(dataTweets[0]['url'])
+        for dt in dataTweets:
+            tweet = autotweet.postData(dt, in_reply_to = id)
+            id = tweet.id
+        id = None
+        for dt in dataTweets:
+            toot = autotoot.postData(dt, in_reply_to = id)
+            id = toot.id
+
     if args.jorf:
-        autotweet.lastJorfTweeter()
-    if args.jorfrecap:
-        autotweet.recapJorfTweeter()
+        jorf = JORF(autotoot.config)
+        jorf.get_sommaire(autotoot.config.last_jorf)
+        jots = jorf.get_jotweets(False)
+
+        tid = autotweet.postJorf(jots)
+        tid = autotoot.postJorf(jots)
+
+        if tid is not None:
+            config.retweets['jorf'] = twid
+            config.reset_last_jorf()
+
+    # if args.jorfrecap:
+        # twid = self.jorfTweeter(self.config.last_recap, recap=True)
+        # if twid is not None:
+        #     self.config.retweets['jorf'] = twid
+        #     self.config.reset_last_recap()
+
 
     autotweet.config.save()
 

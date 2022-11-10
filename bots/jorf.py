@@ -33,7 +33,7 @@ class JORF:
         self.esr = None
 
         self.css = os.path.dirname(os.path.abspath(__file__))+"/css/legifrance.css" #"jorf.css"
-        self.wkoptions={"log-level":"info","javascript-delay":2000}
+        self.wkoptions={"log-level":"info","javascript-delay":2000, "enable-local-file-access": ""}
         self.wkconfig = imgkit.config(wkhtmltoimage=config.wk_path)
 
     def get_access_token(self):

@@ -13,6 +13,7 @@
 # copies or substantial portions of the Software.
 
 import tweepy
+from mastodon import Mastodon
 import logging
 import os
 import json
@@ -40,6 +41,24 @@ def create_twitter_api(config):
     logger.info("API created")
     return api
 
+def create_mastodon_api(config):
+
+    if (config.mastodon_client_id is None or
+        config.mastodon_client_secret is None or
+        config.mastodon_access_token is None or
+        config.mastodon_api_base_url is None ):
+        raise Exception("MASTODON_ID and MASTODON_SECRET and MASTODON_ACCESS_TOKEN and MASTODON_BASE_URL env var must be configured.")
+
+    mastodon = Mastodon(
+        client_id = "y7wTyKZeexNTiWhM-AVtNrBgxPj2CXR8J7KvFF-qP5Y",
+        client_secret = "YvFoOfr3Bj0qfxWE4a3UcZ4aav8Mqq5b1OZLJ1Me3DQ",
+        access_token = "Bckn-3YdzfGGnWhw8XaDebULZ1f3wyQHBFbqIXSCZYU",
+        api_base_url = "https://social.sciences.re"
+    )
+
+    return mastodon
+
+
 def get_wkpath():
     with os.popen("which wkhtmltoimage") as cmd:
         wkpath = cmd.read().rstrip('\n')
@@ -56,6 +75,10 @@ class Config:
         self.twitter_access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
         self.piste_client_id = os.getenv("PISTE_CLIENT_ID")
         self.piste_client_secret = os.getenv("PISTE_CLIENT_SECRET")
+        self.mastodon_client_id = os.getenv("MASTODON_ID")
+        self.mastodon_client_secret = os.getenv("MASTODON_SECRET")
+        self.mastodon_access_token = os.getenv("MASTODON_ACCESS_TOKEN")
+        self.mastodon_api_base_url = os.getenv("MASTODON_BASE_URL")
 
         self.mdconfig_url = "https://raw.githubusercontent.com/cpesr/veilleesr-bot/master/botconfig.md"
 
@@ -65,6 +88,8 @@ class Config:
         self.last_recap = Config.now()
         self.itweet = 0
         self.lasttweetid = 0
+        self.lasttootid = 0
+        self.lastthreadid = 0
         self.retweets = {}
 
     @staticmethod

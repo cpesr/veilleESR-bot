@@ -17,3 +17,4 @@
 
 # DataESR
 https://raw.githubusercontent.com/cpesr/wikidataESR/master/check.md
+https://raw.githubusercontent.com/cpesr/emploiESR/main/emploiEC/emploiEC-graphiques.md
