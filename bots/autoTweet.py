@@ -19,6 +19,7 @@ import logging
 import time
 from os import path
 import argparse
+import re
 
 import vbconfig
 import mdconfig
@@ -26,6 +27,11 @@ from jorf import JORF
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
+
+pm = tweepy.streaming.urllib3.PoolManager()
+
+
+
 
 class AutoTweet:
     def __init__(self, config):
@@ -73,9 +79,7 @@ class AutoTweet:
             logger.warning("Error on post tweet", exc_info=True)
 
     def postData(self, dataTweet, in_reply_to=None):
-        pm = tweepy.streaming.urllib3.PoolManager()
         img = pm.request("GET", dataTweet['imgurl'], preload_content=False)
-
         try:
             logger.info("Tweeting: "+str(dataTweet))
             media = self.api.simple_upload(path.basename(dataTweet['imgurl']), file = img) # filename, *, file, chunked, media_category, additional_owners
@@ -91,6 +95,8 @@ class AutoTweet:
                     media_ids = [media.media_id])
         except Exception as e:
             logger.error("Error on dataTweet", exc_info=True)
+
+        img.release_conn()
 
         return tweet
 
@@ -164,49 +170,12 @@ class AutoTweet:
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Bot twitter pour la cpesr')
-    parser.add_argument('--tag-retweet', dest='tagRetweet', action="store_const", const=True, default=False,
-                        help="Retweete les hashtags configurés")
-    parser.add_argument('--tweet-retweet', dest='tweetRetweet', action="store_const", const=True, default=False,
-                        help="Retweete les tweets configurés")
-    parser.add_argument('--tweet', dest='tweet', action="store_const", const=True, default=False,
-                        help="Tweete le message configuré suivant")
-    parser.add_argument('--datarand', dest='datarand', action="store_const", const=True, default=False,
-                        help="Tweete un graphique data random")
-    parser.add_argument('--tweetmd', dest='tweetmd', nargs=1,
-                        metavar='data_md_url',
-                        help="Tweete tous les graphiques d'un md")
-    parser.add_argument('--jorf', dest='jorf', action="store_const", const=True, default=False,
-                        help="Tweete le dernier JO")
-    parser.add_argument('--jorfrecap', dest='jorfrecap', action="store_const", const=True, default=False,
-                        help="Tweete un reécapitulatif des derniers JO")
-    parser.add_argument('--createconfig', dest='createconfig', action="store_const", const=True, default=False,
-                        help="Crée le fichier de configuration")
+    config = vbconfig.Config.load()
+    autotweet = AutoTweet(config)
+    t = autotweet.api.get_status(1591179258726318080, tweet_mode="extended")
+    print(t.full_text)
 
 
-    args = parser.parse_args()
-
-    if args.createconfig:
-        config.Config.load()
-
-    autotweet = AutoTweet()
-
-    if args.tagRetweet:
-        autotweet.tagRetweeter()
-    if args.tweetRetweet:
-        autotweet.tweetRetweeter()
-    if args.tweet:
-        autotweet.tweetTweeter()
-    if args.datarand:
-        autotweet.dataRandTweeter()
-    if args.tweetmd is not None:
-        autotweet.tweetmd(args.tweetmd[0])
-    if args.jorf:
-        autotweet.lastJorfTweeter()
-    if args.jorfrecap:
-        autotweet.recapJorfTweeter()
-
-    autotweet.config.save()
 
 if __name__ == "__main__":
     main()

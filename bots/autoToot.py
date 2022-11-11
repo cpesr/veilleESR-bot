@@ -33,10 +33,27 @@ import urllib3
 import vbconfig
 import mdconfig
 from jorf import JORF
+import autoTweet
 
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
+
+pm = urllib3.PoolManager()
+
+
+def unshort_url(text):
+    urls = re.findall("https://t.co/\w*", text)
+    for url in urls:
+        get = pm.request("GET", url, preload_content=False)
+        long_url = get.geturl()
+        get.release_conn()
+
+        if long_url.startswith("https://twitter.com") and long_url.count("/") != 5:
+            long_url = ""
+        text = text.replace(url, long_url)
+
+    return text
 
 
 
@@ -78,7 +95,6 @@ class AutoToot:
 
 
     def postData(self, dataTweet, in_reply_to=None):
-        pm = tweepy.streaming.urllib3.PoolManager()
         img = pm.request("GET", dataTweet['imgurl'], preload_content=False)
         toot = None
         try:
@@ -92,6 +108,7 @@ class AutoToot:
         except Exception as e:
             logger.error("Error on postData toot", exc_info=True)
 
+        img.release_conn()
         return toot
 
     def postJorf(self, jotoots, img_close = False):
@@ -123,11 +140,11 @@ class AutoToot:
 
     def postTwitterThreadOnMastodon(self, tt):
         logger.info(f"Post Twitter thread "+str(tt[0].id)+" on Mastodon")
-        pm = urllib3.PoolManager()
+
         mid = None
-        tt[0].full_text = re.sub("https://t.co/.*", "", tt[0].full_text)+"\n\nPar "+tt[0].author.name+" @"+tt[0].author.screen_name+"@twitter.com"
+        tt[0].full_text = unshort_url(tt[0].full_text)+"\n\nPar "+tt[0].author.name+" @"+tt[0].author.screen_name+"@twitter.com"
         for t in tt:
-            text = re.sub("https://t.co/.*", "", t.full_text)
+            text = unshort_url(t.full_text)
             media_ids = []
             try:
                 for media in t.entities['media']:
@@ -136,6 +153,7 @@ class AutoToot:
                     img = pm.request("GET", media['media_url'], preload_content=False)
                     mm = self.api.media_post(img, mime_type = img.headers['Content-Type'])
                     media_ids.append(mm.id)
+                    img.release_conn()
             except Exception:
                 pass
 
@@ -154,15 +172,17 @@ class AutoToot:
             self.api.status_delete(m.get("id"))
 
 def main():
-    autotoot = AutoToot()
+    config = vbconfig.Config.load()
+    autotoot = AutoToot(config)
     #autotoot.tagRetweeter()
 
-    jorf = JORF(autotoot.config)
-    jorf.get_sommaire(autotoot.config.last_jorf)
-    jots = jorf.get_jotweets(False)
-
-    tid = autotoot.postJorf(jots)
-
+    autotweet = autoTweet.AutoTweet(config)
+    t = autotweet.api.get_status(1591179258726318080, tweet_mode="extended")
+    print(t.full_text)
+    print(unshort_url(t.full_text))
+    t = autotweet.api.get_status(1589364241215389697, tweet_mode="extended")
+    print(t.full_text)
+    print(unshort_url(t.full_text))
 
 if __name__ == "__main__":
     main()
