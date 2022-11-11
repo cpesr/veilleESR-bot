@@ -100,6 +100,7 @@ class AutoToot:
             tid = None
             for jot in jotoots:
                 logger.info("Tooting JORF:"+jot['id'])
+                jot['img'].seek(0)
                 media = self.api.media_post(jot['img'], mime_type='image/png')
                 try:
                     toot = self.api.status_post(
@@ -115,7 +116,6 @@ class AutoToot:
                     tid = toot.id
                 in_reply_to = toot.id
                 if img_close: jot['img'].close()
-                else: jot['img'].seek(0)
             return tid
         except Exception as e:
             logger.error("Error on jorfTooter", exc_info=True)

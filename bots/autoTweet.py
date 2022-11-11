@@ -102,6 +102,7 @@ class AutoTweet:
             twid = None
             for jot in jotweets:
                 logger.info("Tweeting JORF:"+jot['id'])
+                jot['img'].seek(0)
                 media = self.api.simple_upload(jot['id'], file = jot['img']) # filename, *, file, chunked, media_category, additional_owners
                 try:
                     tweet = self.api.update_status(
@@ -118,7 +119,6 @@ class AutoTweet:
                     twid = tweet.id
                 in_reply_to = tweet.id
                 if img_close: jot['img'].close()
-                else: jot['img'].seek(0)
             return twid
         except Exception as e:
             logger.error("Error on jorfTweeter", exc_info=True)
