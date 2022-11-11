@@ -53,7 +53,7 @@ class AutoToot:
 
         self.user_id = self.api.me().id
 
-    def tagRepost(self, tags):
+    def tagRepost(self, tags, and_follow = True):
         toots = []
         for tag in tags.split(' '):
             logger.info("Search toots: " + tag)
@@ -65,6 +65,7 @@ class AutoToot:
             if toot.account.id != self.user_id:
                 try:
                     self.api.status_reblog(toot.id)
+                    if and_follow: self.api.account_follow(toot.account.id)
                 except Exception as e:
                     logger.error("Error on tagRetoot", exc_info=True)
         if len(toots) > 0: self.config.lasttootid = toots[0].id

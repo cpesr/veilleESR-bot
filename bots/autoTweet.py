@@ -36,7 +36,7 @@ class AutoTweet:
 
         self.screen_name = self.api.get_settings()['screen_name']
 
-    def tagRepost(self, tags):
+    def tagRepost(self, tags, and_follow = True):
         c = 1 if self.config.lasttweetid == 0 else 100
         q = tags.strip(' ').replace(" "," OR ") + " -filter:retweets"
         logger.info("Search tweets: " + str(q), exc_info=True)
@@ -48,6 +48,7 @@ class AutoTweet:
                 # Retweet, since we have not retweeted it yet
                 try:
                     tweet.retweet()
+                    if and_follow: tweet.author.follow()
                 except Exception as e:
                     logger.error("Error on tagRetweet", exc_info=True)
         if len(tweets) > 0: self.config.lasttweetid = tweets[0].id
