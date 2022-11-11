@@ -8,3 +8,4 @@ six==1.14.0
 tweepy==4.0.0
 urllib3>=1.25.8
 imgkit>=1.2.2
+mastodon.py>=1.5.2
