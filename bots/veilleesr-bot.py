@@ -72,7 +72,7 @@ def main():
 
     if args.tagRetweet:
         logger.info("tag repost")
-        autotweet.tagRepost()
+        autotweet.tagRepost(mdc['config']['tags'])
         autotoot.tagRepost(mdc['config']['tags'])
 
     if args.tweetRetweet:
