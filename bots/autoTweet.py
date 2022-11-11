@@ -96,14 +96,11 @@ class AutoTweet:
 
 
 
-    def jorfTweeter(self, since, recap = False):
+    def postJorf(self, jotweets, img_close = False):
         try:
-            jorf = JORF(self.config)
-            jorf.get_sommaire(since)
-
             in_reply_to = None
             twid = None
-            for jot in jorf.get_jotweets(recap):
+            for jot in jotweets:
                 logger.info("Tweeting JORF:"+jot['id'])
                 media = self.api.simple_upload(jot['id'], file = jot['img']) # filename, *, file, chunked, media_category, additional_owners
                 try:
@@ -120,7 +117,8 @@ class AutoTweet:
                 if in_reply_to is None:
                     twid = tweet.id
                 in_reply_to = tweet.id
-                jot['img'].close()
+                if img_close: jot['img'].close()
+                else: jot['img'].seek(0)
             return twid
         except Exception as e:
             logger.error("Error on jorfTweeter", exc_info=True)

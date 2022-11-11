@@ -94,7 +94,7 @@ class AutoToot:
 
         return toot
 
-    def postJorf(self, jotoots):
+    def postJorf(self, jotoots, img_close = False):
         try:
             in_reply_to = None
             tid = None
@@ -114,7 +114,8 @@ class AutoToot:
                 if in_reply_to is None:
                     tid = toot.id
                 in_reply_to = toot.id
-                jot['img'].close()
+                if img_close: jot['img'].close()
+                else: jot['img'].seek(0)
             return tid
         except Exception as e:
             logger.error("Error on jorfTooter", exc_info=True)

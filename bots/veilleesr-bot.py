@@ -108,10 +108,10 @@ def main():
         jorf.get_sommaire(autotoot.config.last_jorf)
         jots = jorf.get_jotweets(False)
 
-        tid = autotweet.postJorf(jots)
-        tid = autotoot.postJorf(jots)
+        twid = autotweet.postJorf(jots)
+        toid = autotoot.postJorf(jots, img_close = True)
 
-        if tid is not None:
+        if twid is not None:
             config.retweets['jorf'] = twid
             config.reset_last_jorf()
 
