@@ -74,14 +74,15 @@ class AutoTweet:
 
     def post(self, text):
         try:
-            self.api.update_status(text)
+            tweet = self.api.update_status(text)
+            logger.info("Tweeted "+str(tweet.id)+" : "+str(text))
+
         except Exception as e:
             logger.warning("Error on post tweet", exc_info=True)
 
     def postData(self, dataTweet, in_reply_to=None):
         img = pm.request("GET", dataTweet['imgurl'], preload_content=False)
         try:
-            logger.info("Tweeting: "+str(dataTweet))
             media = self.api.simple_upload(path.basename(dataTweet['imgurl']), file = img) # filename, *, file, chunked, media_category, additional_owners
             self.api.create_media_metadata(media.media_id,dataTweet['alt'])
             if in_reply_to is None:
@@ -93,6 +94,7 @@ class AutoTweet:
                     dataTweet['text'],
                     in_reply_to_status_id = in_reply_to,
                     media_ids = [media.media_id])
+            logger.info("Tweeted "+str(tweet.id)+" : "+str(dataTweet))
         except Exception as e:
             logger.error("Error on dataTweet", exc_info=True)
 

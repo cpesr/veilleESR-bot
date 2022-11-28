@@ -17,6 +17,8 @@
 import argparse
 import logging
 from random import randrange
+import time
+from os import path
 
 
 import vbconfig
@@ -43,7 +45,7 @@ def main():
                         help="Tweete un graphique data random")
     parser.add_argument('--tweetmd', dest='tweetmd', nargs=1,
                         metavar='data_md_url',
-                        help="Tweete tous les graphiques d'un md")
+                        help="Tweete tous les graphiques d'un md dans un thread")
     parser.add_argument('--jorf', dest='jorf', action="store_const", const=True, default=False,
                         help="Tweete le dernier JO")
     parser.add_argument('--jorfrecap', dest='jorfrecap', action="store_const", const=True, default=False,
@@ -92,16 +94,27 @@ def main():
         autotoot.postData(dt)
 
     if args.tweetmd is not None:
-        dataTweets = mdconfig.get_datamd(url)
-        # A arranger
-        id = path.basename(dataTweets[0]['url'])
+        dataTweets = mdconfig.get_datamd(args.tweetmd[0])
+        twth = None
+        sleeptime = 0
         for dt in dataTweets:
-            tweet = autotweet.postData(dt, in_reply_to = id)
-            id = tweet.id
-        id = None
-        for dt in dataTweets:
-            toot = autotoot.postData(dt, in_reply_to = id)
-            id = toot.id
+            if twth != dt['thread']:
+                twid = dt['twurl']
+                twth = dt['thread']
+                time.sleep(sleeptime)
+            tweet = autotweet.postData(dt, in_reply_to = twid)
+            #print(str(dt) + " : " + str(twid))
+            twid = tweet.id
+            #twid = int(twid) + 1
+            sleeptime = 450
+
+
+        # id = None
+        # for dt in dataTweets:
+        #     toot = autotoot.postData(dt, in_reply_to = id)
+        #     id = toot.id
+
+
 
     if args.jorf:
         jorf = JORF(autotoot.config)

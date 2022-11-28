@@ -54,6 +54,7 @@ def get_datamd(mdurl):
     datamd = data.read().decode('utf-8').splitlines()
 
     twtexte = "[#DataESR]"
+    dtthread = ""
     twalt = ""
     twurl = ""
     url = ""
@@ -66,12 +67,14 @@ def get_datamd(mdurl):
             elif dm.startswith("- twalt"): twalt = dm[8:].strip(" ")
             elif dm.startswith("- twurl"): twurl = dm[8:].strip(" <>")
             elif dm.startswith("- url"): url = dm[6:].strip(" <>")
-            elif dm.startswith("#"): dttext = twtexte + '.\n\n\U0001F4CA \U0001F4C9 ' + dm.lstrip('# ') + '.'
+            elif dm.startswith("#"):
+                if dm.startswith("## "): dtthread = dm.lstrip('# ')
+                dttexte = twtexte + '\n\n\U0001F4CA \U0001F4C9 ' + dm.lstrip('# ')
             else:
                 dtimgurl = md2img(dm)
                 if dtimgurl is not None:
                     dtimgurl = path.dirname(mdurl) + "/" + dtimgurl
-                    datatweets.append({'text':dttext, 'imgurl':dtimgurl, 'alt':twalt, 'twurl':twurl, 'url':url})
+                    datatweets.append({'text':dttexte, 'thread':dtthread, 'imgurl':dtimgurl, 'alt':twalt, 'twurl':twurl, 'url':url})
 
     return(datatweets)
 
