@@ -106,7 +106,7 @@ def main():
             #print(str(dt) + " : " + str(twid))
             twid = tweet.id
             #twid = int(twid) + 1
-            sleeptime = 450
+            sleeptime = 1
 
 
         # id = None

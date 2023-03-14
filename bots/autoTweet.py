@@ -92,7 +92,7 @@ class AutoTweet:
             else:
                 tweet = self.api.update_status(
                     dataTweet['text'],
-                    in_reply_to_status_id = in_reply_to,
+                    in_reply_to_status_id = in_reply_to.split("/")[-1],
                     media_ids = [media.media_id])
             logger.info("Tweeted "+str(tweet.id)+" : "+str(dataTweet))
         except Exception as e:
