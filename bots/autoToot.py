@@ -160,7 +160,7 @@ class AutoToot:
             m = self.api.status_post(text, in_reply_to_id = mid, media_ids = media_ids)
             mid = m.id
 
-        self.api.status_post("Post original :\nhttps://twitter.com/"+tt[0].author.screen_name+"/status/"+str(tt[0].id), in_reply_to_id = mid)
+        self.api.status_post("Post original :\nhttps://twitter.com/"+tt[0].author.screen_name+"/status/"+str(tt[0].id), in_reply_to_id = mid, visibility = "unlisted")
 
     def postTagThreads(self, threads):
         for tt in threads:
