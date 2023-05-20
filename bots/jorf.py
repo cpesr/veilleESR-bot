@@ -21,7 +21,7 @@ import imgkit
 from io import BytesIO
 from io import StringIO
 from datetime import datetime
-import config
+import vbconfig
 
 class JORF:
     def __init__(self, config):
@@ -42,7 +42,7 @@ class JORF:
 
         req = self.pm.request(
             "POST",
-            "https://oauth.piste.gouv.fr/api/oauth/token/api/oauth/token",
+            "https://oauth.piste.gouv.fr/api/oauth/token", #https://oauth.piste.gouv.fr/api/oauth/token/api/oauth/token
             headers = {
                 'accept': 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded'},
@@ -53,7 +53,7 @@ class JORF:
     def piste_req(self,controller,params):
         req = self.pm.request(
             "POST",
-            "https://api.piste.gouv.fr/dila/legifrance-beta/lf-engine-app/consult/"+controller,
+            "https://api.piste.gouv.fr/dila/legifrance/lf-engine-app/consult/"+controller,
             headers = {
                 'accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -193,7 +193,7 @@ class JORF:
 
 
 def main():
-    conf = config.Config.load()
+    conf = vbconfig.Config.load()
     jorf = JORF(conf)
 
     jorf.get_sommaire(conf.last_jorf)
