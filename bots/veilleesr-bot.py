@@ -52,6 +52,8 @@ def main():
                         help="Tweete un reécapitulatif des derniers JO")
     parser.add_argument('--createconfig', dest='createconfig', action="store_const", const=True, default=False,
                         help="Crée le fichier de configuration")
+    parser.add_argument('--test', dest='test', action="store_const", const=True, default=False,
+                        help="Ne poste rien en ligne (en dev)")
 
 
     args = parser.parse_args()
@@ -115,18 +117,20 @@ def main():
         #     id = toot.id
 
 
-
     if args.jorf:
         jorf = JORF(autotoot.config)
         jorf.get_sommaire(autotoot.config.last_jorf)
         jots = jorf.get_jotweets(False)
 
-        twid = autotweet.postJorf(jots)
-        toid = autotoot.postJorf(jots, img_close = True)
+        if args.test:
+            print(jots)
+        else:
+            twid = autotweet.postJorf(jots)
+            toid = autotoot.postJorf(jots, img_close = True)
 
-        if twid is not None:
-            config.retweets['jorf'] = twid
-            config.reset_last_jorf()
+            if twid is not None:
+                config.retweets['jorf'] = twid
+                config.reset_last_jorf()
 
     # if args.jorfrecap:
         # twid = self.jorfTweeter(self.config.last_recap, recap=True)
