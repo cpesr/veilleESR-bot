@@ -1,0 +1,109 @@
+---
+title: "Baromètre ESR - updatedata"
+author: "CPESR"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+options(dplyr.summarise.inform = FALSE)
+knitr::opts_chunk$set(fig.asp = 9/16, fig.retina = 2)
+
+library(tidyverse)
+library(XML)
+library(ggcpesrthemes)
+theme_set(theme_cpesr())
+theme_cpesr_setup(authors = "Julien Gossa", source = "https://github.com/cpesr/RFC/")
+```
+
+
+```{r funs}
+root <- xmlRoot(xmlParse(file = "survey_648722_fr.xml"))
+
+qlevels <- function(qgrp,qnum) {
+    xmlToDataFrame(root[[4+qgrp]][[2+qnum]][["response"]][["fixed"]])[["label"]]
+}
+#qlevels(1,1)
+#qlevels(3,0)
+
+qsubquestion <- function(qgrp,qnum,qsub) {
+  xmlToDataFrame(root[[4+qgrp]][[2+qnum]])[["text"]][[2+qsub]]
+}
+#qsubquestion(1,1,1)
+
+qtext <- function(qgrp,qnum) {
+  xmlValue(root[[4+qgrp]][[2+qnum]][["text"]][[1]])
+}
+```
+
+## Données 
+
+```{r load}
+res <- read.csv("results-survey648722.csv",na.strings=c("","NA"))
+
+colnames(res)
+```
+
+```{r comp, results='asis'}
+res %>%
+  pivot_longer(-id, names_to = "colonne", values_to = "valeur",values_transform = as.character) %>%
+  group_by(colonne, renseigné = !is.na(valeur)) %>%
+  summarise(nb = n()) %>%
+  pivot_wider(names_from = renseigné, values_from = nb, names_prefix = "Renseigné_") %>%
+  arrange(desc(Renseigné_TRUE)) %>%
+  spoiler_table(trim=Inf)
+```
+
+
+```{r comp2, results='asis'}
+res %>%
+  group_by(submitdate_na = is.na(submitdate), lastpage) %>%
+  summarise(nb = n()) %>%
+  arrange(lastpage) %>%
+  spoiler_table(trim=Inf)
+```
+
+## Export
+
+```{r export}
+results <- res %>%
+  rename(anciennete = aciennete) %>%
+  rename(confiance.ParitairesLocales. = confiance.ParitainesLocales.) %>%
+  filter(!is.na(submitdate)) %>%
+  mutate(across(starts_with("conditions"), ~ factor(.x, levels = qlevels(1,1)))) %>%
+  mutate(across(starts_with("evolution"), ~ factor(.x, levels = qlevels(2,0)))) %>%
+  mutate(across(starts_with("optimisme"), ~ factor(.x, levels = qlevels(3,0)))) %>%
+  mutate(across(starts_with("confiance"), ~ factor(.x, levels = qlevels(4,0)))) %>%
+  mutate(across(starts_with("reformes"), ~ factor(.x, levels = qlevels(5,0)))) %>%
+  mutate(sexe = factor(sexe, qlevels(6,0))) %>%
+  mutate(age = factor(age, qlevels(6,1))) %>%
+  mutate(anciennete = factor(anciennete, qlevels(6,2))) %>%
+  mutate(metier = factor(metier, qlevels(6,3))) %>%
+  mutate(discipline = factor(discipline, qlevels(6,4))) %>%
+  mutate(categorie = factor(categorie, qlevels(6,5))) %>%
+  mutate(statut = factor(statut, qlevels(6,6))) %>%
+  mutate(secteur = factor(secteur, qlevels(6,8))) %>%
+  mutate(responsabilites = factor(responsabilites,qlevels(6,10)))
+
+
+cn <- colnames(results)
+conditions.factor <- tibble(
+  levels = cn[startsWith(cn,"conditions")] %>% substr(12,50),
+  labels = unlist(lapply(1:7, function(x) qsubquestion(1,1,x) )))
+
+confiance.factor <- tibble(
+  levels = cn[startsWith(cn,"confiance")] %>% substr(11,50),
+  labels = unlist(lapply(0:15, function(x) qsubquestion(4,0,x) )))
+
+reformes.factor <- tibble(
+  levels = cn[startsWith(cn,"reformes")] %>% substr(10,50),
+  labels = unlist(lapply(1:7, function(x) qsubquestion(5,0,x) )) %>% gsub(", description)",")",.))
+reformes.factor$labels
+
+save(results,conditions.factor,confiance.factor,reformes.factor, file="results.RData")
+
+results %>%
+  select(conditions.generale.:statut,responsabilites) %>% 
+  write.csv("results-anon.csv",row.names = FALSE)
+```

@@ -1,0 +1,107 @@
+---
+title: "CPESR"
+author: "CPESR"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE)
+options(dplyr.summarise.inform = FALSE)
+knitr::opts_chunk$set(fig.asp = 9/16, fig.retina = 2)
+
+library(tidyverse)
+library(ggcpesrthemes)
+theme_set(theme_cpesr())
+theme_cpesr_setup(authors = "Julien Gossa", source = "https://github.com/cpesr/RFC/")
+
+source("barometre-esr.R")
+```
+
+### Sexe
+
+```{r sexe}
+plot_caracteristique('sexe')
+```
+
+### Age
+
+```{r age}
+plot_caracteristique('age')
+```
+
+### Ancienneté
+
+```{r anciennete}
+plot_caracteristique('anciennete')
+```
+
+## Métier
+
+```{r metier}
+plot_caracteristique('metier')
+```
+
+## Discipline
+
+```{r discipline}
+plot_caracteristique('discipline')
+```
+
+## Catégorie
+
+```{r categorie}
+plot_caracteristique('categorie')
+```
+
+## Statut
+
+```{r statut}
+plot_caracteristique('statut')
+```
+
+## Secteur
+
+```{r secteur}
+plot_caracteristique('secteur')
+```
+
+
+## Responsabilités
+
+```{r responsabilites}
+plot_caracteristique('responsabilites')
+```
+
+## Conditions de travail
+
+```{r conditions}
+plot_bloc("conditions",conditions.factor)
+```
+
+## Evolution des conditions de travail
+
+```{r evolution}
+plot_bloc("evolution",conditions.factor)
+```
+
+## Optimisme pour l'évolution des conditions de travail
+
+```{r optimisme}
+plot_bloc("optimisme",conditions.factor)
+```
+
+## Confiance
+
+```{r confiance, fig.width=12}
+plot_bloc_grid("confiance",confiance.factor)
+```
+
+## Réformes
+
+```{r reformes, fig.width=12}
+plot_bloc_grid("reformes",reformes.factor)
+```
+
+
+
