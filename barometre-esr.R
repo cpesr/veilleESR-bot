@@ -99,9 +99,9 @@ plot_bloc_legend <- function(bloc) {
 
 
 plot_bloc_grid <- function(bloc,bloc.factor) {
-  p1 <- plot_bloc("confiance",confiance.factor) + 
+  p1 <- plot_bloc(bloc,bloc.factor) + 
     theme(legend.title=element_blank(),legend.position = "right")
-  p2 <- plot_bloc_connait("confiance",confiance.factor) + 
+  p2 <- plot_bloc_connait(bloc,bloc.factor) + 
     theme(legend.title=element_blank(),legend.position = "right")
   
   cowplot::plot_grid(nrow=1,rel_widths = c(6,2,1), align = "h",
