@@ -21,14 +21,14 @@ from datetime import datetime
 
 logger = logging.getLogger()
 
-def create_twitter_api(config):
+
+def create_twitter_api_v1(config):
 
     if (config.twitter_consumer_key is None or
-        config.twitter_consumer_key is None or
+        config.twitter_consumer_secret is None or
         config.twitter_access_token is None or
         config.twitter_access_token_secret is None ):
         raise Exception("CONSUMER_KEY and CONSUMER_SECRET and ACCESS_TOKEN and ACCESS_TOKEN_SECRET env var must be configured.")
-
 
     auth = tweepy.OAuthHandler(config.twitter_consumer_key, config.twitter_consumer_secret)
     auth.set_access_token(config.twitter_access_token, config.twitter_access_token_secret)
@@ -36,10 +36,33 @@ def create_twitter_api(config):
     try:
         api.verify_credentials()
     except Exception as e:
-        logger.error("Error creating API", exc_info=True)
+        logger.error("Error creating APIv1.1", exc_info=True)
         raise e
-    logger.info("API created")
+    logger.info("Twitter API v1.1 created")
     return api
+
+
+def create_twitter_api_v2(config):
+
+    if (config.twitter_consumer_key is None or
+        config.twitter_consumer_secret is None or
+        config.twitter_access_token is None or
+        config.twitter_access_token_secret is None ):
+        raise Exception("CONSUMER_KEY and CONSUMER_SECRET and ACCESS_TOKEN and ACCESS_TOKEN_SECRET env var must be configured.")
+
+    client = tweepy.Client(consumer_key=config.twitter_consumer_key,
+                       consumer_secret=config.twitter_consumer_secret,
+                       access_token=config.twitter_access_token,
+                       access_token_secret=config.twitter_access_token_secret)
+    try:
+        client.get_me()
+    except Exception as e:
+        logger.error("Error creating APIv2", exc_info=True)
+        raise e
+    logger.info("Twitter API v2 created")
+
+    return client
+
 
 def create_mastodon_api(config):
 

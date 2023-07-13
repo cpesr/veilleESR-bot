@@ -38,44 +38,49 @@ class AutoTweet:
         self.config = config
 
         logger.info(f"Create twitter api")
-        self.api = vbconfig.create_twitter_api(self.config)
-
+        # v1.1
+        self.api = vbconfig.create_twitter_api_v1(self.config)
         self.screen_name = self.api.get_settings()['screen_name']
 
-    def tagRepost(self, tags, and_follow = True):
-        c = 1 if self.config.lasttweetid == 0 else 100
-        q = tags.strip(' ').replace(" "," OR ") + " -filter:retweets"
-        logger.info("Search tweets: " + str(q), exc_info=True)
-        tweets = self.api.search_tweets(q, since_id=self.config.lasttweetid, count=c, result_type='recent')
-        logger.info("Found tweets: " + str(len(tweets)), exc_info=True)
+        # v2
+        self.client = vbconfig.create_twitter_api_v2(self.config)
+        #self.screen_name = self.client.get_me().data['username']
 
-        for tweet in tweets:
-            if tweet.author.screen_name != self.screen_name and not tweet.retweeted:
-                # Retweet, since we have not retweeted it yet
-                try:
-                    tweet.retweet()
-                    if and_follow: tweet.author.follow()
-                except Exception as e:
-                    logger.error("Error on tagRetweet", exc_info=True)
-        if len(tweets) > 0: self.config.lasttweetid = tweets[0].id
-
-    def tweetRetweeter(self):
-        for rt in self.config.retweets:
-            logger.info("TweetRetweeter: " + rt +":"+str(self.config.retweets[rt]), exc_info=True)
-            try:
-                tweets = self.api.retweet(id = self.config.retweets[rt])
-            except tweepy.errors.Forbidden:
-                tweets = self.api.unretweet(id = self.config.retweets[rt])
-                tweets = self.api.retweet(id = self.config.retweets[rt])
-                pass
-            except tweepy.errors.NotFound:
-                logger.error("TweetRetweeter: Tweet non trouvé", exc_info=True)
-                pass
+    # def tagRepost(self, tags, and_follow = True):
+    #     c = 1 if self.config.lasttweetid == 0 else 100
+    #     q = tags.strip(' ').replace(" "," OR ") + " -filter:retweets"
+    #     logger.info("Search tweets: " + str(q), exc_info=True)
+    #     tweets = self.api.search_tweets(q, since_id=self.config.lasttweetid, count=c, result_type='recent')
+    #     logger.info("Found tweets: " + str(len(tweets)), exc_info=True)
+    #
+    #     for tweet in tweets:
+    #         if tweet.author.screen_name != self.screen_name and not tweet.retweeted:
+    #             # Retweet, since we have not retweeted it yet
+    #             try:
+    #                 tweet.retweet()
+    #                 if and_follow: tweet.author.follow()
+    #             except Exception as e:
+    #                 logger.error("Error on tagRetweet", exc_info=True)
+    #     if len(tweets) > 0: self.config.lasttweetid = tweets[0].id
+    #
+    # def tweetRetweeter(self):
+    #     for rt in self.config.retweets:
+    #         logger.info("TweetRetweeter: " + rt +":"+str(self.config.retweets[rt]), exc_info=True)
+    #         try:
+    #             tweets = self.api.retweet(id = self.config.retweets[rt])
+    #         except tweepy.errors.Forbidden:
+    #             tweets = self.api.unretweet(id = self.config.retweets[rt])
+    #             tweets = self.api.retweet(id = self.config.retweets[rt])
+    #             pass
+    #         except tweepy.errors.NotFound:
+    #             logger.error("TweetRetweeter: Tweet non trouvé", exc_info=True)
+    #             pass
 
     def post(self, text):
         try:
-            tweet = self.api.update_status(text)
-            logger.info("Tweeted "+str(tweet.id)+" : "+str(text))
+            #tweet = self.client.create_tweet(text=(text)
+            tweet = self.client.create_tweet(text=text)
+            logger.info("Tweeted "+str(tweet.data['id'])+" : "+str(text))
 
         except Exception as e:
             logger.warning("Error on post tweet", exc_info=True)
@@ -86,15 +91,15 @@ class AutoTweet:
             media = self.api.simple_upload(path.basename(dataTweet['imgurl']), file = img) # filename, *, file, chunked, media_category, additional_owners
             self.api.create_media_metadata(media.media_id,dataTweet['alt'])
             if in_reply_to is None:
-                tweet = self.api.update_status(
-                    dataTweet['text']+"\n\n"+dataTweet['twurl'],
+                tweet = self.client.create_tweet(
+                    text = dataTweet['text']+"\n\n"+dataTweet['twurl'],
                     media_ids = [media.media_id])
             else:
-                tweet = self.api.update_status(
-                    dataTweet['text'],
+                tweet = self.client.create_tweet(
+                    text = dataTweet['text'],
                     in_reply_to_status_id = in_reply_to.split("/")[-1],
                     media_ids = [media.media_id])
-            logger.info("Tweeted "+str(tweet.id)+" : "+str(dataTweet))
+            logger.info("Tweeted "+str(tweet.data['id'])+" : "+str(dataTweet))
         except Exception as e:
             logger.error("Error on dataTweet", exc_info=True)
 
@@ -113,19 +118,19 @@ class AutoTweet:
                 jot['img'].seek(0)
                 media = self.api.simple_upload(jot['id'], file = jot['img']) # filename, *, file, chunked, media_category, additional_owners
                 try:
-                    tweet = self.api.update_status(
-                        jot['text'],
-                        in_reply_to_status_id = in_reply_to,
+                    tweet = self.client.create_tweet(
+                        text = jot['text'],
+                        in_reply_to_tweet_id = in_reply_to,
                         media_ids = [media.media_id]
                         )
                 except tweepy.errors.BadRequest:
-                    tweet = self.api.update_status(
-                        jot['text'],
-                        in_reply_to_status_id = in_reply_to
+                    tweet = self.client.create_tweet(
+                        text = jot['text'],
+                        in_reply_to_tweet_id = in_reply_to
                         )
                 if in_reply_to is None:
-                    twid = tweet.id
-                in_reply_to = tweet.id
+                    twid = tweet.data['id']
+                in_reply_to = tweet.data['id']
                 if img_close: jot['img'].close()
             return twid
         except Exception as e:
