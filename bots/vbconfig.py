@@ -27,7 +27,7 @@ def create_twitter_api_v1(config):
     if (config.twitter_consumer_key is None or
         config.twitter_consumer_secret is None or
         config.twitter_access_token is None or
-        config.twitter_access_token_secret is None ):
+        config.twitter_access_token_secret is None):
         raise Exception("CONSUMER_KEY and CONSUMER_SECRET and ACCESS_TOKEN and ACCESS_TOKEN_SECRET env var must be configured.")
 
     auth = tweepy.OAuthHandler(config.twitter_consumer_key, config.twitter_consumer_secret)
@@ -47,13 +47,15 @@ def create_twitter_api_v2(config):
     if (config.twitter_consumer_key is None or
         config.twitter_consumer_secret is None or
         config.twitter_access_token is None or
-        config.twitter_access_token_secret is None ):
-        raise Exception("CONSUMER_KEY and CONSUMER_SECRET and ACCESS_TOKEN and ACCESS_TOKEN_SECRET env var must be configured.")
+        config.twitter_access_token_secret is None or
+        config.twitter_bearer_token is None ):
+        raise Exception("CONSUMER_KEY and CONSUMER_SECRET and ACCESS_TOKEN and ACCESS_TOKEN_SECRET and BEARER_TOKEN env var must be configured.")
 
     client = tweepy.Client(consumer_key=config.twitter_consumer_key,
                        consumer_secret=config.twitter_consumer_secret,
                        access_token=config.twitter_access_token,
-                       access_token_secret=config.twitter_access_token_secret)
+                       access_token_secret=config.twitter_access_token_secret,
+                       bearer_token=config.twitter_bearer_token)
     try:
         client.get_me()
     except Exception as e:
@@ -96,6 +98,7 @@ class Config:
         self.twitter_consumer_secret = os.getenv("CONSUMER_SECRET")
         self.twitter_access_token = os.getenv("ACCESS_TOKEN")
         self.twitter_access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
+        self.twitter_bearer_token = os.getenv("BEARER_TOKEN")
         self.piste_client_id = os.getenv("PISTE_CLIENT_ID")
         self.piste_client_secret = os.getenv("PISTE_CLIENT_SECRET")
         self.mastodon_client_id = os.getenv("MASTODON_ID")
