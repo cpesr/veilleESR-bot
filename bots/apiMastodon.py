@@ -34,7 +34,6 @@ from bs4 import BeautifulSoup
 import vbconfig
 import mdconfig
 from jorf import JORF
-import autoTweet
 
 
 logging.basicConfig(level=logging.INFO)
