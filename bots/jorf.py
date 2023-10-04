@@ -18,14 +18,14 @@ import tweepy
 import json
 import os
 import imgkit
-from io import BytesIO
 from io import StringIO
 from datetime import datetime
 import vbconfig
 
 class JORF:
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, piste_client_id, piste_client_secret, wk_path):
+        self.piste_client_id = piste_client_id
+        self.piste_client_secret = piste_client_secret
         self.pm = tweepy.streaming.urllib3.PoolManager()
         self.get_access_token()
         self.jorf = None
@@ -34,10 +34,10 @@ class JORF:
 
         self.css = os.path.dirname(os.path.abspath(__file__))+"/css/legifrance.css" #"jorf.css"
         self.wkoptions={"log-level":"info","javascript-delay":2000, "enable-local-file-access": ""}
-        self.wkconfig = imgkit.config(wkhtmltoimage=config.wk_path)
+        self.wkconfig = imgkit.config(wkhtmltoimage=wk_path)
 
     def get_access_token(self):
-        if (self.config.piste_client_id is None or self.config.piste_client_secret is None):
+        if (self.piste_client_id is None or self.piste_client_secret is None):
             raise Exception("PISTE_CLIENT_ID and PISTE_CLIENT_SECRET env var must be configured.")
 
         req = self.pm.request(
@@ -46,7 +46,7 @@ class JORF:
             headers = {
                 'accept': 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded'},
-            body = "grant_type=client_credentials&client_id="+self.config.piste_client_id+"&client_secret="+self.config.piste_client_secret+"&scope=openid")
+            body = "grant_type=client_credentials&client_id="+self.piste_client_id+"&client_secret="+self.piste_client_secret+"&scope=openid")
         self.access_token = json.loads(req.data)['access_token']
         return self.access_token
 
@@ -156,12 +156,17 @@ class JORF:
 
         fhtml = StringIO(head+html+tail)
         if write_img:
-            imgkit.from_file(fhtml, id+'.png', options=self.wkoptions, config=self.wkconfig)
-            return id+'.png'
+            imgkit.from_file(fhtml, id+'.jpeg', options=self.wkoptions, config=self.wkconfig)
+            return id+'.jpeg'
         else:
-            return BytesIO(imgkit.from_file(fhtml, False, options=self.wkoptions, config=self.wkconfig))
+            return {
+                'filename':id+'.jpeg',
+                'data':imgkit.from_file(fhtml, False, options=self.wkoptions, config=self.wkconfig),
+                'content_type':"image/jpeg",
+                'alt':"Contenu du texte n° "+id }
+            # return BytesIO(imgkit.from_file(fhtml, False, options=self.wkoptions, config=self.wkconfig))
 
-    def get_jotweets(self, recap = False, write_img = False):
+    def get_joposts(self, recap = False, write_img = False):
         sommaire = self.get_sommaire()
         if len(sommaire) == 0:
             return []
@@ -171,34 +176,38 @@ class JORF:
             jotext += "\U0001F5DE Récapitulatif de la semaine du "+self.since['dayOfMonth']+"/"+self.since['month']+"/"+self.since['year']
         else:
             for jo in sommaire[0:2]:
-                jotext += "\U0001F5DE #"+jo['joCont']['titre']+" : "+self.jorf2url(jo['joCont'])+"\n"
+                jotext += "\U0001F5DE #"+jo['joCont']['titre']+"\n"
             if len(sommaire) > 2:
                 jotext += "..."
         joimg = self.html2img(self.sommaire2html(), 'header', write_img)
 
-        jotweets = [ {'id':'header', 'text':jotext, 'img':joimg} ]
+        url = self.jorf2url(sommaire[0]['joCont'])
+        joposts = [ {'text':jotext, 'images':[ joimg ], 'cardurl': url,
+            'card':{'url': url, 'title': jo['joCont']['titre'], 'description':"legifrance" } } ]
 
         esr = self.get_esr()
         for texte in sum([ esr[t] for t in esr], []):
-            txt = texte['titre'] if len(texte['titre']) <= 220 else texte['titre'][:220]+"..."
-            jotext = "[#JORF #JORFESR] "+txt+"\n\n\U0001F4F0 "+self.texte2url(texte)
+            txt = texte['titre'] if len(texte['titre']) <= 200 else texte['titre'][:200]+"..."
+            jotext = "[#JORF #JORFESR] "+txt+"\n\n\U0001F4F0 "
 
             cont = self.piste_req('jorf',{'textCid':texte['id']})
             html = self.cont2html(cont)
             joimg = self.html2img(html, texte['id'], write_img)
 
-            jotweets += [ {'id':texte['id'], 'text':jotext, 'img':joimg} ]
+            url = self.texte2url(texte)
+            joposts += [ {'text':jotext, 'images':[ joimg ], 'cardurl':url,
+                'card':{'url': url, 'title': txt, 'description':"legifrance" } } ]
 
-        return jotweets
+        return joposts
 
 
 def main():
-    conf = vbconfig.Config.load()
-    jorf = JORF(conf)
+    config = vbconfig.Config.load()
+    jorf = JORF(config.get("piste_client_id"),config.get("piste_client_secret"), config.get("wk_path"))
 
-    jorf.get_sommaire(conf.last_jorf)
+    jorf.get_sommaire(config.get('last_jorf'))
     #print(json.dumps(jorf.get_sommaire(),indent=2))
-    print(jorf.get_jotweets(write_img=True))
+    print(jorf.get_joposts(write_img=True))
 
 if __name__ == "__main__":
     main()

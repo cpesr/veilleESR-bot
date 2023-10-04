@@ -22,12 +22,12 @@ def get_mdconfig(url):
 
     botconfig = data.read().decode('utf-8').splitlines()
     config = {}
-    tweets = []
+    posts = []
     datamd = []
     l = []
     for bc in botconfig:
         if bc == "# Config": l = config
-        elif bc == "# VeilleESR": l = tweets
+        elif bc == "# VeilleESR": l = posts
         elif bc == "# DataESR": l = datamd
         elif len(bc) > 0:
             if (bc[0] == '-') :
@@ -35,18 +35,23 @@ def get_mdconfig(url):
                 config[kv[0]]=kv[1]
             else: l.append(bc)
 
-    datatweets = []
+    dataposts = []
     for dm in datamd:
-        datatweets += get_datamd(dm)
+        dataposts += get_datamd(dm)
 
-    return({'config':config, 'tweets':tweets, 'datatweets':datatweets})
+    vposts = []
+    for post in posts:
+        s = post.split(" ")
+        vposts.append({ 'text': " ".join(s[0:-1]), 'cardurl': s[-1] })
+
+    return {'config':config, 'posts':vposts, 'dataposts':dataposts}
 
 def md2img(line):
     end = line.find(".png")
     if end == -1: return None
     start = line.find('src="') + 5
     if start == -1: start = line.find("(") + 2
-    return( line[start:end+4] )
+    return line[start:end+4]
 
 def get_datamd(mdurl):
     pm = urllib3.PoolManager()
@@ -59,7 +64,7 @@ def get_datamd(mdurl):
     twurl = ""
     url = ""
 
-    datatweets = []
+    dataposts = []
     for dm in datamd:
         dm = dm.strip(" ")
         if len(dm) > 0:
@@ -74,9 +79,9 @@ def get_datamd(mdurl):
                 dtimgurl = md2img(dm)
                 if dtimgurl is not None:
                     dtimgurl = path.dirname(mdurl) + "/" + dtimgurl
-                    datatweets.append({'text':dttexte, 'thread':dtthread, 'imgurl':dtimgurl, 'alt':twalt, 'twurl':twurl, 'url':url})
+                    dataposts.append({'text':dttexte, 'images': [{'url':dtimgurl, 'alt':twalt}], 'cardurl':url}) #
 
-    return(datatweets)
+    return dataposts
 
 
 def main():

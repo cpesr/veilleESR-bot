@@ -11,8 +11,8 @@
 [#VeilleESR] Mise à jour quotidienne des publications de presse de l'#ESR. https://cpesr.fr/veille-presse/
 [#VeilleESR] Mise à jour quotidienne des publications de rapports au #MESRI, du Sénat, et de l’EUA. https://cpesr.fr/veille-rapports/
 [#VeilleESR] Déposez et diffusez vos tribunes et motions sur le site de la CPESR. https://cpesr.fr/referencement-de-tribunes-motions-et-petitions/
-[#VeilleESR #HelpESR] Appel à commentaires sur les différents travaux en cours #DataESR. https://github.com/cpesr/RFC
 [#VeilleESR #DataESR] L'entrée dans la carrière des enseignants-chercheurs https://cpesr.fr/lentree-dans-la-carriere-des-enseignants-chercheurs/
+[#VeilleESR #DataESR] Tableaux de bord des établissements de l'ESR https://cpesr.fr/tableau-de-bord-esr/
 
 # DataESR
 https://raw.githubusercontent.com/cpesr/wikidataESR/master/check.md
