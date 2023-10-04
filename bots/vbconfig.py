@@ -86,10 +86,10 @@ class Config:
             #json.dump(self, sf, indent=2, default=lambda o: o.__dict__)
 
     def reset_last_jorf(self):
-        self.last_jorf = self.now()
+        self.set("last_jorf", self.now())
 
     def reset_last_recap(self):
-        self.last_recap = self.now()
+        self.set("last_recap", self.now())
 
 if __name__ == "__main__":
     config = Config.load()
