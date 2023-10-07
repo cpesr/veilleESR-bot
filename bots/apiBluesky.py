@@ -17,6 +17,7 @@ class APIBluesky():
         self.DID = ""
         self.USERNAME = username
         self.PASSWORD = password
+        self.followersDid = None
 
         resp = requests.post(
             self.ATP_HOST + "/xrpc/com.atproto.server.createSession",
@@ -342,6 +343,11 @@ class APIBluesky():
         if username:
             did = self.resolveHandle(username).json().get("did")
 
+        if not self.followersDid:
+            self.followersDid = self.getFollowersDid()
+        if did in self.followersDid: return None
+
+
         if not did:
             # TODO better error in resolveHandle
             raise ValueError("Failed; please pass a username or did of the person you want to follow (maybe the account doesn't exist?)")
@@ -368,6 +374,14 @@ class APIBluesky():
         )
 
         return resp
+
+    def getFollowersDid(self):
+        headers = {"Authorization": "Bearer " + apibsky.ATP_AUTH_TOKEN}
+        resp = requests.get(apibsky.ATP_HOST + "/xrpc/app.bsky.graph.getFollows", params={'actor':"cpesr.bsky.social"}, headers=headers)
+        resp.raise_for_status()
+        jresp = json.loads(resp.content)
+        followersDid = [ f['did'] for f in jresp['follows'] ]
+        return followersDid
 
     def unfollow(self):
         # TODO lots of code re-use. package everything into a API_ACTION class.
@@ -505,6 +519,7 @@ class APIBluesky():
         return post['uri'].replace("at://","https://bsky.app/profile/").replace("app.bsky.feed.post","post")
 
     def getVeille(self, last_uri = ""):
+        followersDid = self.getFollowersDid()
         feed = self.getFeed('at://did:plc:ido6hzdau32ltop6fdhk7s7t/app.bsky.feed.generator/aaak6srraeqxm')
 
         veille = []
@@ -565,22 +580,7 @@ if __name__ == "__main__":
     # This code will only be executed if the script is run directly
     # login(os.environ.get("BSKY_USERNAME"), os.environ.get("BSKY_PASSWORD"))
     apibsky = APIBluesky(os.environ.get("BSKY_USERNAME"), os.environ.get("BSKY_PASSWORD"))
-    # f = getLatestNPosts('klatz.co',1).content
-    # print(f)
-    # resp = rePost("https://staging.bsky.app/profile/klatz.co/post/3jt22a3jx5l2a")
-    # resp = getArchive()
+    apibsky.getVeille()
 
-#
-# data = {'collection': 'app.bsky.feed.post', '$type': 'app.bsky.feed.post', 'repo': 'did:plc:dsiqe4pszk5ldbjk66fyryjv', 'record': {'$type': 'app.bsky.feed.post', 'createdAt': '2023-10-02T09:44:27.845120Z', 'text': "[#JORF #JORFESR] Décret n° 2023-912 du 30 septembre 2023 tirant les conséquences de la création d'une indemnité de maintien de rémunération au profit des agents publics nommés auditeurs de justice ou stagiaires auprès de l'Ecole national...\n\n📰 \nhttps://www.legifrance.gouv.fr/jorf/id/JORFTEXT000048132851", 'embed': {'$type': 'app.bsky.embed.images', 'images': [{'alt': 'Contenu du texte n° JORFTEXT000048132851', 'image': {'$type': 'blob', 'ref': {'$link': 'bafkreihcoe7grmyukz4lbs5p54ft7jzu7xlzxq2at3v3gjyplnkj7gjbgy'}, 'mimeType': 'image/jpeg', 'size': 220074}}]}, 'facets': [{'index': {'byteStart': 257, 'byteEnd': 316}, 'features': [{'uri': 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000048132851', '$type': 'app.bsky.richtext.facet#link'}]}], 'reply': {'root': {'uri': 'at://did:plc:dsiqe4pszk5ldbjk66fyryjv/app.bsky.feed.post/3kar4jce6sz2z', 'cid': 'bafyreieo2kwy24wxi7z6i5a7xaboj3jrkzl72pb6zsobraxjzusjdopohy'}, 'parent': {'uri': 'at://did:plc:dsiqe4pszk5ldbjk66fyryjv/app.bsky.feed.post/3kar4jgfbrz2t', 'cid': 'bafyreifk7thidkszqlmsbo2sc7dfjez5qpo4y65nanxa4icmmzn6jfleym'}}}}
-#
-# headers = {"Authorization": "Bearer " + apibsky.ATP_AUTH_TOKEN}
-#
-# resp = requests.post(
-#     apibsky.ATP_HOST + "/xrpc/com.atproto.repo.createRecord",
-#     json=data,
-#     headers=headers
-# )
-
-
-# resp = login()
-# post("test post")
+    # headers = {"Authorization": "Bearer " + apibsky.ATP_AUTH_TOKEN}
+    # resp = requests.get(apibsky.ATP_HOST + "/xrpc/app.bsky.graph.getFollows", params={'actor':"cpesr.bsky.social"}, headers=headers)
