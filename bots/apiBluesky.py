@@ -376,8 +376,8 @@ class APIBluesky():
         return resp
 
     def getFollowersDid(self):
-        headers = {"Authorization": "Bearer " + apibsky.ATP_AUTH_TOKEN}
-        resp = requests.get(apibsky.ATP_HOST + "/xrpc/app.bsky.graph.getFollows", params={'actor':"cpesr.bsky.social"}, headers=headers)
+        headers = {"Authorization": "Bearer " + self.ATP_AUTH_TOKEN}
+        resp = requests.get(self.ATP_HOST + "/xrpc/app.bsky.graph.getFollows", params={'actor':"cpesr.bsky.social"}, headers=headers)
         resp.raise_for_status()
         jresp = json.loads(resp.content)
         followersDid = [ f['did'] for f in jresp['follows'] ]
