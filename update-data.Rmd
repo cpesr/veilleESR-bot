@@ -52,7 +52,7 @@ res %>%
   summarise(nb = n()) %>%
   pivot_wider(names_from = renseigné, values_from = nb, names_prefix = "Renseigné_") %>%
   arrange(desc(Renseigné_TRUE)) %>%
-  spoiler_table(trim=Inf)
+  spoiler_table(trim=Inf, title = "complétion")
 ```
 
 
@@ -61,8 +61,13 @@ res %>%
   group_by(submitdate_na = is.na(submitdate), lastpage) %>%
   summarise(nb = n()) %>%
   arrange(lastpage) %>%
-  spoiler_table(trim=Inf)
+  ungroup() %>%
+  mutate(nbsum = cumsum(nb)) %>%
+  spoiler_table(trim=Inf, title = "nb réponses complètes")
 ```
+
+
+
 
 ## Export
 
@@ -70,7 +75,8 @@ res %>%
 results <- res %>%
   rename(anciennete = aciennete) %>%
   rename(confiance.ParitairesLocales. = confiance.ParitainesLocales.) %>%
-  filter(!is.na(submitdate)) %>%
+  #filter(!is.na(submitdate)) %>%
+  filter(!is.na(submitdate) | !is.na(conditions.generale.)) %>%
   mutate(across(starts_with("conditions"), ~ factor(.x, levels = qlevels(1,1)))) %>%
   mutate(across(starts_with("evolution"), ~ factor(.x, levels = qlevels(2,0)))) %>%
   mutate(across(starts_with("optimisme"), ~ factor(.x, levels = qlevels(3,0)))) %>%
@@ -99,9 +105,61 @@ confiance.factor <- tibble(
 reformes.factor <- tibble(
   levels = cn[startsWith(cn,"reformes")] %>% substr(10,50),
   labels = unlist(lapply(1:7, function(x) qsubquestion(5,0,x) )) %>% gsub(", description)",")",.))
-reformes.factor$labels
+#reformes.factor$labels
 
-save(results,conditions.factor,confiance.factor,reformes.factor, file="results.RData")
+etab.factor <-tibble(
+    levels = unlist(lapply(1:12,function (x) xmlGetAttr(root[[10]][[9]][[x]],"varName"))),
+    labels = sapply(3:12,function (x) xmlValue(root[[10]][[9]][[x]][[1]][[1]][[1]][[1]]))) %>%
+  mutate(levels = paste0(gsub("_",".",levels),".")) %>%
+  mutate(levels = recode(levels, 'typeetabo.' = 'typeetab.other.')) 
+
+## Labels courts
+
+conditions.factor$lab <- c("Général", "Enseignement", "Recherche", 
+  "Administration", "Relations", "Carrière", "Vie")
+
+confiance.factor$lab <- c("Etat", "MESRI", "Paritaires Nationales", "CNU", "CoNRS", "ANR", 
+"HCERES", "ONR", "FU", "UDICE", "AUREF", "Territoire", 
+"Presidences", "CA, CR, CFVU", "Paritaires Locales", "Composante")
+
+reformes.factor$lab <- c("LOLF", "LRU", "Fioraso", "ORE", "LCAP", "LTF", "LPPR")
+
+## Fusions de caractéristiques
+
+results <- results %>%
+  mutate(metier.grp = fct_recode(metier,
+    `E-EC-C` = "Personnel d'enseignement", 
+    `E-EC-C` = "Personnel de recherche", 
+    `E-EC-C` = "Personnel d'enseignement et de recherche", 
+    `BIATSS` = "Personnel de bibliothéque", 
+    `BIATSS` = "Personnel d'ingénieurie", 
+    `BIATSS` = "Personnel administratif", 
+    `BIATSS` = "Personnel techno-scientifique", 
+    `BIATSS` = "Personnel technique", 
+    `BIATSS` = "Personnel social ou de santé")) %>%
+  mutate(statut.grp = fct_recode(statut,
+    `Titulaire` = "Titulaire d'un poste de la fonction publique", 
+    `Contractuel` = "Titulaire d'une chaire professeur junior (CPJ)", 
+    `Contractuel` = "Sous contrat CDI", 
+    `Contractuel` = "Sous contrat CDD", 
+    `Contractuel` = "Sous contrat de mission scientifique", 
+    `Contractuel` = "Vacataire ou précaire")) %>%
+  mutate(responsabilites.grp = fct_recode(responsabilites,
+    `Nationnal` = "Membre d'une direction au niveau national ou d'un ministère", 
+    `Nationnal` = "Membre élu d'une instance nationale", 
+    `Etablissement` = "Membre d'une présidence ou d'une direction d'établissement", 
+    `Etablissement` = "Membre élu d'un conseil central d'établissement (CA, CR, CFVU...)",
+    `Etablissement` = "Membre d'une autre instance centrale d'établissement", 
+    `Composante` = "Membre d'une direction de composante ou laboratoire", 
+    `Composante` = "Membre d'un conseil de composante ou laboratoire", 
+    `Aucune` = "Aucune de ces responsabilités")) %>%
+  mutate(categorie.grp = fct_recode(categorie,
+    `A` = "PR, DR ou assimilé ; BIATSS catégorie A ou assimilé", 
+    `B` = "MCF, CR, PRAG, PRCE ou assimilé ; BIATSS catégorie B ou assimilé",
+    `C` = "Doctorant, post-doctorant, ATER, ATEN, vacataire ou assimilé ; BIASS catégorie C ou assimilé"))
+
+## Sauvegarde 
+save(results,conditions.factor,confiance.factor,reformes.factor,etab.factor, file="results.RData")
 
 results %>%
   select(conditions.generale.:statut,responsabilites) %>% 
