@@ -1,0 +1,71 @@
+
+\newcommand\titre{Baromètre \\ de l'Enseignement Supérieur \\ et de la Recherche}
+\newcommand\auteur{Julien Gossa}
+\newcommand\rentree{2023}
+\newcommand\ladate{Octobre 2023}
+\newcommand\reportid{baresr-2023-v1.0}
+
+\definecolor{royalblue(traditional)}{rgb}{0.0, 0.14, 0.4}
+\definecolor{royalblue(web)}{rgb}{0.25, 0.41, 0.88}
+
+
+\newcommand\titleS{2}
+\newlength{\titleY} \setlength{\titleY}{0cm}
+\newlength{\titleBoxW} \setlength{\titleBoxW}{4cm}
+\newlength{\titleBoxH} \setlength{\titleBoxH}{2cm}
+\newcommand\titleBoxR{7}
+
+
+\defbeamertemplate*{title page}{customized}[1][]
+{
+  \begin{tikzpicture}[overlay,remember picture]
+
+  \coordinate (logo) at (current page.north west);
+  \coordinate (logoass) at (current page.south east);
+  \coordinate (title) at ($(current page.center) + (0,\titleY)$);
+  \coordinate (author) at (current page.south east);
+  
+  \node (nlogo) [inner sep=3pt, anchor=north west, text width=3cm] at (logo)
+    {\includegraphics[width=3cm]{files/logo_cpesr_sackersgothic}};
+  
+  \begin{scope}[line width=1pt, color=royalblue(web), fill=royalblue(web), line cap=round, rotate around={\titleBoxR:(title)}]
+    \coordinate (btl) at ($(title) + (-\titleBoxW,\titleBoxH)$);
+    \coordinate (btr) at ($(title) + (\titleBoxW,\titleBoxH)$);
+    \coordinate (bbr) at ($(title) + (\titleBoxW,-\titleBoxH)$);
+    \coordinate (bbl) at ($(title) + (-\titleBoxW,-\titleBoxH)$);
+  
+    %\draw [fill=royalblue(web)] (btl) rectangle (bbr);
+  
+    \draw [shorten <=-10cm,shorten >=-14cm, transform shape](btl) -- (btr);
+    \draw [shorten <=-15cm,shorten >=-10cm](bbl) -- (bbr);
+    \draw [shorten <=-2cm,shorten >=-10cm](btl) -- (bbl);
+    \draw [shorten <=-10cm,shorten >=-2cm](btr) -- (bbr);
+  
+    \node (nrentree) at (bbr)
+      [inner sep=2pt, anchor=north east, font=\huge, color=royalblue(traditional), rotate=\titleBoxR]
+      {\rentree};
+    
+    \node (num) at (bbr)
+      [inner sep=2pt, anchor=south west, font=\normalsize, color=royalblue(traditional), rotate=\titleBoxR]
+      {\reportid};
+  
+    \node (num) at (bbr)
+        [inner sep=2pt, anchor=north west, font=\normalsize, color=royalblue(traditional), rotate=\titleBoxR]
+        {\ladate};
+      
+  \end{scope}  
+  
+  
+  \node (ntitle) at (title) 
+    [inner sep=0pt, anchor=center, align=center, font=\bfseries, scale=\titleS, align=center, color=royalblue(traditional)]  
+    {\titre};
+  
+  \node (nlogoass) [inner sep=5pt, anchor=south east, text width=3cm] at (logoass)
+    { En association avec
+    \includegraphics[width=3cm]{files/TMN}};
+
+
+  
+  \end{tikzpicture}
+
+}

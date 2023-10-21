@@ -1,0 +1,51 @@
+%\usepackage[utf8x]{inputenc}
+\usepackage{eurosym}
+%\usepackage{draftwatermark}
+\usepackage[default]{raleway}
+\usepackage[strict]{changepage}
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{tikz}
+\usetikzlibrary{
+  calc,
+  positioning
+}
+
+\def\arraystretch{1.5}
+
+\definecolor{RoyalBlue}{RGB}{65,132,225}
+\colorlet{beamer@blendedblue}{RoyalBlue}
+
+\usepackage{graphbox}
+\newcommand{\figcom}[2]{
+\begin{tabular}{cp{10cm}}
+ #1 & #2  \\ 
+\end{tabular}
+}
+
+
+\newenvironment{cols}[1][]{}{}
+
+\newenvironment{col}[1]{\begin{minipage}{#1}\ignorespaces}{%
+\end{minipage}
+\ifhmode\unskip\fi
+\aftergroup\useignorespacesandallpars}
+
+\def\useignorespacesandallpars#1\ignorespaces\fi{%
+#1\fi\ignorespacesandallpars}
+
+\makeatletter
+\def\ignorespacesandallpars{%
+  \@ifnextchar\par
+    {\expandafter\ignorespacesandallpars\@gobble}%
+    {}%
+}
+\makeatother
+
+\uselanguage{French}
+\languagepath{French}
+
+% \usepackage{fancyhdr}
+% \makeatletter
+% \renewcommand{\@chapapp}{Partie}
+% \makeatother

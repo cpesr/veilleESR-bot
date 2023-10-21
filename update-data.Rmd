@@ -128,9 +128,9 @@ reformes.factor$lab <- c("LOLF", "LRU", "Fioraso", "ORE", "LCAP", "LTF", "LPPR")
 
 results <- results %>%
   mutate(metier.grp = fct_recode(metier,
-    `E-EC-C` = "Personnel d'enseignement", 
-    `E-EC-C` = "Personnel de recherche", 
-    `E-EC-C` = "Personnel d'enseignement et de recherche", 
+    `E` = "Personnel d'enseignement", 
+    `C` = "Personnel de recherche", 
+    `EC` = "Personnel d'enseignement et de recherche", 
     `BIATSS` = "Personnel de bibliothéque", 
     `BIATSS` = "Personnel d'ingénieurie", 
     `BIATSS` = "Personnel administratif", 
@@ -145,8 +145,8 @@ results <- results %>%
     `Contractuel` = "Sous contrat de mission scientifique", 
     `Contractuel` = "Vacataire ou précaire")) %>%
   mutate(responsabilites.grp = fct_recode(responsabilites,
-    `Nationnal` = "Membre d'une direction au niveau national ou d'un ministère", 
-    `Nationnal` = "Membre élu d'une instance nationale", 
+    `National` = "Membre d'une direction au niveau national ou d'un ministère", 
+    `National` = "Membre élu d'une instance nationale", 
     `Etablissement` = "Membre d'une présidence ou d'une direction d'établissement", 
     `Etablissement` = "Membre élu d'un conseil central d'établissement (CA, CR, CFVU...)",
     `Etablissement` = "Membre d'une autre instance centrale d'établissement", 
@@ -154,9 +154,28 @@ results <- results %>%
     `Composante` = "Membre d'un conseil de composante ou laboratoire", 
     `Aucune` = "Aucune de ces responsabilités")) %>%
   mutate(categorie.grp = fct_recode(categorie,
-    `A` = "PR, DR ou assimilé ; BIATSS catégorie A ou assimilé", 
-    `B` = "MCF, CR, PRAG, PRCE ou assimilé ; BIATSS catégorie B ou assimilé",
-    `C` = "Doctorant, post-doctorant, ATER, ATEN, vacataire ou assimilé ; BIASS catégorie C ou assimilé"))
+    `PR, DR` = "PR, DR ou assimilé ; BIATSS catégorie A ou assimilé", 
+    `MCF, CR` = "MCF, CR, PRAG, PRCE ou assimilé ; BIATSS catégorie B ou assimilé",
+    `Doc, Post-Doc,\nATER, vacataires` = "Doctorant, post-doctorant, ATER, ATEN, vacataire ou assimilé ; BIASS catégorie C ou assimilé")) %>%
+  #mutate(categorie.grp = if_else(metier.grp=="BIATSS",NA,categorie.grp)) %>%
+  mutate(anciennete.grp = fct_recode(anciennete,
+    `Moins de 5 ans` = "Moins de 5 ans", 
+    `De 5 à 9 ans` = "De 5 à 9 ans", 
+    `De 10 à 19 ans` = "De 10 à 19 ans", 
+    `Au moins 20 ans` = "De 20 à 29 ans", 
+    `Au moins 20 ans` = "De 30 à 39 ans", 
+    `Au moins 20 ans` = "Au moins 40 ans"
+)) %>%
+  mutate(discipline.grp = fct_recode(discipline,
+    `DEG` = "DEG - Droit, Economie, Gestion", 
+    `LLA-SHS` = "LLA-SHS - Lettres, Langues, Arts et Sciences Humaines et Sociales", 
+    `STEM` = "STEM - Science, Technologie, Ingénierie et Mathématiques", 
+    Santé = "Santé", 
+    NULL = "Non-applicable à votre métier")) %>%
+  mutate(sexe.grp = fct_recode(sexe,
+    NULL = "Autre")) 
+
+
 
 ## Sauvegarde 
 save(results,conditions.factor,confiance.factor,reformes.factor,etab.factor, file="results.RData")
@@ -165,3 +184,70 @@ results %>%
   select(conditions.generale.:statut,responsabilites) %>% 
   write.csv("results-anon.csv",row.names = FALSE)
 ```
+
+
+## Résumés 
+
+```{r res}
+resume <- function(bloc) {
+  df <- results %>%
+    select(id,starts_with(bloc)) %>%
+    pivot_longer(-id, values_to = "Réponse", names_to = "Question") %>%
+    filter(!is.na(Réponse)) %>%
+    #filter( !startsWith(as.character(Réponse), "Ne connait pas")) %>%
+    mutate(Réponse = droplevels(Réponse)) 
+  
+  l <- levels(df$Réponse)
+  
+  df <- df %>%
+    mutate(Réponse = fct_collapse(Réponse, "Négatif" = l[1:3], "Positif"=l[5:7])) %>%
+    summarise(nb.questions = n(), .by=c(Question,Réponse)) %>%
+    mutate(part = nb.questions / sum(nb.questions), .by=Question) %>%
+    mutate(rang = rank(-part), .by=c(Réponse)) %>%
+    mutate(part = scales::percent(part)) %>%
+    arrange(Réponse,rang)
+    
+  
+  df <- bind_rows(df %>%
+                    summarise(nb.questions = sum(nb.questions), .by=c(Réponse)) %>%
+                    mutate(part = scales::percent(nb.questions / sum(nb.questions))),
+                  df
+  )
+
+  return(df) 
+}
+
+# resume("confiance") %>% View()
+```
+
+
+### Condition
+
+```{r rescond}
+resume("condition") %>% slice_head(n=4,by=Réponse) %>% kableExtra::kable()
+```
+
+### Evolution
+
+```{r resevol}
+resume("evolution") %>% slice_head(n=4,by=Réponse) %>% kableExtra::kable()
+```
+
+### Optimisme
+
+```{r resopt}
+resume("optimisme") %>% slice_head(n=4,by=Réponse) %>% kableExtra::kable()
+```
+
+### Confiance
+
+```{r resconf}
+resume("confiance") %>% slice_head(n=4,by=Réponse) %>% kableExtra::kable()
+```
+
+### Réformes
+
+```{r resref}
+resume("reformes") %>% slice_head(n=4,by=Réponse) %>% kableExtra::kable()
+```
+
