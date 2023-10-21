@@ -81,7 +81,7 @@ def veilleesr():
     bsv = apibsky.getVeille(config.get('last_veille_bsky_id'))
     for vpost in bsv:
         try:
-            if vpost['author'] == 'juliengossa.bsky.social':
+            if vpost['author'] == 'juliengossa.cpesr.fr':
                 vthread = apibsky.getVThread(vpost['raw'])
                 apimasto_jg.postVThread(vthread)
                 if apitwitter_jg: apitwitter_jg.postVThread(vthread)

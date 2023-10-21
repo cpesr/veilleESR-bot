@@ -377,7 +377,7 @@ class APIBluesky():
 
     def getFollowersDid(self):
         headers = {"Authorization": "Bearer " + self.ATP_AUTH_TOKEN}
-        resp = requests.get(self.ATP_HOST + "/xrpc/app.bsky.graph.getFollows", params={'actor':"cpesr.bsky.social"}, headers=headers)
+        resp = requests.get(self.ATP_HOST + "/xrpc/app.bsky.graph.getFollows", params={'actor':"cpesr.fr"}, headers=headers)
         resp.raise_for_status()
         jresp = json.loads(resp.content)
         followersDid = [ f['did'] for f in jresp['follows'] ]
@@ -527,7 +527,7 @@ class APIBluesky():
             post = post['post']
             if post['uri'] == last_uri: break
             vpost = self.getVPost(post)
-            if vpost['author'] != "cpesr.bsky.social":
+            if vpost['author'] != "cpesr.fr":
                 self.like(post)
                 self.repost(post)
                 self.follow(did=vpost['raw']['author']['did'])
@@ -580,7 +580,8 @@ if __name__ == "__main__":
     # This code will only be executed if the script is run directly
     # login(os.environ.get("BSKY_USERNAME"), os.environ.get("BSKY_PASSWORD"))
     apibsky = APIBluesky(os.environ.get("BSKY_USERNAME"), os.environ.get("BSKY_PASSWORD"))
-    apibsky.getVeille()
+    f = apibsky.getFollowersDid()
+    print(f)
 
     # headers = {"Authorization": "Bearer " + apibsky.ATP_AUTH_TOKEN}
     # resp = requests.get(apibsky.ATP_HOST + "/xrpc/app.bsky.graph.getFollows", params={'actor':"cpesr.bsky.social"}, headers=headers)
