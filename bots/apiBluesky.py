@@ -1,7 +1,8 @@
 import requests
 import datetime
 import os
-import unittest
+from collections import OrderedDict
+import operator
 import mimetypes
 import json
 from bs4 import BeautifulSoup
@@ -105,14 +106,6 @@ class APIBluesky():
 
     def getPostByUrl(self, url):
         """Get a post's HTTP response data when given the URL."""
-        # https://staging.bsky.app/profile/shinyakato.dev/post/3ju777mfnfv2j
-        "https://bsky.social/xrpc/app.bsky.feed.getPostThread?uri=at%3A%2F%2Fdid%3Aplc%3Ascx5mrfxxrqlfzkjcpbt3xfr%2Fapp.bsky.feed.post%2F3jszsrnruws27A"
-        "at://did:plc:scx5mrfxxrqlfzkjcpbt3xfr/app.bsky.feed.post/3jszsrnruws27"
-        "https://staging.bsky.app/profile/naia.bsky.social/post/3jszsrnruws27"
-
-
-        # getPosts
-        # https://bsky.social/xrpc/app.bsky.feed.getPosts?uris=at://did:plc:o2hywbrivbyxugiukoexum57/app.bsky.feed.post/3jua5rlgrq42p
 
         headers = {"Authorization": "Bearer " + self.ATP_AUTH_TOKEN}
 
@@ -219,6 +212,8 @@ class APIBluesky():
                         "description": vpost['card']['description']
                     }
                 }
+                if 'thumb' in vpost['card']:
+                    data['record']['embed']['external']['thumb'] = vpost['card']['thumb']
                 try:
                     resp_blob = self.uploadImage(vpost['card']['image'])
                     data['record']['embed']['external']['thumb']: resp_blob.json()["blob"]
@@ -237,6 +232,12 @@ class APIBluesky():
                 data['record']['facets'] = [ {'index': { 'byteStart':start, 'byteEnd':end},
                         'features': [ {'uri': vpost['cardurl'], '$type': 'app.bsky.richtext.facet#link'} ] } ]
 
+        if 'embed' not in data['record'] and 'quote' in vpost:
+            # Si pas d'images ni de card, alors on met le quote
+            data['record']['embed'] = {
+                "$type": "app.bsky.embed.record",
+                "record": vpost['quote']
+            }
 
         if reply_to:
             data['record']['reply'] = reply_to
@@ -251,6 +252,7 @@ class APIBluesky():
             json=data,
             headers=headers
         )
+        # print(resp.content)
         resp.raise_for_status()
         return resp
 
@@ -266,7 +268,6 @@ class APIBluesky():
             parent = {'uri':post['uri'], 'cid':post['cid']}
             rt = {'root':root, 'parent':parent}
 
-
     def importVPost(self, vpost):
         text = "[#VeilleESR] "+vpost['card']['title']+"\n\nVia "+vpost['url']
         start = bytes(text,encoding='utf-8').find(bytes(vpost['url'],encoding='utf-8'))
@@ -279,8 +280,6 @@ class APIBluesky():
                 'features': [ {'uri': vpost['url'], '$type': 'app.bsky.richtext.facet#link'} ] } ]
         }
         self.postVPost(ipost)
-
-
 
     def deletePost(self, did,rkey):
         # rkey: post slug
@@ -332,11 +331,6 @@ class APIBluesky():
 
         return resp
 
-    # [[API Design]] TODO one implementation should be highly ergonomic (comfy 2 use) and the other should just closely mirror the API's exact behavior?
-    # idk if im super happy about returning requests, either, i kinda want tuples where the primary object u get back is whatever ergonomic thing you expect
-    # and then you can dive into that and ask for the request. probably this means writing a class to encapsulate each of the
-    # API actions, populating the class in the implementations, and making the top-level api as pretty as possible
-    # ideally atproto lib contains meaty close-to-the-api and atprototools is a layer on top that focuses on ergonomics?
     def follow(self, username=None, did=None):
         """Follow the user with the given username or DID."""
 
@@ -375,12 +369,24 @@ class APIBluesky():
 
         return resp
 
-    def getFollowersDid(self):
+    def getFollows(self):
         headers = {"Authorization": "Bearer " + self.ATP_AUTH_TOKEN}
-        resp = requests.get(self.ATP_HOST + "/xrpc/app.bsky.graph.getFollows", params={'actor':"cpesr.fr"}, headers=headers)
-        resp.raise_for_status()
-        jresp = json.loads(resp.content)
-        followersDid = [ f['did'] for f in jresp['follows'] ]
+        follows = []
+        nf = 100
+        cursor = None
+        while nf == 100:
+            resp = requests.get(self.ATP_HOST + "/xrpc/app.bsky.graph.getFollows", params={'actor':"cpesr.fr", 'limit':100, 'cursor':cursor}, headers=headers)
+            resp.raise_for_status()
+            jresp = json.loads(resp.content)
+            follows += jresp['follows']
+            nf = len(jresp['follows'])
+            cursor = jresp['cursor']
+
+        return(follows)
+
+    def getFollowsDid(self):
+        follows = self.getFollows()
+        followersDid = [ f['did'] for f in follows ]
         return followersDid
 
     def unfollow(self):
@@ -472,7 +478,7 @@ class APIBluesky():
     def getFeed(self, aturl):
 
         headers = {"Authorization": "Bearer " + self.ATP_AUTH_TOKEN}
-        resp = requests.get(self.ATP_HOST + "/xrpc/app.bsky.feed.getFeed", params={'feed':aturl}, headers=headers)
+        resp = requests.get(self.ATP_HOST + "/xrpc/app.bsky.feed.getFeed", params={'feed':aturl,'limit':100}, headers=headers)
         resp.raise_for_status()
 
         return(json.loads(resp.content)['feed'])
@@ -489,10 +495,12 @@ class APIBluesky():
 
                     #text = text.replace(uri[8:37]+"...",uri)
 
+        #print(post)
         vpost = {
             'text': btext.decode(),
             'card': None,
             'author': post['author']['handle'],
+            'author_name': post['author']['displayName'] if 'displayName' in post['author'] else post['author']['handle'],
             'id': post['uri'],
             'url': self.getPostURL(post),
             'images': [],
@@ -519,7 +527,6 @@ class APIBluesky():
         return post['uri'].replace("at://","https://bsky.app/profile/").replace("app.bsky.feed.post","post")
 
     def getVeille(self, last_uri = ""):
-        followersDid = self.getFollowersDid()
         feed = self.getFeed('at://did:plc:ido6hzdau32ltop6fdhk7s7t/app.bsky.feed.generator/aaak6srraeqxm')
 
         veille = []
@@ -534,6 +541,111 @@ class APIBluesky():
                 veille.append(vpost)
 
         return veille
+
+
+    def getTops(self, last_uri="", toplength = 5):
+        feed = self.getFeed('at://did:plc:ido6hzdau32ltop6fdhk7s7t/app.bsky.feed.generator/aaak6srraeqxm')
+        posts = []
+        hello = []
+        nposts = dict()
+
+        for post in feed:
+            if post['post']['uri'] == last_uri: break
+
+            post = post['post']
+            handle = post['author']['handle']
+
+            posts.append({
+                'record':{'uri':post['uri'], 'cid':post['cid']},
+                'popularity':post['replyCount'] + post['repostCount'] + post['likeCount']
+                })
+
+            if handle == "cpesr.fr": continue
+
+            if "HelloESR" in post['record']['text']:
+                hello.append({'handle':handle, 'did':post['author']['did']})
+            try:
+                nposts[handle]['nposts'] += 1
+            except:
+                nposts[handle] = {'handle':handle, 'did':post['author']['did'], 'nposts':1}
+
+
+        nposts = sorted(nposts.values(), key=operator.itemgetter('nposts'), reverse=True)[0:toplength]
+        popposts = sorted(posts, key=operator.itemgetter('popularity'), reverse=True)[0:toplength]
+
+        return {'hello':hello,'nposts':nposts,'popposts':popposts, 'last_uri':feed[0]['post']['uri']}
+
+    def getNewCertifieds(self):
+        try:
+            with open("config/bscertifs.json") as f:
+                oldcertifieds = json.load(f)
+        except:
+            oldcertifieds = []
+
+        follows = self.getFollows()
+        certifieds = [ {'handle':f['handle'],'did':f['did']} for f in follows if "cpesr.fr" in f['handle'] ]
+        newcertifieds = [ c for c in certifieds if c['handle'] not in oldcertifieds ]
+        with open("config/bscertifs.json","w") as f:
+            f.write(json.dumps([c['handle'] for c in certifieds], indent=4))
+
+        return(newcertifieds)
+
+    def sliceHandles(self, authors, intro="", maxlength=290):
+        slices=[]
+        s=intro
+        facets=[]
+        end = 0
+        for author in authors:
+            if end+len(author['handle'])+4>maxlength:
+                slices.append({'text':s,'facets':facets})
+                s=intro
+                facets=[]
+            start = len(bytes(s,encoding='utf-8'))
+            s+="@"+author['handle']+"\n"
+            end = len(bytes(s,encoding='utf-8'))-1
+            facets.append({'index': { 'byteStart':start, 'byteEnd':end},
+             'features': [ {'did':author['did'], "$type":"app.bsky.richtext.facet#mention"} ] })
+        if s != intro: slices.append({'text':s,'facets':facets})
+        return slices
+
+
+    def postRecap(self, last_uri=""):
+        # r = apibsky.uploadImage({'url':"https://cpesr.fr/wp-content/uploads/2020/01/ahmed-badawy-R4-DtoeKcHA-unsplash-scaled-e1606055582140.jpg"})
+        card = {
+            'title': "Feed #VeilleESR",
+            'description': "Le feed des praticiennes et praticiens de l'ESR",
+            'url': "https://bsky.app/profile/did:plc:ido6hzdau32ltop6fdhk7s7t/feed/aaak6srraeqxm",
+            'thumb': {"$type":"blob","ref":{"$link":"bafkreibnqtbszx45rtwckdsfdscup3bg2kuhsc6ysd5qhzmrcpfnvnbdfe"},"mimeType":"image/jpeg","size":306895} }
+
+        tops = self.getTops(last_uri)
+        newcertifieds = self.getNewCertifieds()
+
+        vthread = []
+        for npost in self.sliceHandles(tops['nposts'],intro=
+            "📣 Recap de la semaine #VeilleESR \n\n"+
+            "🫶 Contributions les plus actives :\n"):
+            vthread.append({'text': npost['text'],
+                            'facets': npost['facets'],
+                            'card':card})
+
+        for poppost in tops['popposts']:
+            vthread.append({'text': "🏅 Posts les plus populaires\n",
+                        'quote': poppost['record']})
+
+        for hello in self.sliceHandles(tops['hello'],intro="👋 Bienvenue à :\n"):
+            vthread.append({'text': hello['text'],
+                            'facets': hello['facets']})
+
+        for certifs in self.sliceHandles(newcertifieds,intro="🧑‍🏫 Nouvelles certifications :\n"):
+            vthread.append({'text': certifs['text'],
+                            'facets': certifs['facets']})
+
+        #return(vthread)
+
+        self.postVThread(vthread)
+
+        return tops['last_uri']
+
 
 
     def getPostThread(self, aturl, depth=15):
@@ -557,6 +669,30 @@ class APIBluesky():
                 break
         return vthread
 
+    def getDNSZone(self):
+        follows = self.getFollows()
+        dnsz=""
+        for f in follows:
+            if 'handle.invalid' in f['handle']:
+                handle = f['displayName']
+                did = f['did']
+                dnsz+='_atproto.'+handle+'          IN TXT    "did='+did+'"\n'
+        dnsz+='\n'
+        for f in follows:
+            if 'cpesr.fr' in f['handle']:
+                handle = f['handle'][0:-len('cpesr.fr')]
+                did = f['did']
+                dnsz+='_atproto.'+handle+'          IN TXT    "did='+did+'"\n'
+        dnsz+='\n'
+        for f in follows:
+            if 'bsky.social' in f['handle']:
+                handle = f['handle'][0:-12]
+                did = f['did']
+                dnsz+='_atproto.'+handle+'          IN TXT    "did='+did+'"\n'
+
+        return(dnsz)
+
+
 #'at://did:plc:mf3wkwt3y7gj32dbunijoefg/app.bsky.feed.post/3kahszi5j7k2i'
 
 def register(user, password, invcode, email):
@@ -576,12 +712,20 @@ def register(user, password, invcode, email):
     return resp
 
 
+
 if __name__ == "__main__":
     # This code will only be executed if the script is run directly
     # login(os.environ.get("BSKY_USERNAME"), os.environ.get("BSKY_PASSWORD"))
     apibsky = APIBluesky(os.environ.get("BSKY_USERNAME"), os.environ.get("BSKY_PASSWORD"))
-    f = apibsky.getFollowersDid()
-    print(f)
+    # f = apibsky.getFollows()
+    # print(f)
+    # print(len(f))
+    # dnsz = apibsky.getDNSZone()
+    # print(dnsz)
+
+    # lu = apibsky.getTops()
+    lu = apibsky.postRecap()
+    print(json.dumps(lu,indent=4))
 
     # headers = {"Authorization": "Bearer " + apibsky.ATP_AUTH_TOKEN}
     # resp = requests.get(apibsky.ATP_HOST + "/xrpc/app.bsky.graph.getFollows", params={'actor':"cpesr.bsky.social"}, headers=headers)
