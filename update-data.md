@@ -1,7 +1,7 @@
 Baromètre ESR - updatedata
 ================
 CPESR
-2023-10-21
+2023-11-01
 
 ## Données
 
@@ -52,82 +52,82 @@ complétion
 
 | colonne                      | Renseigné_FALSE | Renseigné_TRUE |
 |:-----------------------------|----------------:|---------------:|
-| datestamp                    |              NA |           3037 |
-| ipaddr                       |              NA |           3037 |
-| seed                         |              NA |           3037 |
-| startdate                    |              NA |           3037 |
-| startlanguage                |              NA |           3037 |
-| typeetab.IUT.                |              NA |           3037 |
-| typeetab.UFR.                |              NA |           3037 |
-| typeetab.UMR.                |              NA |           3037 |
-| typeetab.cenrec.             |              NA |           3037 |
-| typeetab.ecole.              |              NA |           3037 |
-| typeetab.institut.           |              NA |           3037 |
-| typeetab.labo.               |              NA |           3037 |
-| typeetab.natreg.             |              NA |           3037 |
-| typeetab.univ.               |              NA |           3037 |
-| lastpage                     |             531 |           2506 |
-| conditions.generale.         |             615 |           2422 |
-| conditions.vie.              |             634 |           2403 |
-| conditions.carriere.         |             656 |           2381 |
-| conditions.admin.            |             684 |           2353 |
-| conditions.rel.              |             719 |           2318 |
-| evolution.generale.          |             804 |           2233 |
-| evolution.vie.               |             820 |           2217 |
-| conditions.rech.             |             828 |           2209 |
-| evolution.carriere.          |             841 |           2196 |
-| optimisme.generale.          |             847 |           2190 |
-| evolution.admin.             |             860 |           2177 |
-| optimisme.carriere.          |             866 |           2171 |
-| optimisme.vie.               |             867 |           2170 |
-| optimisme.admin.             |             891 |           2146 |
-| evolution.rel.               |             901 |           2136 |
-| confiance.Etat.              |             903 |           2134 |
-| confiance.MESRI.             |             905 |           2132 |
-| confiance.Presidences.       |             933 |           2104 |
-| optimisme.rel.               |             933 |           2104 |
-| confiance.Dircomp.           |             940 |           2097 |
-| confiance.HCERES.            |             968 |           2069 |
-| confiance.Conseils.          |             972 |           2065 |
-| confiance.ANR.               |             973 |           2064 |
-| evolution.rech.              |             989 |           2048 |
-| confiance.ParitainesLocales. |            1000 |           2037 |
-| confiance.CNU.               |            1002 |           2035 |
-| confiance.Territoire.        |            1005 |           2032 |
-| confiance.ParitairesNat.     |            1014 |           2023 |
-| optimisme.rech.              |            1019 |           2018 |
-| metier                       |            1031 |           2006 |
-| statut                       |            1032 |           2005 |
-| submitdate                   |            1033 |           2004 |
-| aciennete                    |            1034 |           2003 |
-| age                          |            1034 |           2003 |
-| secteur                      |            1044 |           1993 |
-| discipline                   |            1045 |           1992 |
-| categorie                    |            1052 |           1985 |
-| conditions.ens.              |            1061 |           1976 |
-| confiance.ONR.               |            1068 |           1969 |
-| sexe                         |            1069 |           1968 |
-| reformes.LPPR.               |            1074 |           1963 |
-| confiance.CoNRS.             |            1084 |           1953 |
-| reformes.LRU.                |            1090 |           1947 |
-| responsabilites              |            1096 |           1941 |
-| confiance.UDICE.             |            1111 |           1926 |
-| reformes.LTF.                |            1112 |           1925 |
-| confiance.FU.                |            1113 |           1924 |
-| etab                         |            1130 |           1907 |
-| reformes.ORE.                |            1137 |           1900 |
-| reformes.LCAP.               |            1139 |           1898 |
-| reformes.Fioraso.            |            1146 |           1891 |
-| optimisme.ens.               |            1172 |           1865 |
-| evolution.ens.               |            1188 |           1849 |
-| reformes.LOLF.               |            1195 |           1842 |
-| confiance.AUREF.             |            1204 |           1833 |
-| responsabilites2             |            2201 |            836 |
-| refurl                       |            2550 |            487 |
-| ELajout                      |            2594 |            443 |
-| ELbarometre                  |            2775 |            262 |
-| etab.other.                  |            2795 |            242 |
-| typeetab.other.              |            2945 |             92 |
+| datestamp                    |              NA |           3078 |
+| ipaddr                       |              NA |           3078 |
+| seed                         |              NA |           3078 |
+| startdate                    |              NA |           3078 |
+| startlanguage                |              NA |           3078 |
+| typeetab.IUT.                |              NA |           3078 |
+| typeetab.UFR.                |              NA |           3078 |
+| typeetab.UMR.                |              NA |           3078 |
+| typeetab.cenrec.             |              NA |           3078 |
+| typeetab.ecole.              |              NA |           3078 |
+| typeetab.institut.           |              NA |           3078 |
+| typeetab.labo.               |              NA |           3078 |
+| typeetab.natreg.             |              NA |           3078 |
+| typeetab.univ.               |              NA |           3078 |
+| lastpage                     |             541 |           2537 |
+| conditions.generale.         |             627 |           2451 |
+| conditions.vie.              |             646 |           2432 |
+| conditions.carriere.         |             669 |           2409 |
+| conditions.admin.            |             696 |           2382 |
+| conditions.rel.              |             734 |           2344 |
+| evolution.generale.          |             822 |           2256 |
+| evolution.vie.               |             838 |           2240 |
+| conditions.rech.             |             843 |           2235 |
+| evolution.carriere.          |             859 |           2219 |
+| optimisme.generale.          |             865 |           2213 |
+| evolution.admin.             |             878 |           2200 |
+| optimisme.carriere.          |             884 |           2194 |
+| optimisme.vie.               |             885 |           2193 |
+| optimisme.admin.             |             909 |           2169 |
+| evolution.rel.               |             920 |           2158 |
+| confiance.Etat.              |             922 |           2156 |
+| confiance.MESRI.             |             923 |           2155 |
+| confiance.Presidences.       |             951 |           2127 |
+| optimisme.rel.               |             952 |           2126 |
+| confiance.Dircomp.           |             958 |           2120 |
+| confiance.HCERES.            |             986 |           2092 |
+| confiance.Conseils.          |             991 |           2087 |
+| confiance.ANR.               |             992 |           2086 |
+| evolution.rech.              |            1008 |           2070 |
+| confiance.ParitainesLocales. |            1018 |           2060 |
+| confiance.CNU.               |            1020 |           2058 |
+| confiance.Territoire.        |            1024 |           2054 |
+| confiance.ParitairesNat.     |            1034 |           2044 |
+| optimisme.rech.              |            1038 |           2040 |
+| metier                       |            1051 |           2027 |
+| statut                       |            1051 |           2027 |
+| submitdate                   |            1052 |           2026 |
+| aciennete                    |            1053 |           2025 |
+| age                          |            1053 |           2025 |
+| secteur                      |            1063 |           2015 |
+| discipline                   |            1064 |           2014 |
+| categorie                    |            1071 |           2007 |
+| conditions.ens.              |            1078 |           2000 |
+| confiance.ONR.               |            1087 |           1991 |
+| sexe                         |            1091 |           1987 |
+| reformes.LPPR.               |            1092 |           1986 |
+| confiance.CoNRS.             |            1104 |           1974 |
+| reformes.LRU.                |            1109 |           1969 |
+| responsabilites              |            1115 |           1963 |
+| confiance.UDICE.             |            1130 |           1948 |
+| reformes.LTF.                |            1130 |           1948 |
+| confiance.FU.                |            1133 |           1945 |
+| etab                         |            1151 |           1927 |
+| reformes.ORE.                |            1156 |           1922 |
+| reformes.LCAP.               |            1158 |           1920 |
+| reformes.Fioraso.            |            1165 |           1913 |
+| optimisme.ens.               |            1193 |           1885 |
+| evolution.ens.               |            1209 |           1869 |
+| reformes.LOLF.               |            1214 |           1864 |
+| confiance.AUREF.             |            1226 |           1852 |
+| responsabilites2             |            2234 |            844 |
+| refurl                       |            2588 |            490 |
+| ELajout                      |            2634 |            444 |
+| ELbarometre                  |            2815 |            263 |
+| etab.other.                  |            2834 |            244 |
+| typeetab.other.              |            2985 |             93 |
 
 </details>
 <details>
@@ -137,15 +137,15 @@ nb réponses complètes
 
 | submitdate_na | lastpage |   nb | nbsum |
 |:--------------|---------:|-----:|------:|
-| TRUE          |        0 |   36 |    36 |
-| TRUE          |        1 |  174 |   210 |
-| TRUE          |        2 |   60 |   270 |
-| TRUE          |        3 |   69 |   339 |
-| TRUE          |        4 |   86 |   425 |
-| TRUE          |        5 |   45 |   470 |
-| TRUE          |        6 |   32 |   502 |
-| FALSE         |        7 | 2004 |  2506 |
-| TRUE          |       NA |  531 |  3037 |
+| TRUE          |        0 |   37 |    37 |
+| TRUE          |        1 |  180 |   217 |
+| TRUE          |        2 |   60 |   277 |
+| TRUE          |        3 |   69 |   346 |
+| TRUE          |        4 |   86 |   432 |
+| TRUE          |        5 |   47 |   479 |
+| TRUE          |        6 |   32 |   511 |
+| FALSE         |        7 | 2026 |  2537 |
+| TRUE          |       NA |  541 |  3078 |
 
 </details>
 
@@ -181,7 +181,7 @@ rang
 Négatif
 </td>
 <td style="text-align:right;">
-6807
+6883
 </td>
 <td style="text-align:left;">
 42.4%
@@ -198,10 +198,10 @@ NA
 Négatif
 </td>
 <td style="text-align:right;">
-1556
+1578
 </td>
 <td style="text-align:left;">
-66.1565%
+66.275%
 </td>
 <td style="text-align:left;">
 conditions.admin.
@@ -215,10 +215,10 @@ conditions.admin.
 Négatif
 </td>
 <td style="text-align:right;">
-1457
+1473
 </td>
 <td style="text-align:left;">
-61.2442%
+61.197%
 </td>
 <td style="text-align:left;">
 conditions.carriere.
@@ -232,10 +232,10 @@ conditions.carriere.
 Négatif
 </td>
 <td style="text-align:right;">
-1003
+1013
 </td>
 <td style="text-align:left;">
-45.4257%
+45.345%
 </td>
 <td style="text-align:left;">
 conditions.rech.
@@ -249,10 +249,10 @@ conditions.rech.
 Ni bonnes, ni mauvaises
 </td>
 <td style="text-align:right;">
-2915
+2940
 </td>
 <td style="text-align:left;">
-18.2%
+18.1%
 </td>
 <td style="text-align:left;">
 NA
@@ -266,10 +266,10 @@ NA
 Ni bonnes, ni mauvaises
 </td>
 <td style="text-align:right;">
-596
+599
 </td>
 <td style="text-align:left;">
-25.7340%
+25.576%
 </td>
 <td style="text-align:left;">
 conditions.rel.
@@ -283,10 +283,10 @@ conditions.rel.
 Ni bonnes, ni mauvaises
 </td>
 <td style="text-align:right;">
-405
+410
 </td>
 <td style="text-align:left;">
-20.4960%
+20.500%
 </td>
 <td style="text-align:left;">
 conditions.ens.
@@ -300,10 +300,10 @@ conditions.ens.
 Ni bonnes, ni mauvaises
 </td>
 <td style="text-align:right;">
-461
+465
 </td>
 <td style="text-align:left;">
-19.1923%
+19.128%
 </td>
 <td style="text-align:left;">
 conditions.vie.
@@ -317,10 +317,10 @@ conditions.vie.
 Positif
 </td>
 <td style="text-align:right;">
-6333
+6423
 </td>
 <td style="text-align:left;">
-39.4%
+39.5%
 </td>
 <td style="text-align:left;">
 NA
@@ -334,10 +334,10 @@ NA
 Positif
 </td>
 <td style="text-align:right;">
-1398
+1418
 </td>
 <td style="text-align:left;">
-60.3627%
+60.547%
 </td>
 <td style="text-align:left;">
 conditions.rel.
@@ -351,10 +351,10 @@ conditions.rel.
 Positif
 </td>
 <td style="text-align:right;">
-1350
+1370
 </td>
 <td style="text-align:left;">
-56.2032%
+56.355%
 </td>
 <td style="text-align:left;">
 conditions.vie.
@@ -368,10 +368,10 @@ conditions.vie.
 Positif
 </td>
 <td style="text-align:right;">
-1066
+1079
 </td>
 <td style="text-align:left;">
-44.0132%
+44.023%
 </td>
 <td style="text-align:left;">
 conditions.generale.
@@ -411,7 +411,7 @@ rang
 Négatif
 </td>
 <td style="text-align:right;">
-9085
+9170
 </td>
 <td style="text-align:left;">
 61%
@@ -428,10 +428,10 @@ NA
 Négatif
 </td>
 <td style="text-align:right;">
-1648
+1665
 </td>
 <td style="text-align:left;">
-75.80%
+75.79%
 </td>
 <td style="text-align:left;">
 evolution.admin.
@@ -445,10 +445,10 @@ evolution.admin.
 Négatif
 </td>
 <td style="text-align:right;">
-1680
+1696
 </td>
 <td style="text-align:left;">
-75.37%
+75.31%
 </td>
 <td style="text-align:left;">
 evolution.generale.
@@ -462,10 +462,10 @@ evolution.generale.
 Négatif
 </td>
 <td style="text-align:right;">
-1309
+1321
 </td>
 <td style="text-align:left;">
-70.83%
+70.72%
 </td>
 <td style="text-align:left;">
 evolution.ens.
@@ -479,7 +479,7 @@ evolution.ens.
 Stable
 </td>
 <td style="text-align:right;">
-4710
+4761
 </td>
 <td style="text-align:left;">
 32%
@@ -496,10 +496,10 @@ NA
 Stable
 </td>
 <td style="text-align:right;">
-1418
+1432
 </td>
 <td style="text-align:left;">
-66.45%
+66.42%
 </td>
 <td style="text-align:left;">
 evolution.rel.
@@ -513,10 +513,10 @@ evolution.rel.
 Stable
 </td>
 <td style="text-align:right;">
-815
+824
 </td>
 <td style="text-align:left;">
-36.81%
+36.84%
 </td>
 <td style="text-align:left;">
 evolution.vie.
@@ -530,10 +530,10 @@ evolution.vie.
 Stable
 </td>
 <td style="text-align:right;">
-671
+679
 </td>
 <td style="text-align:left;">
-30.60%
+30.64%
 </td>
 <td style="text-align:left;">
 evolution.carriere.
@@ -547,7 +547,7 @@ evolution.carriere.
 Positif
 </td>
 <td style="text-align:right;">
-1043
+1063
 </td>
 <td style="text-align:left;">
 7%
@@ -564,10 +564,10 @@ NA
 Positif
 </td>
 <td style="text-align:right;">
-274
+278
 </td>
 <td style="text-align:left;">
-12.38%
+12.43%
 </td>
 <td style="text-align:left;">
 evolution.vie.
@@ -581,10 +581,10 @@ evolution.vie.
 Positif
 </td>
 <td style="text-align:right;">
-203
+205
 </td>
 <td style="text-align:left;">
-9.26%
+9.25%
 </td>
 <td style="text-align:left;">
 evolution.carriere.
@@ -598,10 +598,10 @@ evolution.carriere.
 Positif
 </td>
 <td style="text-align:right;">
-154
+158
 </td>
 <td style="text-align:left;">
-7.22%
+7.33%
 </td>
 <td style="text-align:left;">
 evolution.rel.
@@ -641,7 +641,7 @@ rang
 Négatif
 </td>
 <td style="text-align:right;">
-9871
+9977
 </td>
 <td style="text-align:left;">
 67%
@@ -658,10 +658,10 @@ NA
 Négatif
 </td>
 <td style="text-align:right;">
-1741
+1760
 </td>
 <td style="text-align:left;">
-81.17%
+81.18%
 </td>
 <td style="text-align:left;">
 optimisme.admin.
@@ -675,10 +675,10 @@ optimisme.admin.
 Négatif
 </td>
 <td style="text-align:right;">
-1590
+1605
 </td>
 <td style="text-align:left;">
-78.79%
+78.68%
 </td>
 <td style="text-align:left;">
 optimisme.rech.
@@ -692,10 +692,10 @@ optimisme.rech.
 Négatif
 </td>
 <td style="text-align:right;">
-1464
+1481
 </td>
 <td style="text-align:left;">
-78.50%
+78.57%
 </td>
 <td style="text-align:left;">
 optimisme.ens.
@@ -709,7 +709,7 @@ optimisme.ens.
 Ni optimiste, ni pessimiste
 </td>
 <td style="text-align:right;">
-3367
+3396
 </td>
 <td style="text-align:left;">
 23%
@@ -726,10 +726,10 @@ NA
 Ni optimiste, ni pessimiste
 </td>
 <td style="text-align:right;">
-1088
+1098
 </td>
 <td style="text-align:left;">
-51.71%
+51.65%
 </td>
 <td style="text-align:left;">
 optimisme.rel.
@@ -743,10 +743,10 @@ optimisme.rel.
 Ni optimiste, ni pessimiste
 </td>
 <td style="text-align:right;">
-615
+622
 </td>
 <td style="text-align:left;">
-28.35%
+28.38%
 </td>
 <td style="text-align:left;">
 optimisme.vie.
@@ -760,10 +760,10 @@ optimisme.vie.
 Ni optimiste, ni pessimiste
 </td>
 <td style="text-align:right;">
-438
+441
 </td>
 <td style="text-align:left;">
-20.18%
+20.11%
 </td>
 <td style="text-align:left;">
 optimisme.carriere.
@@ -777,7 +777,7 @@ optimisme.carriere.
 Positif
 </td>
 <td style="text-align:right;">
-1422
+1443
 </td>
 <td style="text-align:left;">
 10%
@@ -794,10 +794,10 @@ NA
 Positif
 </td>
 <td style="text-align:right;">
-387
+395
 </td>
 <td style="text-align:left;">
-18.39%
+18.58%
 </td>
 <td style="text-align:left;">
 optimisme.rel.
@@ -811,10 +811,10 @@ optimisme.rel.
 Positif
 </td>
 <td style="text-align:right;">
-374
+377
 </td>
 <td style="text-align:left;">
-17.24%
+17.20%
 </td>
 <td style="text-align:left;">
 optimisme.vie.
@@ -828,10 +828,10 @@ optimisme.vie.
 Positif
 </td>
 <td style="text-align:right;">
-181
+182
 </td>
 <td style="text-align:left;">
-8.34%
+8.30%
 </td>
 <td style="text-align:left;">
 optimisme.carriere.
@@ -871,10 +871,10 @@ rang
 Négatif
 </td>
 <td style="text-align:right;">
-17892
+18094
 </td>
 <td style="text-align:left;">
-55.2%
+55.3%
 </td>
 <td style="text-align:left;">
 NA
@@ -888,10 +888,10 @@ NA
 Négatif
 </td>
 <td style="text-align:right;">
-1943
+1964
 </td>
 <td style="text-align:left;">
-91.135%
+91.137%
 </td>
 <td style="text-align:left;">
 confiance.MESRI.
@@ -905,10 +905,10 @@ confiance.MESRI.
 Négatif
 </td>
 <td style="text-align:right;">
-1896
+1918
 </td>
 <td style="text-align:left;">
-88.847%
+88.961%
 </td>
 <td style="text-align:left;">
 confiance.Etat.
@@ -922,10 +922,10 @@ confiance.Etat.
 Négatif
 </td>
 <td style="text-align:right;">
-1598
+1615
 </td>
 <td style="text-align:left;">
-77.422%
+77.421%
 </td>
 <td style="text-align:left;">
 confiance.ANR.
@@ -939,7 +939,7 @@ confiance.ANR.
 Ni confiance, ni pas confiance
 </td>
 <td style="text-align:right;">
-7026
+7099
 </td>
 <td style="text-align:left;">
 21.7%
@@ -956,10 +956,10 @@ NA
 Ni confiance, ni pas confiance
 </td>
 <td style="text-align:right;">
-627
+637
 </td>
 <td style="text-align:left;">
-30.781%
+30.922%
 </td>
 <td style="text-align:left;">
 confiance.ParitairesLocales.
@@ -973,10 +973,10 @@ confiance.ParitairesLocales.
 Ni confiance, ni pas confiance
 </td>
 <td style="text-align:right;">
-621
+626
 </td>
 <td style="text-align:left;">
-30.561%
+30.477%
 </td>
 <td style="text-align:left;">
 confiance.Territoire.
@@ -990,10 +990,10 @@ confiance.Territoire.
 Ni confiance, ni pas confiance
 </td>
 <td style="text-align:right;">
-587
+593
 </td>
 <td style="text-align:left;">
-29.812%
+29.784%
 </td>
 <td style="text-align:left;">
 confiance.ONR.
@@ -1007,7 +1007,7 @@ confiance.ONR.
 Positif
 </td>
 <td style="text-align:right;">
-5390
+5445
 </td>
 <td style="text-align:left;">
 16.6%
@@ -1024,10 +1024,10 @@ NA
 Positif
 </td>
 <td style="text-align:right;">
-1069
+1081
 </td>
 <td style="text-align:left;">
-50.978%
+50.991%
 </td>
 <td style="text-align:left;">
 confiance.Dircomp.
@@ -1041,10 +1041,10 @@ confiance.Dircomp.
 Positif
 </td>
 <td style="text-align:right;">
-789
+795
 </td>
 <td style="text-align:left;">
-38.733%
+38.592%
 </td>
 <td style="text-align:left;">
 confiance.ParitairesLocales.
@@ -1058,10 +1058,10 @@ confiance.ParitairesLocales.
 Positif
 </td>
 <td style="text-align:right;">
-636
+641
 </td>
 <td style="text-align:left;">
-31.253%
+31.147%
 </td>
 <td style="text-align:left;">
 confiance.CNU.
@@ -1075,7 +1075,7 @@ confiance.CNU.
 Ne connait pas cette instance
 </td>
 <td style="text-align:right;">
-2089
+2111
 </td>
 <td style="text-align:left;">
 6.4%
@@ -1092,10 +1092,10 @@ NA
 Ne connait pas cette instance
 </td>
 <td style="text-align:right;">
-625
+632
 </td>
 <td style="text-align:left;">
-34.097%
+34.125%
 </td>
 <td style="text-align:left;">
 confiance.AUREF.
@@ -1109,10 +1109,10 @@ confiance.AUREF.
 Ne connait pas cette instance
 </td>
 <td style="text-align:right;">
-388
+391
 </td>
 <td style="text-align:left;">
-20.166%
+20.103%
 </td>
 <td style="text-align:left;">
 confiance.FU.
@@ -1126,10 +1126,10 @@ confiance.FU.
 Ne connait pas cette instance
 </td>
 <td style="text-align:right;">
-342
+346
 </td>
 <td style="text-align:left;">
-17.757%
+17.762%
 </td>
 <td style="text-align:left;">
 confiance.UDICE.
@@ -1169,10 +1169,10 @@ rang
 Négatif
 </td>
 <td style="text-align:right;">
-9618
+9729
 </td>
 <td style="text-align:left;">
-72.0%
+71.9%
 </td>
 <td style="text-align:left;">
 NA
@@ -1186,10 +1186,10 @@ NA
 Négatif
 </td>
 <td style="text-align:right;">
-1658
+1677
 </td>
 <td style="text-align:left;">
-85.157%
+85.170%
 </td>
 <td style="text-align:left;">
 reformes.LRU.
@@ -1203,10 +1203,10 @@ reformes.LRU.
 Négatif
 </td>
 <td style="text-align:right;">
-1657
+1676
 </td>
 <td style="text-align:left;">
-84.412%
+84.391%
 </td>
 <td style="text-align:left;">
 reformes.LPPR.
@@ -1220,10 +1220,10 @@ reformes.LPPR.
 Négatif
 </td>
 <td style="text-align:right;">
-1407
+1425
 </td>
 <td style="text-align:left;">
-73.091%
+73.152%
 </td>
 <td style="text-align:left;">
 reformes.LTF.
@@ -1237,7 +1237,7 @@ reformes.LTF.
 Ni positif, ni négatif
 </td>
 <td style="text-align:right;">
-1123
+1134
 </td>
 <td style="text-align:left;">
 8.4%
@@ -1254,10 +1254,10 @@ NA
 Ni positif, ni négatif
 </td>
 <td style="text-align:right;">
-201
+203
 </td>
 <td style="text-align:left;">
-10.590%
+10.573%
 </td>
 <td style="text-align:left;">
 reformes.LCAP.
@@ -1271,10 +1271,10 @@ reformes.LCAP.
 Ni positif, ni négatif
 </td>
 <td style="text-align:right;">
-188
+189
 </td>
 <td style="text-align:left;">
-10.206%
+10.139%
 </td>
 <td style="text-align:left;">
 reformes.LOLF.
@@ -1288,10 +1288,10 @@ reformes.LOLF.
 Ni positif, ni négatif
 </td>
 <td style="text-align:right;">
-187
+190
 </td>
 <td style="text-align:left;">
-9.842%
+9.886%
 </td>
 <td style="text-align:left;">
 reformes.ORE.
@@ -1305,10 +1305,10 @@ reformes.ORE.
 Positif
 </td>
 <td style="text-align:right;">
-450
+452
 </td>
 <td style="text-align:left;">
-3.4%
+3.3%
 </td>
 <td style="text-align:left;">
 NA
@@ -1322,10 +1322,10 @@ NA
 Positif
 </td>
 <td style="text-align:right;">
-102
+103
 </td>
 <td style="text-align:left;">
-5.196%
+5.186%
 </td>
 <td style="text-align:left;">
 reformes.LPPR.
@@ -1342,7 +1342,7 @@ Positif
 76
 </td>
 <td style="text-align:left;">
-4.000%
+3.954%
 </td>
 <td style="text-align:left;">
 reformes.ORE.
@@ -1359,7 +1359,7 @@ Positif
 62
 </td>
 <td style="text-align:left;">
-3.267%
+3.229%
 </td>
 <td style="text-align:left;">
 reformes.LCAP.
@@ -1373,7 +1373,7 @@ reformes.LCAP.
 Ne connait pas cette loi
 </td>
 <td style="text-align:right;">
-2175
+2207
 </td>
 <td style="text-align:left;">
 16.3%
@@ -1390,10 +1390,10 @@ NA
 Ne connait pas cette loi
 </td>
 <td style="text-align:right;">
-607
+617
 </td>
 <td style="text-align:left;">
-32.953%
+33.101%
 </td>
 <td style="text-align:left;">
 reformes.LOLF.
@@ -1407,10 +1407,10 @@ reformes.LOLF.
 Ne connait pas cette loi
 </td>
 <td style="text-align:right;">
-441
+447
 </td>
 <td style="text-align:left;">
-23.235%
+23.281%
 </td>
 <td style="text-align:left;">
 reformes.LCAP.
@@ -1424,10 +1424,10 @@ reformes.LCAP.
 Ne connait pas cette loi
 </td>
 <td style="text-align:right;">
-329
+333
 </td>
 <td style="text-align:left;">
-17.398%
+17.407%
 </td>
 <td style="text-align:left;">
 reformes.Fioraso.
@@ -1438,3 +1438,252 @@ reformes.Fioraso.
 </tr>
 </tbody>
 </table>
+
+### Etablissements
+
+- Nb etab : 114
+- Nb etab.other : 110
+- Nb univ : 68
+
+<details>
+<summary>
+Voir les données
+</summary>
+
+| etab                                                                                                                                                   | nb_reponses |
+|:-------------------------------------------------------------------------------------------------------------------------------------------------------|------------:|
+| NA                                                                                                                                                     |         533 |
+| Autre                                                                                                                                                  |         267 |
+| Université de Lorraine                                                                                                                                 |          82 |
+| Université de Paris                                                                                                                                    |          82 |
+| Université de Lille                                                                                                                                    |          79 |
+| Sorbonne Université                                                                                                                                    |          78 |
+| Université Paris-Saclay                                                                                                                                |          69 |
+| Université Grenoble Alpes                                                                                                                              |          67 |
+| Aix-Marseille Université                                                                                                                               |          64 |
+| Université Paris 1 - Panthéon Sorbonne                                                                                                                 |          48 |
+| Nantes Université                                                                                                                                      |          43 |
+| Université de Strasbourg                                                                                                                               |          42 |
+| École des hautes études en sciences sociales                                                                                                           |          41 |
+| Université Lumière - Lyon 2                                                                                                                            |          41 |
+| Université de Montpellier                                                                                                                              |          39 |
+| Université Paris Nanterre                                                                                                                              |          33 |
+| Université Paris 8 - Vincennes - Saint-Denis                                                                                                           |          32 |
+| Université Toulouse III - Paul Sabatier                                                                                                                |          31 |
+| Université Toulouse - Jean Jaurès                                                                                                                      |          31 |
+| Université de Bordeaux                                                                                                                                 |          31 |
+| Université Paris sciences et lettres                                                                                                                   |          29 |
+| Université de Rouen Normandie                                                                                                                          |          27 |
+| Université Rennes 2                                                                                                                                    |          26 |
+| Université Paris-Est Créteil                                                                                                                           |          26 |
+| Université Côte d’Azur                                                                                                                                 |          24 |
+| Université de Tours                                                                                                                                    |          22 |
+| Muséum national d’histoire naturelle                                                                                                                   |          22 |
+| Université Claude Bernard - Lyon 1                                                                                                                     |          21 |
+| Université Sorbonne Paris Nord                                                                                                                         |          19 |
+| Université de Reims Champagne-Ardenne                                                                                                                  |          19 |
+| Université de Versailles Saint-Quentin-en-Yvelines                                                                                                     |          18 |
+| Université de Bourgogne                                                                                                                                |          18 |
+| Université d’Angers                                                                                                                                    |          18 |
+| Université de Franche-Comté                                                                                                                            |          18 |
+| Université Jean Moulin - Lyon 3                                                                                                                        |          17 |
+| Université Sorbonne Nouvelle - Paris 3                                                                                                                 |          17 |
+| Université de Rennes 1                                                                                                                                 |          17 |
+| CY Cergy Paris Université                                                                                                                              |          16 |
+| Université Bordeaux Montaigne                                                                                                                          |          15 |
+| Institut national d’enseignement supérieur pour l’agriculture, l’alimentation et l’environnement                                                       |          14 |
+| Université de Poitiers                                                                                                                                 |          14 |
+| Université Clermont Auvergne                                                                                                                           |          14 |
+| Université de Picardie Jules-Verne                                                                                                                     |          14 |
+| Université Gustave Eiffel                                                                                                                              |          13 |
+| Institut polytechnique de Paris                                                                                                                        |          11 |
+| Université de Bretagne Occidentale                                                                                                                     |          11 |
+| Université de Caen Normandie                                                                                                                           |          10 |
+| Université de Pau et des Pays de l’Adour                                                                                                               |           9 |
+| Université de Limoges                                                                                                                                  |           9 |
+| Université de Haute-Alsace                                                                                                                             |           8 |
+| Institut national des sciences appliquées de Lyon                                                                                                      |           8 |
+| Université Jean Monnet                                                                                                                                 |           8 |
+| École normale supérieure de Lyon                                                                                                                       |           8 |
+| Conservatoire national des arts et métiers                                                                                                             |           8 |
+| Sciences Po                                                                                                                                            |           8 |
+| Université d’Orléans                                                                                                                                   |           7 |
+| Université Savoie Mont Blanc                                                                                                                           |           7 |
+| Université Paul-Valéry - Montpellier 3                                                                                                                 |           7 |
+| Toulouse INP                                                                                                                                           |           7 |
+| Sciences Po Bordeaux                                                                                                                                   |           7 |
+| Université d’Évry-Val-d’Essonne                                                                                                                        |           6 |
+| Université Toulouse Capitole                                                                                                                           |           5 |
+| Collège de France                                                                                                                                      |           5 |
+| La Rochelle Université                                                                                                                                 |           5 |
+| Institut Mines-Télécom, au périmètre des écoles IMT Atlantique, Lille Douai, Albi, Alès, Mines Saint-Étienne et Institut Mines-Télécom Business school |           5 |
+| Institut national des sciences appliquées de Toulouse                                                                                                  |           5 |
+| Université de Nîmes                                                                                                                                    |           5 |
+| Sciences Po Toulouse                                                                                                                                   |           5 |
+| Université Le Havre Normandie                                                                                                                          |           5 |
+| Université d’Artois                                                                                                                                    |           4 |
+| Institut national universitaire Jean-François Champollion                                                                                              |           4 |
+| Institut national des sciences appliquées de Rennes                                                                                                    |           4 |
+| Université de technologie de Compiègne                                                                                                                 |           4 |
+| Centrale Marseille                                                                                                                                     |           4 |
+| Institut national des sciences appliquées Centre Val de Loire                                                                                          |           4 |
+| Avignon Université                                                                                                                                     |           4 |
+| Université Panthéon-Assas                                                                                                                              |           4 |
+| Le Mans Université                                                                                                                                     |           3 |
+| Université du Littoral Côte d’Opale                                                                                                                    |           3 |
+| Institut national des langues et civilisations orientales                                                                                              |           3 |
+| Bordeaux INP                                                                                                                                           |           3 |
+| École nationale des sciences géographiques                                                                                                             |           3 |
+| Université Polytechnique Hauts-de-France                                                                                                               |           2 |
+| Arts et Métiers Sciences et Technologies                                                                                                               |           2 |
+| Université de Perpignan Via Domitia                                                                                                                    |           2 |
+| Centrale Lille Institut                                                                                                                                |           2 |
+| Université de Guyane                                                                                                                                   |           2 |
+| Université de Corse Pasquale Paoli                                                                                                                     |           2 |
+| Institut supérieur de l’aéronautique et de l’espace                                                                                                    |           2 |
+| Institut supérieur d’électronique de Paris                                                                                                             |           2 |
+| Université de Toulon                                                                                                                                   |           2 |
+| École nationale d’ingénieurs de Brest                                                                                                                  |           2 |
+| Sciences Po Lyon                                                                                                                                       |           2 |
+| Agrosup Dijon                                                                                                                                          |           1 |
+| Université Bretagne Sud                                                                                                                                |           1 |
+| École nationale d’ingénieurs de Tarbes                                                                                                                 |           1 |
+| Université de technologie de Troyes                                                                                                                    |           1 |
+| Université de technologie de Belfort-Montbéliard                                                                                                       |           1 |
+| École nationale supérieure d’architecture de Paris-La Villette                                                                                         |           1 |
+| Vet Agro Sup                                                                                                                                           |           1 |
+| Institut national des sciences appliquées de Rouen Normandie                                                                                           |           1 |
+| École nationale supérieure de formation de l’enseignement agricole                                                                                     |           1 |
+| Institut national supérieur de formation et de recherche pour l’éducation des jeunes handicapés et les enseignements adaptés                           |           1 |
+| École nationale supérieure d’informatique pour l’industrie et l’entreprise                                                                             |           1 |
+| Institut national du sport, de l’expertise et de la performance                                                                                        |           1 |
+| École nationale supérieure de chimie de Rennes                                                                                                         |           1 |
+| École nationale supérieure des sciences de l’information et des bibliothèques                                                                          |           1 |
+| École nationale des ponts et chaussées                                                                                                                 |           1 |
+| École des hautes études en santé publique                                                                                                              |           1 |
+| École nationale supérieure d’ingénieurs de Caen                                                                                                        |           1 |
+| Sciences Po Aix                                                                                                                                        |           1 |
+| IAE Paris - Sorbonne Business School                                                                                                                   |           1 |
+| Casa de Velázquez de Madrid                                                                                                                            |           1 |
+| Centrale Lyon                                                                                                                                          |           1 |
+
+</details>
+<details>
+<summary>
+Voir les données
+</summary>
+
+| etab.other.                                                              | nb_reponses |
+|:-------------------------------------------------------------------------|------------:|
+| NA                                                                       |        2216 |
+| cnrs                                                                     |          66 |
+| inserm                                                                   |          13 |
+| inrae                                                                    |           9 |
+| inria                                                                    |           9 |
+| ird                                                                      |           8 |
+| cea                                                                      |           7 |
+| cirad                                                                    |           6 |
+| ifremer                                                                  |           4 |
+| université paris cité                                                    |           4 |
+| ecole nationale supérieure d’architecture de nantes                      |           3 |
+| observatoire de paris                                                    |           3 |
+| cnrs                                                                     |           3 |
+| ined                                                                     |           3 |
+| école normale supérieure                                                 |           2 |
+| institut agro                                                            |           2 |
+| ird - institut de recherche pour le développement                        |           2 |
+| université paris cité                                                    |           2 |
+| institut de recherche pour le développement                              |           2 |
+| ecole normale supérieure                                                 |           2 |
+| université rennes 2                                                      |           2 |
+| campus condorcet                                                         |           2 |
+| mesr                                                                     |           2 |
+| ens paris                                                                |           2 |
+| centrale nantes                                                          |           1 |
+| la réunion                                                               |           1 |
+| anid au chili (postdoctorat à l’étranger))                               |           1 |
+| université lumière lyon2                                                 |           1 |
+| pas certaine que cela préserve l’anonymat                                |           1 |
+| espi                                                                     |           1 |
+| ehess                                                                    |           1 |
+| école nationale supérieure d’architecture de marseille                   |           1 |
+| inha                                                                     |           1 |
+| cnrs besançon                                                            |           1 |
+| ecole normale supérieure paris                                           |           1 |
+| institut pasteur                                                         |           1 |
+| université grenoble-alpes                                                |           1 |
+| ecole normale supérieure de paris                                        |           1 |
+| omp                                                                      |           1 |
+| station d’ecologie théorique et expérimentale                            |           1 |
+| université grenoble alpes                                                |           1 |
+| institu de recherche pour le développement                               |           1 |
+| lpsc-cnrs                                                                |           1 |
+| météo france                                                             |           1 |
+| cnrs (pas dans la liste ?)                                               |           1 |
+| non précisé (pas confiance)                                              |           1 |
+| université grenoble alpes - cnrs                                         |           1 |
+| esrf                                                                     |           1 |
+| inria - institut national de recherche en informatique et en automatique |           1 |
+| institut agro montpellier                                                |           1 |
+| inrap                                                                    |           1 |
+| enscm                                                                    |           1 |
+| ecole polytechnique                                                      |           1 |
+| université pari cité                                                     |           1 |
+| clermon auvergne inp                                                     |           1 |
+| isae-supaero                                                             |           1 |
+| inria grenoble / uga                                                     |           1 |
+| centrale supélec                                                         |           1 |
+| univ rennes                                                              |           1 |
+| institut national de la recherche en informatique et automatique (inria) |           1 |
+| cnrs!                                                                    |           1 |
+| inria sophia antipolis                                                   |           1 |
+| laas/cnrs                                                                |           1 |
+| anonymat                                                                 |           1 |
+| sciences po lille                                                        |           1 |
+| ens-psl                                                                  |           1 |
+| scuola superiore meridionale (université de naples, italie)              |           1 |
+| amue                                                                     |           1 |
+| intitut curie                                                            |           1 |
+| anonymat non garanti                                                     |           1 |
+| école normale supérieure (paris)                                         |           1 |
+| sorbonne université                                                      |           1 |
+| grenoble-inp                                                             |           1 |
+| grenoble inp                                                             |           1 |
+| centre national de la recherche scientifique                             |           1 |
+| ne souhaite pas repondre                                                 |           1 |
+| cea saclay                                                               |           1 |
+| cea list                                                                 |           1 |
+| université jean moulin lyon 3                                            |           1 |
+| enac                                                                     |           1 |
+| dauphine                                                                 |           1 |
+| ecole normale sup de paris                                               |           1 |
+| centralesupelec                                                          |           1 |
+| université de rennes                                                     |           1 |
+| labo cnrs en idf                                                         |           1 |
+| école d’économie de paris                                                |           1 |
+| espol                                                                    |           1 |
+| université catholique de louvain                                         |           1 |
+| université de barcelona                                                  |           1 |
+| epcc                                                                     |           1 |
+| campus condorcet                                                         |           1 |
+| mines paris                                                              |           1 |
+| institut national de la santé et de la recherche médicale (inserm)       |           1 |
+| etablissement public campus condorcet                                    |           1 |
+| campus condorcet humathèque                                              |           1 |
+| icm                                                                      |           1 |
+| école normale supérieure de paris (ens psl)                              |           1 |
+| ephe                                                                     |           1 |
+| institut de recherche pour le développement (ird)                        |           1 |
+| ens paris-saclay                                                         |           1 |
+| école nationale supérieure d’architecture de paris val de seine          |           1 |
+| inserm                                                                   |           1 |
+| cerfacs                                                                  |           1 |
+| université                                                               |           1 |
+| grenoble inp                                                             |           1 |
+| université gustave eiffel                                                |           1 |
+| institut des sciences biologiques cnrs                                   |           1 |
+| openedition                                                              |           1 |
+| etranger (flaunted de poste en france)                                   |           1 |
+| institut sophia agrobiotech (umr cnrs/inrae/univ cote d’azur             |           1 |
+
+</details>

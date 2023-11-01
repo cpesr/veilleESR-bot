@@ -251,3 +251,27 @@ resume("confiance") %>% slice_head(n=4,by=Réponse) %>% kableExtra::kable()
 resume("reformes") %>% slice_head(n=4,by=Réponse) %>% kableExtra::kable()
 ```
 
+### Etablissements
+
+- Nb etab : `r n_distinct(results$etab)`
+- Nb etab.other : `r n_distinct(str_to_lower(results$etab.other.))`
+- Nb univ : `r results %>% filter(str_detect(etab,"niversit")) %>% pull(etab) %>% n_distinct()`
+
+
+```{r etabs, results='asis'}
+results %>%
+  summarise(nb_reponses = n(), .by=etab) %>%
+  arrange(desc(nb_reponses)) %>%
+  spoiler_table(trim = Inf)
+```
+
+```{r etabs.o, results='asis'}
+results %>%
+  mutate(etab.other. = str_to_lower(etab.other.)) %>%
+  summarise(nb_reponses = n(), .by=etab.other.) %>%
+  arrange(desc(nb_reponses)) %>%
+  spoiler_table(trim = Inf)
+```
+
+
+
