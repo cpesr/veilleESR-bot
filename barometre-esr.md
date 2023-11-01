@@ -104,7 +104,7 @@ _Nombre de réponses_ : 2460 répondants ont rempli au moins la première partie
 \ 
 :::
 ::: {.col data-latex="{0.7\textwidth}"}
-__39% des opinions des répondants sur leurs conditions de travail sont positives, contre 42% qui sont négatives.__ Sont le mieux perçues les relations professionnelles avec les autres corps de métier (6% d'opinions positives) et les conditions de vie en général (56% d'opinions positives). Sont le plus mal perçues les conditions d'évolution de carrière (61% d'opinions négatives) et les conditions de travail relatives à l'administration (66% d'opinions négatives).
+__40% des opinions des répondants sur leurs conditions de travail sont positives, contre 42% qui sont négatives.__ Sont le mieux perçues les relations professionnelles avec les autres corps de métier (60% d'opinions positives) et les conditions de vie en général (56% d'opinions positives). Sont le plus mal perçues les conditions d'évolution de carrière (61% d'opinions négatives) et les conditions de travail relatives à l'administration (66% d'opinions négatives).
 :::
 ::::::
 
