@@ -401,8 +401,32 @@ Il en ressort des déceptions (_« J’ai été initialement favorable aux lois 
 ___« La dégradation de l’ESR n’est qu’un épiphénomène au vu de la catastrophe écologique en cours mais elle résulte du même aveuglement de nos gouvernants »___. Lorsqu'elle est mentionnée, la crise écologique surpasse les craintes propres à l'ESR, et participe à la défiance envers les gouvernants ainsi qu'à un certain découragemen (_« comme la planète est fichue, je dois avouer que même en ayant répondu à ce questionnaire, le sort de l’ESR n’est plus du tout ma priorité »_).
 
 
+## Expressions libres : contrôle par analyse automatique IA
 
-## Expressions libres : oservations sur le baromètre (I)
+Afin de contrôler les analyses précédentes, les outils OpenAI (chatGPT) ont été utilisés 
+pour former 8 groupes avec les phrases laissées en expressions libres, puis pour résumer ces phrases de façon synthétique. Le résultat suivant est donc hermétique aux biais des auteurs du baromètre.
+
+\scriptsize
+
+- Les répondants expriment leur frustration face à la dégradation continue du système français de recherche et d'enseignement supérieur. Ils attribuent cette dégradation à une politique de réduction des ressources financières et humaines, et à un financement mal orienté vers des projets "blingbling". Ils estiment que leur travail est de plus en plus entravé par des tâches administratives et une recherche constante de financement. 
+
+- Les répondants expriment un sentiment de frustration et de désillusion vis-à-vis de leur situation professionnelle. Ils évoquent un manque d'espoir pour l'amélioration de la situation dans la recherche, laissant certains dans l'attente de la retraite. Ils mentionnent également des difficultés spécifiques, comme la perte de reconnaissance pour certaines spécialités.
+
+- Les répondants expriment un sentiment d'épuisement et de frustration face à la dégradation de leurs conditions de travail. Ils dénoncent une précarité croissante, un sous-encadrement nuisible à la qualité de l'enseignement, une charge administrative écrasante et des procédures de plus en plus complexes. Certains ont subi des burn-outs et craignent pour leur santé mentale. 
+
+- Cet ensemble de phrases exprime le sentiment de frustration, de démotivation et d'abandon ressenti par un groupe d'enseignants-chercheurs. Ils sont préoccupés par le manque de soutien et de ressources pour la recherche et l'éducation dans le service public, conduisant à une baisse de la motivation du personnel et une diminution des inscriptions en doctorat. 
+
+- Cet ensemble de réflexions représente le ressenti d'enseignants-chercheurs face à leurs conditions de travail. Ils décrivent une situation épuisante et frustrante, marquée par une charge administrative et pédagogique lourde, des changements de règles constants et une absence de stabilité. Ils mentionnent également des cas de discrimination, des conflits d'intérêts, et des problèmes de gouvernance
+
+- Les répondants expriment leur frustration face à la bureaucratie croissante et aux dysfonctionnements administratifs dans le système d'enseignement supérieur et de recherche (ESR) français. Ils déplorent la perte de confiance et le climat délétère dans le milieu académique, imputant ces problèmes à des réformes néolibérales et à une culture de compétition individualiste. 
+
+- Les répondants expriment un fort mécontentement et pessimisme face à leur situation actuelle. Ils déplorent l'insuffisance des effectifs administratifs et enseignants, l'accroissement des tâches administratives, l'emploi croissant de vacataires et la fragilisation des équipes. Ils se sentent impuissants et isolés face aux réformes imposées, sans consultation.
+
+- Les répondants expriment leur frustration et leur insatisfaction face aux conditions de travail actuelles. Ils soulignent le manque d'opportunités de carrière, particulièrement en ce qui concerne l'obtention de postes de maître de conférences dans les villes de leur choix. Ils critiquent également les bas salaires par rapport à la charge de travail et aux responsabilités qu'ils assument. 
+
+
+
+## Expressions libres : observations sur le baromètre (I)
 
 \footnotesize
 
@@ -418,7 +442,10 @@ ___« Je comprends bien l’intention du questionnaire, mais il me manque une qu
 
 ___« Attention svp à l’anonymat »___. Les auteurs sont conscients des limites de l'anonymat, et mettent tout en œuvre pour le préserver au maximum. C'est par exemple la raison pour laquelle les extraits de témoignage ne sont pas reliés aux informations statutaires.
 
-## Expressions libres : oservations sur le baromètre (I)
+
+
+
+## Expressions libres : observations sur le baromètre (I)
 
 \footnotesize
 
@@ -438,7 +465,7 @@ ___« Le barème aurait pu aussi poser la question de la confiance vis à vis de
 ___« Parmi les réformes, vous auriez pu ajouter celle des IUT en BUT. Cette réforme a eu de douloureuses conséquences sur les équipes et le sens du métier. »___. Cette modification sera étudiée.
 
 
-## Expressions libres : oservations sur le baromètre (III)
+## Expressions libres : observations sur le baromètre (III)
 
 \footnotesize
 
