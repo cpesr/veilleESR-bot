@@ -365,7 +365,7 @@ Le score de chaque groupe est calculé comme la moyenne des réponses, en valeur
 
 ## Expressions libres : quelques choses ajoutées aux réponses (I)
 
-160 commentaires ont été laissées par les répondants à la question « Avez-vous quelque chose à ajouter aux réponses que vous avez fournies ? » et « Avez-vous des observations sur le baromètre lui-même ? ».
+84 commentaires ont été laissées par les répondants à la question « Avez-vous quelque chose à ajouter aux réponses que vous avez fournies ? ». Ils sont analysés dans la suite.
 
 \footnotesize
 
@@ -404,22 +404,23 @@ ___« La dégradation de l’ESR n’est qu’un épiphénomène au vu de la cat
 ## Expressions libres : contrôle par analyse automatique IA
 
 Afin de contrôler les analyses précédentes, les outils OpenAI (chatGPT) ont été utilisés 
-pour former 4 groupes avec les phrases laissées en expressions libres, puis pour résumer ces phrases de façon synthétique. Le résultat suivant est donc hermétique aux biais des auteurs du baromètre.
+pour résumer les expressions libres de façon synthétique. Le résultat suivant est donc hermétique aux biais des auteurs du baromètre.
 
-\scriptsize
 \footnotesize
 
-- Les participants à l'enquête expriment une profonde insatisfaction face à la dégradation du système d'enseignement supérieur et de recherche en France, attribuant cette détérioration à un manque de financement adéquat, un déséquilibre entre la compétition et la collaboration, et un manque de reconnaissance pour le développement de logiciels libres. Ils soulignent également l'effet néfaste de cette situation sur la motivation et la capacité des jeunes chercheurs à trouver un emploi dans le domaine. Plusieurs participants expriment leur frustration face à l'inefficacité des politiques actuelles et appellent à une réforme.
+Voici les points principaux qui ressortent de ces réponses à l'enquête sur l'enseignement supérieur et la recherche :
 
-- Les participants à l'enquête sur l'enseignement supérieur et la recherche expriment des préoccupations concernant la gestion des universités, y compris la discrimination, l'augmentation des responsabilités administratives, l'épuisement professionnel et le manque de stabilité. Ils critiquent également les salaires insuffisants, les difficultés à obtenir des postes permanents et le manque de démocratie dans la gestion des laboratoires. Les réformes récentes, notamment la mise en place du Bachelor Universitaire de Technologie (BUT) et la semestrialisation des emplois du temps, ainsi que l'impact de la COVID-19, sont également cités comme des sources de stress. Enfin, ils dénoncent le non renouvellement des postes d'enseignants-chercheurs et la précarisation du personnel.
+1. ___Les conditions de travail___ : Les répondants soulignent les conditions de travail difficiles, notamment en raison de la charge administrative, des changements de règles fréquents et de la surcharge de travail. Ils expriment également leur épuisement et le manque de soutien des collègues et de l'administration.
 
-- L'enquête sur l'enseignement supérieur et la recherche révèle un sentiment général de désillusion et de frustration parmi les personnels, lié à des défis tels que le manque de perspectives d'amélioration, les difficultés psychologiques dues à des conditions de travail en dégradation, l'impact négatif des réformes néolibérales et une hiérarchisation accrue. Des problèmes spécifiques sont également signalés, tels que la difficulté à postuler à des projets régionaux et le manque de reconnaissance pour certains domaines de spécialité.
+2. ___La précarité___ : Les répondants mentionnent la précarité des collègues sans poste, le manque d'opportunités d'emploi et la difficulté à obtenir un poste stable. Ils soulignent également les salaires bas et la dégradation de la qualité de l'administration publique.
 
-- L'enquête sur l'enseignement supérieur et la recherche révèle une insatisfaction croissante parmi les professionnels du secteur. Ils signalent un épuisement dû à une charge de travail accrue, à un manque de soutien administratif et à un climat de travail tendu. De plus, ils expriment leur frustration face à la précarité de l'emploi, aux dysfonctionnements administratifs et à la complexité croissante des procédures. Les conditions de travail difficiles et l'augmentation des obligations administratives ont entraîné un sentiment de mal-être, y compris des burn-out. Les répondants font également état d'une dégradation de la qualité de l'enseignement et de la recherche, ainsi que d'un manque de reconnaissance et de soutien de la part des autorités. Enfin, ils expriment leurs inquiétudes concernant l'avenir de l'enseignement supérieur et de la recherche en France.
-
+3. ___Les réformes___ : Les répondants critiquent les réformes du système d'enseignement supérieur et de recherche, les considérant comme des causes de dégradation. Ils mentionnent notamment la privatisation, la bureaucratisation excessive et les politiques de gestion basées sur des critères quantitatifs plutôt que qualitatifs.
 
 
 ## Expressions libres : observations sur le baromètre (I)
+
+84 commentaires ont été laissées par les répondants à la question « Avez-vous des observations sur le baromètre lui-même ? ». Ils sont analysés dans la suite.
+
 
 \footnotesize
 
@@ -433,14 +434,12 @@ ___«Proposition d'extension au expériences de discriminations, souffrance au t
 
 ___« Je comprends bien l’intention du questionnaire, mais il me manque une question sur ce que je pense de l’avenir pour les autres… »___. Cette inquiétude des autres est très fréquente dans les commentaires, mais la vision globale sur l'état de l'ESR doit émerger du nombre de réponses, chaque ne représentant qu'un cas individuel. C'est ce qui a par exemple permis d'identifier que les perceptions positives sont liées à des situations individuelles et exceptionnelles. 
 
-___« Attention svp à l’anonymat »___. Les auteurs sont conscients des limites de l'anonymat, et mettent tout en œuvre pour le préserver au maximum. C'est par exemple la raison pour laquelle les extraits de témoignage ne sont pas reliés aux informations statutaires.
-
-
-
 
 ## Expressions libres : observations sur le baromètre (I)
 
 \footnotesize
+
+___« Attention svp à l’anonymat »___. Les auteurs sont conscients des limites de l'anonymat, et mettent tout en œuvre pour le préserver au maximum. C'est par exemple la raison pour laquelle les extraits de témoignage ne sont pas reliés aux informations statutaires.
 
 
 ___« Rédigé par des enseignants-chercheurs et ça se voit ;) »___. Avant diffusion, le baromètre a été soumis pour commentaire à des collègues de tous statuts, EC comme BIATSS, titulaires comme précaires, permettant de l'adapter à toutes les perspectives. Les auteurs craignent que la diversité de la communauté rende impossible d'avoir des questions parfaitement adaptées à tous les répondants.
@@ -455,13 +454,11 @@ ___« Un peu trop général, il serait intéressant que les questions soient plu
 
 ___« Le barème aurait pu aussi poser la question de la confiance vis à vis des syndicats »___. La question s'est posée lors de l'élaboration du baromètre, mais s'est butée à la difficulté de mettre tous les syndicats dans une seule question malgré leur diversité. Les questions sur les instances paritaires donnent cependant un début de réponse, tout en contournant cette difficulté.
 
-___« Parmi les réformes, vous auriez pu ajouter celle des IUT en BUT. Cette réforme a eu de douloureuses conséquences sur les équipes et le sens du métier. »___. Cette modification sera étudiée.
-
-
 ## Expressions libres : observations sur le baromètre (III)
 
 \footnotesize
 
+___« Parmi les réformes, vous auriez pu ajouter celle des IUT en BUT. Cette réforme a eu de douloureuses conséquences sur les équipes et le sens du métier. »___. Cette modification sera étudiée.
 
 ___« Peut être rajoute la possibilité de répondre public prive mixte ».___ Vu le très faible nombre de réponses "privé", cela n'aurait pas changé grand chose, mais cette modification sera étudiée.
 
@@ -473,6 +470,8 @@ ___« Un grand merci de mener cette étude »___. Beaucoup de commentaires sont 
 
 \vfill
 
-```{r, out.width="20%", fig.align='center'}
+```{r, out.width="13%", fig.align='center'}
 knitr::include_graphics("files/589px-Knowledge-Reid-Highsmith.png")
 ```
+
+\hfill Contact : contact@cpesr.fr
