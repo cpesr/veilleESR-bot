@@ -1,0 +1,45 @@
+---
+title: "Expressions libres"
+author: "CPESR"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+options(dplyr.summarise.inform = FALSE)
+knitr::opts_chunk$set(fig.asp = 9/16, fig.retina = 2)
+
+library(tidyverse)
+library(ggcpesrthemes)
+theme_set(theme_cpesr())
+theme_cpesr_setup(authors = "Julien Gossa", source = "https://github.com/cpesr/RFC/")
+
+source("barometre-esr.R")
+```
+
+## Avez-vous des choses à ajouter ? 
+
+```{r elajout, results='asis'}
+t <- results %>% filter(!is.na(ELajout))
+for(i in seq(1,length(t))) { 
+  cat("\n### Témoignage ", i,"\n\n")
+  for(c in c('sexe','age','anciennete','metier','statut','categorie','discipline','etab','etab.other','responsabilites'))
+    cat("- ",c," : ",as.character(t[i,c]),"\n")
+
+  cat("\n\n",t[i,'ELajout'],"\n")
+}
+```
+
+## Propositions pour le baromètre
+
+```{r elbaro, results='asis'}
+t <- results %>% filter(!is.na(ELbarometre))
+for(i in seq(1,length(t))) { 
+  cat("\n### Témoignage ", i,"\n\n")
+  for(c in c('sexe','age','anciennete','metier','statut','categorie','discipline','responsabilite'))
+    cat("- ",c," : ",as.character(t[i,c]),"\n")
+
+  cat(t[i,'ELbarometre'],"\n")
+}
+```

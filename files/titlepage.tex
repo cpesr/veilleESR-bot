@@ -2,7 +2,7 @@
 \newcommand\titre{Baromètre \\ de l'Enseignement Supérieur \\ et de la Recherche}
 \newcommand\auteur{Julien Gossa}
 \newcommand\rentree{Edition 2023}
-\newcommand\ladate{Octobre 2023}
+\newcommand\ladate{Novembre 2023}
 \newcommand\reportid{baresr-2023-v1.0}
 
 \definecolor{royalblue(traditional)}{rgb}{0.0, 0.14, 0.4}
@@ -21,7 +21,7 @@
   \begin{tikzpicture}[overlay,remember picture]
 
   \coordinate (logo) at (current page.north west);
-  \coordinate (logoass) at (current page.south east);
+  \coordinate (logoass) at ($(logo) + (0,-1.2cm)$);
   \coordinate (title) at ($(current page.center) + (0,\titleY)$);
   \coordinate (author) at (current page.south east);
   
@@ -60,7 +60,7 @@
     [inner sep=0pt, anchor=center, align=center, font=\bfseries, scale=\titleS, align=center, color=royalblue(traditional)]  
     {\titre};
   
-  \node (nlogoass) [inner sep=5pt, anchor=south east, text width=3cm] at (logoass)
+  \node (nlogoass) [inner sep=5pt, anchor=north west, font=\footnotesize, text width=3cm] at (logoass)
     { En association avec
     \includegraphics[width=3cm]{files/TMN}};
 
