@@ -412,10 +412,12 @@ ___« Trop d’acronymes (certains me sont inconnus) et pas de version anglaise�
 
 ___« Un grand merci de mener cette étude »___. Beaucoup de commentaires sont reconnaissants de l'initiative du baromètre, ce qui peut indiquer un déficit d'attention de l'institution envers ses membres.
 
+La CPESR remercie chaleureusement les participants et participants à ce baromètre.
+
 \vfill
 
 
-\begin{center}\includegraphics[width=0.1\linewidth]{files/589px-Knowledge-Reid-Highsmith} \end{center}
+\begin{center}\includegraphics[width=0.07\linewidth]{files/589px-Knowledge-Reid-Highsmith} \end{center}
 
 \scriptsize
 
