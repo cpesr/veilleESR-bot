@@ -36,6 +36,7 @@ class Config:
             'mdconfig_url': "https://raw.githubusercontent.com/cpesr/veilleesr-bot/master/botconfig.md",
             'wk_path': get_wkpath(),
             'last_veille_bsky_id': "",
+            'last_recap_bsky_id': "",
             'last_veille_masto_id': "",
             'last_jorf': Config.now(),
             'last_recap': Config.now(),

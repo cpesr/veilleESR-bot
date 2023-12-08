@@ -125,12 +125,16 @@ def broadcast(vpost):
     apimasto.postVPost(vpost)
     if apitwitter: apitwitter.postVPost(vpost)
 
+def bskyrecap():
+    lrbi = apibsky.postRecap(config.get("last_recap_bsky_id"))
+    config.set("last_recap_bsky_id",lrbi)
 
 def main():
     parser = argparse.ArgumentParser(description='Bot twitter pour la cpesr')
     parser.add_argument('--veilleesr', dest='veilleesr', action="store_const", const=True, default=False,
                         help="Effectue la veille ESR")
-
+    parser.add_argument('--bskyrecap', dest='bskyrecap', action="store_const", const=True, default=False,
+                        help="Effectue le recap bluesky")
     parser.add_argument('--post', dest='post', action="store_const", const=True, default=False,
                         help="Poste le message configuré suivant")
     parser.add_argument('--datarand', dest='datarand', action="store_const", const=True, default=False,
@@ -154,6 +158,9 @@ def main():
     if args.veilleesr:
         veilleesr()
 
+    if args.bskyrecap:
+        bskyrecap()
+
     if args.post:
         ipost = config.set("ipost",(config.get("ipost")+1)%len(mdc['posts']))
         vpost = mdc['posts'][ipost]
@@ -165,6 +172,7 @@ def main():
         vpost = mdc['dataposts'][i]
         logger.info("Post data "+vpost['text'])
         broadcast(vpost)
+
 
     # if args.tweetmd is not None:
     #     dataTweets = mdconfig.get_datamd(args.tweetmd[0])

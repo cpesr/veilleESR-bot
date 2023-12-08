@@ -18,7 +18,8 @@ class APIBluesky():
         self.DID = ""
         self.USERNAME = username
         self.PASSWORD = password
-        self.followersDid = None
+        self.followsDid = None
+        self.config = self.loadConfig()
 
         resp = requests.post(
             self.ATP_HOST + "/xrpc/com.atproto.server.createSession",
@@ -37,6 +38,16 @@ class APIBluesky():
 
         self.DID = resp.json().get("did")
         # TODO DIDs expire shortly and need to be refreshed for any long-lived sessions
+
+    def loadConfig(self):
+        with open("config/bsconfig.json") as f:
+            self.config = json.load(f)
+        return self.config
+
+    def saveConfig(self):
+        with open("config/bsconfig.json","w") as f:
+            f.write(json.dumps(self.config, indent=4))
+
 
     def reinit(self):
         """Check if the session needs to be refreshed, and refresh if so."""
@@ -107,8 +118,6 @@ class APIBluesky():
     def getPostByUrl(self, url):
         """Get a post's HTTP response data when given the URL."""
 
-        headers = {"Authorization": "Bearer " + self.ATP_AUTH_TOKEN}
-
         username_of_person_in_link = url.split('/')[-3]
         if not "did:plc" in username_of_person_in_link:
             did_of_person_in_link = self.resolveHandle(username_of_person_in_link).json().get('did')
@@ -117,14 +126,20 @@ class APIBluesky():
 
         url_identifier = url.split('/')[-1] # the random stuff at the end, better hope there's no query params
 
-        uri = "at://{}/app.bsky.feed.post/{}".format(did_of_person_in_link, url_identifier)
+        return self.getPost(did_of_person_in_link, url_identifier)
+
+
+    def getPost(self, did, purl):
+        headers = {"Authorization": "Bearer " + self.ATP_AUTH_TOKEN}
+        uri = "at://{}/app.bsky.feed.post/{}".format(did, purl)
 
         resp = requests.get(
             self.ATP_HOST + "/xrpc/app.bsky.feed.getPosts?uris={}".format(uri),
             headers=headers
         )
+        resp.raise_for_status()
 
-        return resp
+        return json.loads(resp.content)['posts'][0]
 
     def uploadImage(self, image):
         if 'url' in image:
@@ -337,9 +352,9 @@ class APIBluesky():
         if username:
             did = self.resolveHandle(username).json().get("did")
 
-        if not self.followersDid:
-            self.followersDid = self.getFollowersDid()
-        if did in self.followersDid: return None
+        if not self.followsDid:
+            self.followsDid = self.getFollowsDid()
+        if did in self.followsDid: return None
 
 
         if not did:
@@ -386,8 +401,8 @@ class APIBluesky():
 
     def getFollowsDid(self):
         follows = self.getFollows()
-        followersDid = [ f['did'] for f in follows ]
-        return followersDid
+        followsDid = [ f['did'] for f in follows ]
+        return followsDid
 
     def unfollow(self):
         # TODO lots of code re-use. package everything into a API_ACTION class.
@@ -547,6 +562,7 @@ class APIBluesky():
         feed = self.getFeed('at://did:plc:ido6hzdau32ltop6fdhk7s7t/app.bsky.feed.generator/aaak6srraeqxm')
         posts = []
         hello = []
+        helpposts = []
         nposts = dict()
 
         for post in feed:
@@ -554,6 +570,7 @@ class APIBluesky():
 
             post = post['post']
             handle = post['author']['handle']
+
 
             posts.append({
                 'record':{'uri':post['uri'], 'cid':post['cid']},
@@ -564,6 +581,10 @@ class APIBluesky():
 
             if "HelloESR" in post['record']['text']:
                 hello.append({'handle':handle, 'did':post['author']['did']})
+
+            if "HelpESR" in post['record']['text']:
+                helpposts.append({'record':{'uri':post['uri'], 'cid':post['cid']}})
+
             try:
                 nposts[handle]['nposts'] += 1
             except:
@@ -573,20 +594,14 @@ class APIBluesky():
         nposts = sorted(nposts.values(), key=operator.itemgetter('nposts'), reverse=True)[0:toplength]
         popposts = sorted(posts, key=operator.itemgetter('popularity'), reverse=True)[0:toplength]
 
-        return {'hello':hello,'nposts':nposts,'popposts':popposts, 'last_uri':feed[0]['post']['uri']}
+        return {'hello':hello,'nposts':nposts,'popposts':popposts, 'helpposts':helpposts, 'last_uri':feed[0]['post']['uri']}
 
     def getNewCertifieds(self):
-        try:
-            with open("config/bscertifs.json") as f:
-                oldcertifieds = json.load(f)
-        except:
-            oldcertifieds = []
-
         follows = self.getFollows()
         certifieds = [ {'handle':f['handle'],'did':f['did']} for f in follows if "cpesr.fr" in f['handle'] ]
-        newcertifieds = [ c for c in certifieds if c['handle'] not in oldcertifieds ]
-        with open("config/bscertifs.json","w") as f:
-            f.write(json.dumps([c['handle'] for c in certifieds], indent=4))
+        newcertifieds = [ c for c in certifieds if c not in self.config['certifieds'] ]
+
+        self.config['certifieds'] = certifieds
 
         return(newcertifieds)
 
@@ -632,6 +647,10 @@ class APIBluesky():
             vthread.append({'text': "🏅 Posts les plus populaires\n",
                         'quote': poppost['record']})
 
+        for helppost in tops['helpposts']:
+            vthread.append({'text': "💬 Demande d'aide #HelpESR\n",
+                        'quote': helppost['record']})
+
         for hello in self.sliceHandles(tops['hello'],intro="👋 Bienvenue à :\n"):
             vthread.append({'text': hello['text'],
                             'facets': hello['facets']})
@@ -640,34 +659,53 @@ class APIBluesky():
             vthread.append({'text': certifs['text'],
                             'facets': certifs['facets']})
 
+        self.config['topposts'] += tops['popposts']
+        self.saveConfig()
+
         #return(vthread)
 
         self.postVThread(vthread)
 
-        return tops['last_uri']
+        return tops
 
 
 
-    def getPostThread(self, aturl, depth=15):
-
+    def getPostThread(self, aturl, depth=1):
         headers = {"Authorization": "Bearer " + self.ATP_AUTH_TOKEN}
         resp = requests.get(self.ATP_HOST + "/xrpc/app.bsky.feed.getPostThread", params={'uri':aturl, 'depth':depth}, headers=headers)
         resp.raise_for_status()
 
-        return(json.loads(resp.content)['thread'])
+        return json.loads(resp.content)['thread']
+
 
     def getVThread(self, post):
-        thread = self.getPostThread(post['uri'])
-        did = thread['post']['author']['did']
+        did = post['author']['did']
         vthread = []
+
+        thread = self.getPostThread(post['uri'],depth=2)
         while True:
-            try:
-                vthread.append(self.getVPost(thread['post']))
-                thread = thread['replies'][0]
-                if thread['post']['author']['did'] != did: break
-            except IndexError:
-                break
+            vthread.append(self.getVPost(thread['post']))
+            if 'replies' in thread:
+                nthread = None
+                for replie in thread['replies']:
+                    if replie['post']['author']['did'] == did:
+                        nthread = replie
+                        break
+                if nthread is None: break
+                thread = nthread
+            else:
+                thread = self.getPostThread(thread['post']['uri'],depth=2)
+
         return vthread
+
+
+    def threadToTxt(self, url):
+        post = self.getPostByUrl(url)
+        txt = post['record']['text']+"\n\n"
+        while 'reply' in post['record']:
+            post = self.getPostByUrl(post['record']['reply']['parent']['uri'])
+            txt = post['record']['text']+"\n\n"+txt
+        return txt
 
     def getDNSZone(self):
         follows = self.getFollows()
@@ -680,7 +718,7 @@ class APIBluesky():
         dnsz+='\n'
         for f in follows:
             if 'cpesr.fr' in f['handle']:
-                handle = f['handle'][0:-len('cpesr.fr')]
+                handle = f['handle'][0:-len('cpesr.fr')-1]
                 did = f['did']
                 dnsz+='_atproto.'+handle+'          IN TXT    "did='+did+'"\n'
         dnsz+='\n'
@@ -691,6 +729,8 @@ class APIBluesky():
                 dnsz+='_atproto.'+handle+'          IN TXT    "did='+did+'"\n'
 
         return(dnsz)
+
+
 
 
 #'at://did:plc:mf3wkwt3y7gj32dbunijoefg/app.bsky.feed.post/3kahszi5j7k2i'
@@ -713,6 +753,7 @@ def register(user, password, invcode, email):
 
 
 
+
 if __name__ == "__main__":
     # This code will only be executed if the script is run directly
     # login(os.environ.get("BSKY_USERNAME"), os.environ.get("BSKY_PASSWORD"))
@@ -724,8 +765,27 @@ if __name__ == "__main__":
     # print(dnsz)
 
     # lu = apibsky.getTops()
-    lu = apibsky.postRecap()
-    print(json.dumps(lu,indent=4))
+    # tops = apibsky.postRecap()
+    # print(json.dumps(tops,indent=4))
+    # print(json.dumps(tops["last_uri"],indent=4))
+
+    # nc = apibsky.getNewCertifieds()
+    # print(nc)
+
+    # txt = apibsky.threadToTxt("https://bsky.app/profile/mmdejantee.bsky.social/post/3kfdk5tttlw27")
+    # txt = apibsky.threadToTxt("https://bsky.app/profile/mmdejantee.bsky.social/post/3kfb5kil4hv2d")
+    # txt = apibsky.threadToTxt("https://bsky.app/profile/mmdejantee.bsky.social/post/3kf6mw44j5v2d")
+    # txt = apibsky.threadToTxt("https://bsky.app/profile/mmdejantee.bsky.social/post/3kffyhnue2t27")
+    # print(txt)
+
+    post = apibsky.getPostByUrl("https://bsky.app/profile/juliengossa.cpesr.fr/post/3kfxuwfqgto23")
+    #print(json.dumps(post,indent=4))
+    # thread = apibsky.getPostThread(post['uri'], depth=0)
+    # print(json.dumps(thread,indent=4))
+
+    vthread = apibsky.getVThread(post)
+    for p in vthread: print(p['text'])
+
 
     # headers = {"Authorization": "Bearer " + apibsky.ATP_AUTH_TOKEN}
     # resp = requests.get(apibsky.ATP_HOST + "/xrpc/app.bsky.graph.getFollows", params={'actor':"cpesr.bsky.social"}, headers=headers)

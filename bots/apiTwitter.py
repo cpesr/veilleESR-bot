@@ -110,9 +110,9 @@ class APITwitter:
         return vpost
 
     def postVPost(self, vpost, in_reply_to=None):
-        text = vpost['text']
-        if 'cardurl' in vpost:
-            text = text + "\n\n" + vpost['cardurl']
+        cardurl = ("\n\n" + vpost['cardurl']) if 'cardurl' in vpost else ""
+        maxtxtlen = 279 - len(cardurl)
+        text = vpost['text'][0:maxtxtlen] + cardurl
 
         media_ids = []
         if 'images' in vpost:
