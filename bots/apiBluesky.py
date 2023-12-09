@@ -40,7 +40,9 @@ class APIBluesky():
         # TODO DIDs expire shortly and need to be refreshed for any long-lived sessions
 
     def loadConfig(self):
-        with open("config/bsconfig.json") as f:
+        configfile = os.path.dirname(os.path.abspath(__file__)) + "/config/bsconfig.json"
+
+        with open(configfile) as f:
             self.config = json.load(f)
         return self.config
 
