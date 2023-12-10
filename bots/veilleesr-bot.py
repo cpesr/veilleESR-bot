@@ -126,8 +126,8 @@ def broadcast(vpost):
     if apitwitter: apitwitter.postVPost(vpost)
 
 def bskyrecap():
-    lrbi = apibsky.postRecap(config.get("last_recap_bsky_id"))
-    config.set("last_recap_bsky_id",lrbi)
+    tops = apibsky.postRecap(config.get("last_recap_bsky_id"))
+    config.set("last_recap_bsky_id",tops['last_uri'])
 
 def main():
     parser = argparse.ArgumentParser(description='Bot twitter pour la cpesr')

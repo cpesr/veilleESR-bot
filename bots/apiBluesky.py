@@ -664,9 +664,10 @@ class APIBluesky():
         self.config['topposts'] += tops['popposts']
         self.saveConfig()
 
-        #return(vthread)
+        #print(vthread)
 
         self.postVThread(vthread)
+
 
         return tops
 
