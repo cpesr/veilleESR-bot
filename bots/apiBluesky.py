@@ -684,19 +684,19 @@ class APIBluesky():
         did = post['author']['did']
         vthread = []
 
-        thread = self.getPostThread(post['uri'],depth=2)
         while True:
+            thread = self.getPostThread(post['uri'],depth=1)
             vthread.append(self.getVPost(thread['post']))
-            if 'replies' in thread:
-                nthread = None
-                for replie in thread['replies']:
-                    if replie['post']['author']['did'] == did:
-                        nthread = replie
-                        break
-                if nthread is None: break
-                thread = nthread
-            else:
-                thread = self.getPostThread(thread['post']['uri'],depth=2)
+
+            if 'replies' not in thread: break
+
+            post = None
+            for replie in thread['replies']:
+                if replie['post']['author']['did'] == did:
+                    post = replie['post']
+                    break
+
+            if post is None : break
 
         return vthread
 
@@ -786,7 +786,7 @@ if __name__ == "__main__":
     # print(json.dumps(thread,indent=4))
 
     vthread = apibsky.getVThread(post)
-    for p in vthread: print(p['text'])
+    for p in vthread: print(p['text']+"\n\n")
 
 
     # headers = {"Authorization": "Bearer " + apibsky.ATP_AUTH_TOKEN}
