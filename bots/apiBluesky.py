@@ -358,6 +358,7 @@ class APIBluesky():
             self.followsDid = self.getFollowsDid()
         if did in self.followsDid: return None
 
+        self.followsDid.append(did)
 
         if not did:
             # TODO better error in resolveHandle
@@ -554,9 +555,11 @@ class APIBluesky():
             if vpost['author'] != "cpesr.fr":
                 self.like(post)
                 self.repost(post)
-                self.follow(did=vpost['raw']['author']['did'])
+                if self.follow(did=vpost['raw']['author']['did']) is not None:
+                    self.addSubjectToList(self.config['url_list_esr'],vpost['raw']['author']['did'])
                 veille.append(vpost)
 
+        veille.reverse()
         return veille
 
 
@@ -598,9 +601,12 @@ class APIBluesky():
 
         return {'hello':hello,'nposts':nposts,'popposts':popposts, 'helpposts':helpposts, 'last_uri':feed[0]['post']['uri']}
 
-    def getNewCertifieds(self):
+    def getCertifieds(self):
         follows = self.getFollows()
-        certifieds = [ {'handle':f['handle'],'did':f['did']} for f in follows if "cpesr.fr" in f['handle'] ]
+        return [ {'handle':f['handle'],'did':f['did']} for f in follows if "cpesr.fr" in f['handle'] ]
+
+    def getNewCertifieds(self):
+        certifieds = self.getCertifieds()
         newcertifieds = [ c for c in certifieds if c not in self.config['certifieds'] ]
 
         self.config['certifieds'] = certifieds
@@ -636,6 +642,9 @@ class APIBluesky():
 
         tops = self.getTops(last_uri)
         newcertifieds = self.getNewCertifieds()
+
+        for did in [ c['did'] for c in newcertifieds ]:
+            self.addSubjectToList(self.config['url_list_cpesr'],did)
 
         vthread = []
         for npost in self.sliceHandles(tops['nposts'],intro=
@@ -733,12 +742,38 @@ class APIBluesky():
 
         return(dnsz)
 
+    def addSubjectToList(self,list_uri,subject_did):
+        timestamp = datetime.datetime.now(datetime.timezone.utc)
+        timestamp = timestamp.isoformat().replace('+00:00', 'Z')
+
+        headers = {"Authorization": "Bearer " + self.ATP_AUTH_TOKEN}
+
+        data = {
+            "collection": "app.bsky.graph.listitem",
+            "repo": "{}".format(self.DID),
+            "record": {
+                "$type": "app.bsky.graph.listitem",
+                "subject": subject_did,
+                "list": list_uri,
+                "createdAt": timestamp,
+            }
+        }
+
+
+        resp = requests.post(
+            self.ATP_HOST + "/xrpc/com.atproto.repo.createRecord",
+            json=data,
+            headers=headers
+        )
+
+
 
 
 
 #'at://did:plc:mf3wkwt3y7gj32dbunijoefg/app.bsky.feed.post/3kahszi5j7k2i'
 
 def register(user, password, invcode, email):
+
     data = {
         "email": email,
         "handle": user + ".bsky.social",
@@ -764,8 +799,8 @@ if __name__ == "__main__":
     # f = apibsky.getFollows()
     # print(f)
     # print(len(f))
-    # dnsz = apibsky.getDNSZone()
-    # print(dnsz)
+    #dnsz = apibsky.getDNSZone()
+    #print(dnsz)
 
     # lu = apibsky.getTops()
     # tops = apibsky.postRecap()
@@ -781,13 +816,20 @@ if __name__ == "__main__":
     # txt = apibsky.threadToTxt("https://bsky.app/profile/mmdejantee.bsky.social/post/3kffyhnue2t27")
     # print(txt)
 
-    post = apibsky.getPostByUrl("https://bsky.app/profile/juliengossa.cpesr.fr/post/3kfxuwfqgto23")
-    #print(json.dumps(post,indent=4))
+    # post = apibsky.getPostByUrl("https://bsky.app/profile/juliengossa.cpesr.fr/post/3kfxuwfqgto23")
+    # print(json.dumps(post,indent=4))
     # thread = apibsky.getPostThread(post['uri'], depth=0)
     # print(json.dumps(thread,indent=4))
 
-    vthread = apibsky.getVThread(post)
-    for p in vthread: print(p['text']+"\n\n")
+    #vthread = apibsky.getVThread(post)
+    # for p in vthread: print(p['text']+"\n\n")
+
+    # list_cpesr = 'at://did:plc:dsiqe4pszk5ldbjk66fyryjv/app.bsky.graph.list/3kgtylky36c2d'
+    # list_esr = 'at://did:plc:dsiqe4pszk5ldbjk66fyryjv/app.bsky.graph.list/3kgwftxoqkh2f'
+    # dids = apibsky.getFollowsDid()
+    # for did in dids:
+    #     apibsky.addSubjectToList(list_esr,did)
+
 
 
     # headers = {"Authorization": "Bearer " + apibsky.ATP_AUTH_TOKEN}
