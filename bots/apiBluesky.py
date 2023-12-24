@@ -19,6 +19,10 @@ class APIBluesky():
         self.USERNAME = username
         self.PASSWORD = password
         self.followsDid = None
+
+        self.configfile = os.path.dirname(os.path.abspath(__file__)) + "/config/bsconfig.json"
+        self.topfile = os.path.dirname(os.path.abspath(__file__)) + "/config/bstop.json"
+
         self.config = self.loadConfig()
 
         resp = requests.post(
@@ -40,14 +44,12 @@ class APIBluesky():
         # TODO DIDs expire shortly and need to be refreshed for any long-lived sessions
 
     def loadConfig(self):
-        configfile = os.path.dirname(os.path.abspath(__file__)) + "/config/bsconfig.json"
-
-        with open(configfile) as f:
+        with open(self.configfile) as f:
             self.config = json.load(f)
         return self.config
 
     def saveConfig(self):
-        with open("config/bsconfig.json","w") as f:
+        with open(self.configfile,"w") as f:
             f.write(json.dumps(self.config, indent=4))
 
 
@@ -564,7 +566,7 @@ class APIBluesky():
 
 
     def getTops(self, last_uri="", toplength = 5):
-        feed = self.getFeed('at://did:plc:ido6hzdau32ltop6fdhk7s7t/app.bsky.feed.generator/aaak6srraeqxm')
+        feed = self.getFeed(self.config['url_feed_VeilleESR'])
         posts = []
         hello = []
         helpposts = []
@@ -575,7 +577,6 @@ class APIBluesky():
 
             post = post['post']
             handle = post['author']['handle']
-
 
             posts.append({
                 'record':{'uri':post['uri'], 'cid':post['cid']},
