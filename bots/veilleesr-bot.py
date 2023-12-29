@@ -92,7 +92,7 @@ def veilleesr():
         except Exception as e:
             logger.error("Error posting vpost "+str(e))
 
-    if len(bsv) > 0: config.set('last_veille_bsky_id',bsv[0]['id'])
+    if len(bsv) > 0: config.set('last_veille_bsky_id',bsv[-1]['id'])
 
     logger.info("Veille on Mastodon since "+str(config.get('last_veille_masto_id')))
     mav = apimasto.getVeille(config.get('last_veille_masto_id'))
