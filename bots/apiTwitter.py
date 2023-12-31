@@ -35,7 +35,7 @@ pm = tweepy.streaming.urllib3.PoolManager()
 
 
 class APITwitter:
-    def __init__(self, consumer_key, consumer_secret, access_token, access_token_secret, bearer_token):
+    def __init__(self, consumer_key, consumer_secret, access_token, access_token_secret, bearer_token), test=True:
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.access_token = access_token

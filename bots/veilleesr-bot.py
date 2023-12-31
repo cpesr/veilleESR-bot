@@ -95,7 +95,11 @@ def veilleesr():
     if len(bsv) > 0: config.set('last_veille_bsky_id',bsv[-1]['id'])
 
     logger.info("Veille on Mastodon since "+str(config.get('last_veille_masto_id')))
-    mav = apimasto.getVeille(config.get('last_veille_masto_id'))
+    try:
+        mav = apimasto.getVeille(config.get('last_veille_masto_id'))
+    except Exception as e:
+        logger.error("Error veille on masto "+str(e))
+        mav = []
     for vpost in mav:
         try:
             apibsky.importVPost(vpost)

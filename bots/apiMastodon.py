@@ -58,7 +58,7 @@ def unshort_url(text):
 
 
 class APIMastodon:
-    def __init__(self, client_id, client_secret, access_token, api_base_url):
+    def __init__(self, client_id, client_secret, access_token, api_base_url, test=True):
         logger.info(f"Create mastodon api")
         self.api = Mastodon(
             client_id = client_id,
@@ -216,5 +216,5 @@ if __name__ == "__main__":
         config.get("MASTODON_BASE_URL")
         )
 
-    veille = apimasto.getVeille("111145255692617395")
+    veille = apimasto.getVeille("111669063673926276")
     print(json.dumps(veille, indent=2, default=str))

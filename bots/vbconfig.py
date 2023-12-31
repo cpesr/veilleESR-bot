@@ -53,6 +53,7 @@ class Config:
 
     def set(self,key,val):
         self.config[key] = val
+        self.save()
         return val
 
 
