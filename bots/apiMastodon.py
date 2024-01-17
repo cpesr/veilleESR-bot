@@ -36,7 +36,6 @@ import mdconfig
 from jorf import JORF
 
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 pm = urllib3.PoolManager()
@@ -67,6 +66,8 @@ class APIMastodon:
             api_base_url = api_base_url)
 
         self.user_id = self.api.me().id
+
+        self.test = test
 
 
     def getVPost(self, toot):
@@ -120,6 +121,10 @@ class APIMastodon:
         return veille
 
     def post(self, text):
+        if self.test:
+            logger.info("Masto fake post "+text)
+            return None
+
         try:
             self.api.status_post(text)
         except Exception as e:
@@ -140,6 +145,9 @@ class APIMastodon:
 
 
     def postVPost(self, vpost, in_reply_to=None, visibility="public"):
+        if self.test:
+            logger.info("Masto fake vpost \""+vpost['text'][0:50]+"...\"")
+            return "fakeid"
 
         text = vpost['text']
         if 'cardurl' in vpost:
@@ -167,41 +175,20 @@ class APIMastodon:
             irp = toot
 
     def importVPost(self, vpost):
-        tweet = self.api.status_post(
+        if self.test:
+            logger.info("Masto fake importvpost \""+vpost['text'][0:50]+"...\"")
+            return "fakeid"
+
+        toot = self.api.status_post(
             status="[#VeilleESR] "+vpost['card']['title']+"\n\n"+vpost['card']['url']+"\n\nVia "+vpost['url']
         )
 
 
-    def postTag(self, vthread):
-        logger.info(f"Post thread "+vthread[0]['url']+" on Mastodon")
-        return None
-
-        mid = None
-        tt[0].full_text = unshort_url(tt[0].full_text)+"\n\nPar "+tt[0].author.name+" @"+tt[0].author.screen_name+"@twitter.com"
-        for t in tt:
-            text = unshort_url(t.full_text)
-            media_ids = []
-            try:
-                for media in t.entities['media']:
-                    #urllib.request.urlretrieve(media['media_url'], "/tmp/t2m_media")
-                    #mm = self.mastodon.media_post("/tmp/t2m_media")
-                    img = pm.request("GET", media['media_url'], preload_content=False)
-                    mm = self.api.media_post(img, mime_type = img.headers['Content-Type'])
-                    media_ids.append(mm.id)
-                    img.release_conn()
-            except Exception:
-                pass
-
-            m = self.api.status_post(text, in_reply_to_id = mid, media_ids = media_ids)
-            mid = m.id
-
-        self.api.status_post("Post original :\nhttps://twitter.com/"+tt[0].author.screen_name+"/status/"+str(tt[0].id), in_reply_to_id = mid, visibility = "unlisted")
-
-    def postTagThreads(self, threads):
-        for tt in threads:
-            self.postTwitterThreadOnMastodon(tt)
-
     def deleteAllToots(self):
+        if self.test:
+            logger.info("Masto fake delete all toot")
+            return None
+
         for m in self.api.timeline():
             print(m.get("id"))
             self.api.status_delete(m.get("id"))

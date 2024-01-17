@@ -20,6 +20,8 @@ from random import randrange
 import time
 from os import path
 
+import traceback
+
 
 import vbconfig
 import mdconfig
@@ -39,40 +41,9 @@ mdc = mdconfig.get_mdconfig(config.get("mdconfig_url"))
 
 apitwitter = None
 apitwitter_jg = None
-try:
-    apitwitter = APITwitter(
-        config.get("TWITTER_CONSUMER_KEY"),
-        config.get("TWITTER_CONSUMER_SECRET"),
-        config.get("TWITTER_ACCESS_TOKEN"),
-        config.get("TWITTER_ACCESS_TOKEN_SECRET"),
-        config.get("TWITTER_BEARER_TOKEN")
-        )
-
-    apitwitter_jg = APITwitter(
-        config.get("TWITTERJG_CONSUMER_KEY"),
-        config.get("TWITTERJG_CONSUMER_SECRET"),
-        config.get("TWITTERJG_ACCESS_TOKEN"),
-        config.get("TWITTERJG_ACCESS_TOKEN_SECRET"),
-        config.get("TWITTERJG_BEARER_TOKEN")
-        )
-except Exception as e: logger.error(str(e))
-
-apimasto = APIMastodon(
-    config.get("MASTODON_ID"),
-    config.get("MASTODON_SECRET"),
-    config.get("MASTODON_ACCESS_TOKEN"),
-    config.get("MASTODON_BASE_URL")
-    )
-
-apimasto_jg = APIMastodon(
-    config.get("MASTODONJG_ID"),
-    config.get("MASTODONJG_SECRET"),
-    config.get("MASTODONJG_ACCESS_TOKEN"),
-    config.get("MASTODON_BASE_URL")
-    )
-
-logger.info("Create bluesky api")
-apibsky = APIBluesky(config.get("BSKY_USERNAME"),config.get("BSKY_PASSWORD"))
+apimasto = None
+apimasto_jg = None
+apibsky = None
 
 def veilleesr():
     logger.info("veilleesr")
@@ -91,6 +62,7 @@ def veilleesr():
                 if apitwitter: apitwitter.importVPost(vpost)
         except Exception as e:
             logger.error("Error posting vpost "+str(e))
+            traceback.print_exc()
 
     if len(bsv) > 0: config.set('last_veille_bsky_id',bsv[-1]['id'])
 
@@ -113,15 +85,24 @@ def postJorf(test=False):
     jorf = JORF(config.get("piste_client_id"),config.get("piste_client_secret"), config.get("wk_path"))
     jorf.get_sommaire(config.get("last_jorf"))
     joposts = jorf.get_joposts(False)
+    config.reset_last_jorf()
 
     if test:
         print(joposts)
-    else:
+        return None
+
+    try:
         apibsky.postVThread(joposts)
+    except:
+        logger.error("Error posting thread on BS")
+    try:
         apimasto.postVThread(joposts)
+    except:
+        logger.error("Error posting thread on Masto")
+    try:
         if apitwitter: apitwitter.postVThread(joposts)
-        #
-        config.reset_last_jorf()
+    except:
+        logger.error("Error posting thread on X")
 
 
 def broadcast(vpost):
@@ -156,6 +137,52 @@ def main():
 
 
     args = parser.parse_args()
+
+    global apitwitter
+    global apitwitter_jg
+    global apimasto
+    global apimasto_jg
+    global apibsky
+    config.test = args.test
+
+    try:
+        apitwitter = APITwitter(
+            config.get("TWITTER_CONSUMER_KEY"),
+            config.get("TWITTER_CONSUMER_SECRET"),
+            config.get("TWITTER_ACCESS_TOKEN"),
+            config.get("TWITTER_ACCESS_TOKEN_SECRET"),
+            config.get("TWITTER_BEARER_TOKEN"),
+            args.test
+            )
+
+        apitwitter_jg = APITwitter(
+            config.get("TWITTERJG_CONSUMER_KEY"),
+            config.get("TWITTERJG_CONSUMER_SECRET"),
+            config.get("TWITTERJG_ACCESS_TOKEN"),
+            config.get("TWITTERJG_ACCESS_TOKEN_SECRET"),
+            config.get("TWITTERJG_BEARER_TOKEN"),
+            args.test
+            )
+    except Exception as e: logger.error(str(e))
+
+    apimasto = APIMastodon(
+        config.get("MASTODON_ID"),
+        config.get("MASTODON_SECRET"),
+        config.get("MASTODON_ACCESS_TOKEN"),
+        config.get("MASTODON_BASE_URL"),
+        args.test
+        )
+
+    apimasto_jg = APIMastodon(
+        config.get("MASTODONJG_ID"),
+        config.get("MASTODONJG_SECRET"),
+        config.get("MASTODONJG_ACCESS_TOKEN"),
+        config.get("MASTODON_BASE_URL"),
+        args.test
+        )
+
+    logger.info("Create bluesky api")
+    apibsky = APIBluesky(config.get("BSKY_USERNAME"),config.get("BSKY_PASSWORD"),args.test)
 
 
     if args.veilleesr:

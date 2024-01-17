@@ -31,7 +31,7 @@ class Config:
 
     configfile = os.path.dirname(os.path.abspath(__file__)) + "/config/config.json"
 
-    def __init__(self):
+    def __init__(self, test=True):
         self.config = {
             'mdconfig_url': "https://raw.githubusercontent.com/cpesr/veilleesr-bot/master/botconfig.md",
             'wk_path': get_wkpath(),
@@ -41,6 +41,8 @@ class Config:
             'last_jorf': Config.now(),
             'last_recap': Config.now(),
             'ipost': 0 }
+
+        self.test=test
 
     def get(self,key):
         try:
@@ -67,8 +69,8 @@ class Config:
         }
 
     @staticmethod
-    def load():
-        config = Config()
+    def load(test=True):
+        config = Config(test)
         try:
             with open(Config.configfile,"r") as sf:
                 config.config = json.load(sf)
@@ -81,6 +83,10 @@ class Config:
         return config
 
     def save(self):
+        if self.test:
+            logger.debug("Config save")
+            return None
+
         if not os.path.exists(os.path.dirname(self.configfile)):
             os.makedirs(os.path.dirname(self.configfile))
         with open(self.configfile,"w") as sf:

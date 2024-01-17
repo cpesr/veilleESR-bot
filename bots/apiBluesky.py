@@ -63,6 +63,10 @@ class APIBluesky():
 
 
     def doOnPost(self, action, post):
+        if self.test:
+            logger.info("BS : fake "+action+" "+post['uri'])
+            return None
+
         timestamp = datetime.datetime.now(datetime.timezone.utc)
         timestamp = timestamp.isoformat().replace('+00:00', 'Z')
 
@@ -169,6 +173,10 @@ class APIBluesky():
     def postVPost(self, vpost, reply_to=None):
         """Post a post."""
 
+        if self.test:
+            logger.info("BS : fake post \""+vpost['text'][0:50]+"...\"")
+            return { 'uri':'fake', 'cid':'fake' }
+
         timestamp = datetime.datetime.now(datetime.timezone.utc)
         timestamp = timestamp.isoformat().replace('+00:00', 'Z')
 
@@ -267,15 +275,14 @@ class APIBluesky():
         )
         # print(resp.content)
         resp.raise_for_status()
-        return resp
+        return json.loads(resp.content)
 
     def postVThread(self, vthread):
         rt = None
         for vpost in vthread:
             # img = vpost.pop('images')
             # print(json.dumps(vpost,indent=2))
-            resp = self.postVPost(vpost, reply_to = rt)
-            post = json.loads(resp.content)
+            post = self.postVPost(vpost, reply_to = rt)
             if not rt:
                 root = {'uri':post['uri'], 'cid':post['cid']}
             parent = {'uri':post['uri'], 'cid':post['cid']}
@@ -577,7 +584,7 @@ class APIBluesky():
             veille.append(vpost)
 
         veille.reverse()
-        self.updateTopVeille(veille)
+        self.updateTops(veille)
         return veille
 
     def getPostDateYM(self,post):
@@ -605,6 +612,7 @@ class APIBluesky():
         feed = self.getFeed(self.config['url_feed_'+top+'_top'],limit)
         for post in feed:
             date = self.getPostDateYM(post)
+            if date not in self.top: self.top[date] = {'help':[],'hello':[],'authors':{}}
             if top not in self.top[date]: self.top[date][top] = {}
             self.top[date][top][post['uri']] = post['likeCount']+post['repostCount']
 
@@ -849,9 +857,11 @@ def register(user, password, invcode, email):
 
 
 if __name__ == "__main__":
-    # This code will only be executed if the script is run directly
-    # login(os.environ.get("BSKY_USERNAME"), os.environ.get("BSKY_PASSWORD"))
     apibsky = APIBluesky(os.environ.get("BSKY_USERNAME"), os.environ.get("BSKY_PASSWORD"), test=True)
+
+    ## DNSZone
+    dns = apibsky.getDNSZone()
+    print(dns)
 
     ## Test getList
     # items = apibsky.getList(apibsky.config['url_list_esr'])
@@ -866,8 +876,8 @@ if __name__ == "__main__":
     # apibsky.updateTops(v)
 
     ## Test recap
-    vt = apibsky.postRecap("2023-12")
-    for p in vt: print(str(p)+"\n\n")
+    # vt = apibsky.postRecap("2023-12")
+    # for p in vt: print(str(p)+"\n\n")
 
     ## Test getProfiles
     # l = apibsky.getList(apibsky.config["url_list_esr"])
