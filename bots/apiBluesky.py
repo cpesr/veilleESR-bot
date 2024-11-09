@@ -580,7 +580,8 @@ class APIBluesky():
                 self.like(post)
                 self.repost(post)
                 if self.follow(did=vpost['raw']['author']['did']) is not None:
-                    self.addSubjectToList(self.config['url_list_esr'],vpost['raw']['author']['did'])
+                    if "#HelloESR" in vpost['raw']['record']['text']:
+                        self.addSubjectToList(self.config['url_list_esr'],vpost['raw']['author']['did'])
             veille.append(vpost)
 
         veille.reverse()
