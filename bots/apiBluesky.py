@@ -289,7 +289,7 @@ class APIBluesky():
             rt = {'root':root, 'parent':parent}
 
     def importVPost(self, vpost):
-        text = "[#VeilleESR] "+vpost['card']['title']+"\n\nVia "+vpost['url']
+        text = "[ #VeilleESR ] "+vpost['card']['title']+"\n\nVia "+vpost['url']
         start = bytes(text,encoding='utf-8').find(bytes(vpost['url'],encoding='utf-8'))
         end = start + len(bytes(vpost['url'],encoding='utf-8'))
         ipost = {
@@ -570,7 +570,7 @@ class APIBluesky():
         return post['uri'].replace("at://","https://bsky.app/profile/").replace("app.bsky.feed.post","post")
 
     def getVeille(self, last_uri = ""):
-        feed = self.getFeed('at://did:plc:ido6hzdau32ltop6fdhk7s7t/app.bsky.feed.generator/aaak6srraeqxm', last_uri=last_uri)
+        feed = self.getFeed('at://did:plc:ido6hzdau32ltop6fdhk7s7t/app.bsky.feed.generator/aaakuqgof6n5i', last_uri=last_uri)
 
         veille = []
         for post in feed:
