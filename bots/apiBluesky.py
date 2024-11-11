@@ -570,7 +570,7 @@ class APIBluesky():
         return post['uri'].replace("at://","https://bsky.app/profile/").replace("app.bsky.feed.post","post")
 
     def getVeille(self, last_uri = ""):
-        feed = self.getFeed('at://did:plc:ido6hzdau32ltop6fdhk7s7t/app.bsky.feed.generator/aaakuqgof6n5i', last_uri=last_uri)
+        feed = self.getFeed('at://did:plc:dsiqe4pszk5ldbjk66fyryjv/app.bsky.feed.generator/aaakuqgof6n5i', last_uri=last_uri)
 
         veille = []
         for post in feed:
