@@ -113,6 +113,11 @@ def broadcast(vpost):
 def bskyrecap():
     tops = apibsky.postRecap()
 
+def bskydnszone():
+    dnsz = apibsky.getDNSZone()
+    print(dnsz)
+
+
 def main():
     parser = argparse.ArgumentParser(description='Bot twitter pour la cpesr')
     parser.add_argument('--veilleesr', dest='veilleesr', action="store_const", const=True, default=False,
@@ -126,10 +131,15 @@ def main():
     # parser.add_argument('--postmd', dest='postmd', nargs=1,
     #                     metavar='data_md_url',
     #                     help="Poste tous les graphiques d'un md dans un thread")
+
     parser.add_argument('--jorf', dest='jorf', action="store_const", const=True, default=False,
                         help="Tweete le dernier JO")
     parser.add_argument('--jorfrecap', dest='jorfrecap', action="store_const", const=True, default=False,
                         help="Tweete un reécapitulatif des derniers JO")
+
+    parser.add_argument('--bskydnszone', dest='bskydnszone', action="store_const", const=True, default=False,
+                        help="Obtient la zone DNS pour les certification bsky")
+
     parser.add_argument('--createconfig', dest='createconfig', action="store_const", const=True, default=False,
                         help="Crée le fichier de configuration")
     parser.add_argument('--test', dest='test', action="store_const", const=True, default=False,
@@ -229,6 +239,8 @@ def main():
     if args.jorf:
         postJorf(test=args.test)
 
+    if args.bskydnszone:
+        bskydnszone()
 
     # if args.jorfrecap:
         # twid = self.jorfTweeter(self.config.last_recap, recap=True)

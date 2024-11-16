@@ -61,6 +61,13 @@ class APIBluesky():
         with open(self.topfile,"w") as f:
             f.write(json.dumps(self.top, indent=4))
 
+    def parseURI(self, uri):
+        parts = uri.split("/")
+        return {
+            "repo": parts[2],
+            "collection": parts[3],
+            "rkey": parts[4]
+        }
 
     def doOnPost(self, action, post):
         if self.test:
@@ -301,7 +308,19 @@ class APIBluesky():
         }
         self.postVPost(ipost)
 
-    def deletePost(self, did,rkey):
+
+    def deleteRecord(elf, uri):
+        headers = {"Authorization": "Bearer " + self.ATP_AUTH_TOKEN}
+        data = self.parseURI(uri)
+        resp = requests.post(
+            self.ATP_HOST + "/xrpc/com.atproto.repo.deleteRecord",
+            json = data,
+            headers=headers
+        )
+        return resp
+
+
+    def deletePost(self, did, rkey):
         # rkey: post slug
         # i.e. /profile/foo.bsky.social/post/AAAA
         # rkey is AAAA
@@ -570,7 +589,7 @@ class APIBluesky():
         return post['uri'].replace("at://","https://bsky.app/profile/").replace("app.bsky.feed.post","post")
 
     def getVeille(self, last_uri = ""):
-        feed = self.getFeed('at://did:plc:dsiqe4pszk5ldbjk66fyryjv/app.bsky.feed.generator/aaakuqgof6n5i', last_uri=last_uri)
+        feed = self.getFeed(self.config['url_feed_VeilleESR'], last_uri=last_uri)
 
         veille = []
         for post in feed:
@@ -580,8 +599,9 @@ class APIBluesky():
                 self.like(post)
                 self.repost(post)
                 if self.follow(did=vpost['raw']['author']['did']) is not None:
-                    if "#HelloESR" in vpost['raw']['record']['text']:
-                        self.addSubjectToList(self.config['url_list_esr'],vpost['raw']['author']['did'])
+                    self.addSubjectToList(self.config['url_list_esr'],vpost['raw']['author']['did'])
+                    if "helloesr" in vpost['raw']['record']['text'].lower():
+                        self.addSubjectToList(self.config['url_list_pack'],vpost['raw']['author']['did'])
             veille.append(vpost)
 
         veille.reverse()
@@ -761,7 +781,6 @@ class APIBluesky():
 
         return vthread
 
-
     def threadToTxt(self, url):
         post = self.getPostByUrl(url)
         txt = post['record']['text']+"\n\n"
@@ -773,23 +792,14 @@ class APIBluesky():
     def getDNSZone(self):
         follows = self.getFollows()
         dnsz=""
-        for f in follows:
-            if 'handle.invalid' in f['handle']:
-                handle = f['displayName']
-                did = f['did']
-                dnsz+='_atproto.'+handle+'          IN TXT    "did='+did+'"\n'
-        dnsz+='\n'
-        for f in follows:
-            if 'cpesr.fr' in f['handle']:
-                handle = f['handle'][0:-len('cpesr.fr')-1]
-                did = f['did']
-                dnsz+='_atproto.'+handle+'          IN TXT    "did='+did+'"\n'
-        dnsz+='\n'
-        for f in follows:
-            if 'bsky.social' in f['handle']:
-                handle = f['handle'][0:-12]
-                did = f['did']
-                dnsz+='_atproto.'+handle+'          IN TXT    "did='+did+'"\n'
+
+        handles = \
+            { f['did']:f['handle'].split(".")[0] for f in follows if 'cpesr.fr' in f['handle'] } | \
+            { f['did']:f['handle'].split(".")[0] for f in follows if 'bsky.social' in f['handle'] }
+            #{ f['did']:f['displayName'] for f in follows if 'handle.invalid' in f['handle'] } | \
+
+        for did in handles:
+            dnsz+='_atproto.'+handles[did].ljust(20," ")+' IN TXT "did='+did+'"\n'
 
         return(dnsz)
 
@@ -831,38 +841,40 @@ class APIBluesky():
             headers=headers
         )
 
+        return resp
+
+    def removeSubjectFromList(self, did, rkey):
+        app.bsky.graph.listitem
 
 
+    def updateStarterPack(self):
+        headers = {"Authorization": "Bearer " + self.ATP_AUTH_TOKEN}
 
+        resp = requests.get(apibsky.ATP_HOST + "/xrpc/app.bsky.graph.getStarterPack", params={'starterPack':self.config["url_starterpack"]}, headers=headers)
+        jresp = json.loads(resp.content)
+        url_list_pack = jresp['starterPack']['record']['list']
+        print(url_list_pack)
 
-#'at://did:plc:mf3wkwt3y7gj32dbunijoefg/app.bsky.feed.post/3kahszi5j7k2i'
+        list_pack = self.getList(url_list_pack)
+        did_list_pack = [ l['subject']['did'] for l in list_pack ]
 
-def register(user, password, invcode, email):
-
-    data = {
-        "email": email,
-        "handle": user + ".bsky.social",
-        "inviteCode": invcode,
-        "password": password,
-    }
-
-    resp = requests.post(
-        # don't use self.ATP_HOST here because you can't instantiate a session if you haven't registered an account yet
-        "https://bsky.social/xrpc/com.atproto.server.createAccount",
-        json = data,
-    )
-
-    return resp
-
-
-
+        dids = self.getFollowsDid()
+        for did in dids:
+            print(did)            
+            if did in did_list_pack: continue
+            resp = self.addSubjectToList(url_list_pack, did)
+            print(resp.content)
 
 if __name__ == "__main__":
     apibsky = APIBluesky(os.environ.get("BSKY_USERNAME"), os.environ.get("BSKY_PASSWORD"), test=True)
 
+    apibsky.updateStarterPack()
+
     ## DNSZone
-    dns = apibsky.getDNSZone()
-    print(dns)
+    # dns = apibsky.getDNSZone()
+    # print(dns)
+
+    
 
     ## Test getList
     # items = apibsky.getList(apibsky.config['url_list_esr'])
