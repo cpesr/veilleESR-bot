@@ -1,5 +1,5 @@
 0 7 * * * root /usr/local/bin/python3 /bots/veilleesr-bot.py --jorf  >> /var/log/cron.log  2>&1
 # 0 1 * * 1 root /usr/local/bin/python3 /bots/veilleesr-bot.py --jorfrecap  >> /var/log/cron.log  2>&1
 0 13 * * * root /usr/local/bin/python3 /bots/veilleesr-bot.py --veilleesr --datarand --jorf >> /var/log/cron.log  2>&1
-0 14 * * 0 root /usr/local/bin/python3 /bots/veilleesr-bot.py --bskyrecap >> /var/log/cron.log  2>&1
+0 14 1 * * root /usr/local/bin/python3 /bots/veilleesr-bot.py --bskyrecap >> /var/log/cron.log  2>&1
 #

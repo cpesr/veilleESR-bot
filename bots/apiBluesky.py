@@ -668,8 +668,6 @@ class APIBluesky():
         help = self.getUriCid(top['help'])
 
         newcertifieds = self.getNewCertifieds()
-        for did in [ c['did'] for c in newcertifieds ]:
-            self.addSubjectToList(self.config['url_list_cpesr'],did)
 
         vthread = []
         for post in self.sliceHandles(authors, intro=
@@ -701,6 +699,11 @@ class APIBluesky():
 
         if not self.test:
             self.postVThread(vthread)
+        else:
+            print(json.dumps(vthread,indent=2))
+
+        for did in [ c['did'] for c in newcertifieds ]:
+            self.addSubjectToList(self.config['url_list_cpesr'],did)
 
         return vthread
 
@@ -740,6 +743,7 @@ class APIBluesky():
         facets=[]
         end = 0
         for author in authors:
+            if author['handle'] == "juliengossa.cpesr.fr": continue
             if end+len(author['handle'])+4>maxlength:
                 slices.append({'text':s,'facets':facets})
                 s=intro
@@ -842,9 +846,6 @@ class APIBluesky():
         )
 
         return resp
-
-    def removeSubjectFromList(self, did, rkey):
-        app.bsky.graph.listitem
 
 
     def updateStarterPack(self):
