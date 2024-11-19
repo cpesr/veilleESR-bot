@@ -600,7 +600,7 @@ class APIBluesky():
                 self.repost(post)
                 if self.follow(did=vpost['raw']['author']['did']) is not None:
                     self.addSubjectToList(self.config['url_list_esr'],vpost['raw']['author']['did'])
-                    if "helloesr" in vpost['raw']['record']['text'].lower():
+                    if "helloesr" in vpost['text'].lower():
                         self.addSubjectToList(self.config['url_list_pack'],vpost['raw']['author']['did'])
             veille.append(vpost)
 

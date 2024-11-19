@@ -57,6 +57,7 @@ def veilleesr():
                 apimasto_jg.postVThread(vthread)
                 if apitwitter_jg: apitwitter_jg.postVThread(vthread)
             else:
+                if "#veilleesr" not in vpost['text'].lower(): continue
                 if not vpost['card']: continue
                 apimasto.importVPost(vpost)
                 if apitwitter: apitwitter.importVPost(vpost)
