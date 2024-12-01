@@ -8,6 +8,8 @@ import json
 from bs4 import BeautifulSoup
 import logging
 
+import vbconfig
+
 logger = logging.getLogger()
 
 class APIBluesky():
@@ -438,7 +440,7 @@ class APIBluesky():
         while(len(ids)>0):
             subids = ids[0:24]
             ids = ids[25:]
-
+            print(subids)
             resp = requests.get(
                 self.ATP_HOST + "/xrpc/app.bsky.actor.getProfiles?actors",
                 params = {'actors':subids},
@@ -446,6 +448,7 @@ class APIBluesky():
             )
             resp.raise_for_status()
             profiles += json.loads(resp.content)['profiles']
+            print("ok")
 
         return profiles
 
@@ -670,7 +673,7 @@ class APIBluesky():
         newcertifieds = self.getNewCertifieds()
 
         vthread = []
-        for post in self.sliceHandles(authors, intro=
+        for post in self.sliceHandles(dids=authors, intro=
             "📣 Recap du mois #VeilleESR \n\n"+
             "🫶 Contributions les plus actives :\n"):
             vthread.append({'text': post['text'],
@@ -689,11 +692,11 @@ class APIBluesky():
             vthread.append({'text': "💬 Demande d'aide #HelpESR\n",
                         'quote': post})
 
-        for hello in self.sliceHandles(hellos,intro="👋 Bienvenue à :\n"):
+        for hello in self.sliceHandles(dids=hellos,intro="👋 Bienvenue à :\n"):
             vthread.append({'text': hello['text'],
                             'facets': hello['facets']})
 
-        for certifs in self.sliceHandles(newcertifieds,intro="🧑‍🏫 Nouvelles certifications :\n"):
+        for certifs in self.sliceHandles(authors=newcertifieds,intro="🧑‍🏫 Nouvelles certifications :\n"):
             vthread.append({'text': certifs['text'],
                             'facets': certifs['facets']})
 
@@ -736,8 +739,8 @@ class APIBluesky():
 
         return(newcertifieds)
 
-    def sliceHandles(self, dids, intro="", maxlength=290):
-        authors = self.getProfiles(dids)
+    def sliceHandles(self, dids=None, authors=None, intro="", maxlength=290):
+        if authors is None: authors = self.getProfiles(dids)
         slices=[]
         s=intro
         facets=[]
@@ -859,6 +862,8 @@ class APIBluesky():
         list_pack = self.getList(url_list_pack)
         did_list_pack = [ l['subject']['did'] for l in list_pack ]
 
+        print("Taille de la liste : "+str(len(did_list_pack)))
+
         dids = self.getFollowsDid()
         for did in dids:
             print(did)            
@@ -867,16 +872,17 @@ class APIBluesky():
             print(resp.content)
 
 if __name__ == "__main__":
-    apibsky = APIBluesky(os.environ.get("BSKY_USERNAME"), os.environ.get("BSKY_PASSWORD"), test=True)
+    config = vbconfig.Config.load()
+    apibsky = APIBluesky(config.get("BSKY_USERNAME"),config.get("BSKY_PASSWORD"),test=True)
 
-    apibsky.updateStarterPack()
+    ## Update starterpack
+    # apibsky.updateStarterPack()
 
     ## DNSZone
     # dns = apibsky.getDNSZone()
     # print(dns)
 
-    
-
+ 
     ## Test getList
     # items = apibsky.getList(apibsky.config['url_list_esr'])
     # print(items)
@@ -890,8 +896,8 @@ if __name__ == "__main__":
     # apibsky.updateTops(v)
 
     ## Test recap
-    # vt = apibsky.postRecap("2023-12")
-    # for p in vt: print(str(p)+"\n\n")
+    vt = apibsky.postRecap("2024-11")
+    for p in vt: print(str(p)+"\n\n")
 
     ## Test getProfiles
     # l = apibsky.getList(apibsky.config["url_list_esr"])
