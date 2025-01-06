@@ -667,7 +667,8 @@ class APIBluesky():
         authors = [ a[0] for a in sorted(top['authors'].items(), key=lambda x:-x[1])[0:5] ]
         hellos = top['hello']
         VeilleESR = self.getUriCid([ a[0] for a in sorted(top['VeilleESR'].items(), key=lambda x:-x[1])[0:3] ])
-        ESR = self.getUriCid([ a[0] for a in sorted(top['ESR'].items(), key=lambda x:-x[1])[0:3] ])
+        # ESR = self.getUriCid([ a[0] for a in sorted(top['ESR'].items(), key=lambda x:-x[1])[0:3] ])
+        ESR = []
         help = self.getUriCid(top['help'])
 
         newcertifieds = self.getNewCertifieds()
@@ -879,8 +880,8 @@ if __name__ == "__main__":
     # apibsky.updateStarterPack()
 
     ## DNSZone
-    # dns = apibsky.getDNSZone()
-    # print(dns)
+    dns = apibsky.getDNSZone()
+    print(dns)
 
  
     ## Test getList
@@ -896,8 +897,8 @@ if __name__ == "__main__":
     # apibsky.updateTops(v)
 
     ## Test recap
-    vt = apibsky.postRecap("2024-11")
-    for p in vt: print(str(p)+"\n\n")
+    #vt = apibsky.postRecap("2024-11")
+    #for p in vt: print(str(p)+"\n\n")
 
     ## Test getProfiles
     # l = apibsky.getList(apibsky.config["url_list_esr"])
