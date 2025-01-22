@@ -156,25 +156,25 @@ def main():
     global apibsky
     config.test = args.test
 
-    try:
-        apitwitter = APITwitter(
-            config.get("TWITTER_CONSUMER_KEY"),
-            config.get("TWITTER_CONSUMER_SECRET"),
-            config.get("TWITTER_ACCESS_TOKEN"),
-            config.get("TWITTER_ACCESS_TOKEN_SECRET"),
-            config.get("TWITTER_BEARER_TOKEN"),
-            args.test
-            )
+    # try:
+    #     apitwitter = APITwitter(
+    #         config.get("TWITTER_CONSUMER_KEY"),
+    #         config.get("TWITTER_CONSUMER_SECRET"),
+    #         config.get("TWITTER_ACCESS_TOKEN"),
+    #         config.get("TWITTER_ACCESS_TOKEN_SECRET"),
+    #         config.get("TWITTER_BEARER_TOKEN"),
+    #         args.test
+    #         )
 
-        apitwitter_jg = APITwitter(
-            config.get("TWITTERJG_CONSUMER_KEY"),
-            config.get("TWITTERJG_CONSUMER_SECRET"),
-            config.get("TWITTERJG_ACCESS_TOKEN"),
-            config.get("TWITTERJG_ACCESS_TOKEN_SECRET"),
-            config.get("TWITTERJG_BEARER_TOKEN"),
-            args.test
-            )
-    except Exception as e: logger.error(str(e))
+    #     apitwitter_jg = APITwitter(
+    #         config.get("TWITTERJG_CONSUMER_KEY"),
+    #         config.get("TWITTERJG_CONSUMER_SECRET"),
+    #         config.get("TWITTERJG_ACCESS_TOKEN"),
+    #         config.get("TWITTERJG_ACCESS_TOKEN_SECRET"),
+    #         config.get("TWITTERJG_BEARER_TOKEN"),
+    #         args.test
+    #         )
+    # except Exception as e: logger.error(str(e))
 
     apimasto = APIMastodon(
         config.get("MASTODON_ID"),
