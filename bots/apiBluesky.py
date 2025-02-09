@@ -666,7 +666,7 @@ class APIBluesky():
 
         authors = [ a[0] for a in sorted(top['authors'].items(), key=lambda x:-x[1])[0:5] ]
         hellos = top['hello']
-        VeilleESR = self.getUriCid([ a[0] for a in sorted(top['VeilleESR'].items(), key=lambda x:-x[1])[0:3] ])
+        VeilleESR = self.getUriCid([ a[0] for a in sorted(top['VeilleESR'].items(), key=lambda x:-x[1])[0:5] ])
         # ESR = self.getUriCid([ a[0] for a in sorted(top['ESR'].items(), key=lambda x:-x[1])[0:3] ])
         ESR = []
         help = self.getUriCid(top['help'])

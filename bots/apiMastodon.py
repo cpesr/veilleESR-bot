@@ -152,6 +152,8 @@ class APIMastodon:
         text = vpost['text']
         if 'cardurl' in vpost:
             text = text +" "+ vpost['cardurl']
+        if 'card' in vpost and 'url' in vpost['card']:
+            text = text +" "+ vpost['card']['url']
 
         media_ids = []
         if 'images' in vpost:

@@ -137,7 +137,7 @@ class APITwitter:
 
         return tweet.data
 
-    def postVThread(self, vthread):
+    def postVThread(self, vthread, full=False):
         irp = None
         for vpost in vthread:
             tweet = self.postVPost(vpost, in_reply_to = irp)
